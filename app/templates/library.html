@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Content Library - Content Creator Pro{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h2 mb-4">
+                <i class="fas fa-folder me-2 text-primary"></i>Content Library
+            </h1>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Your Generated Content</h5>
+                    <p class="text-muted">Your content library will appear here once you start generating content.</p>
+                    <a href="{{ url_for('main.generator') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Create Your First Content
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
