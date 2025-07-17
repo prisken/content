@@ -6,7 +6,7 @@ os.environ['VERCEL_ENV'] = 'production'
 
 app = Flask(__name__)
 
-# Simple HTML template for the landing page
+# Improved HTML template for the landing page with better text visibility
 LANDING_HTML = """
 <!DOCTYPE html>
 <html lang="en">
@@ -17,9 +17,42 @@ LANDING_HTML = """
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
-        .hero { padding: 100px 0; color: white; }
-        .feature-card { background: white; border-radius: 15px; padding: 30px; margin: 20px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .btn-primary { background: linear-gradient(45deg, #667eea, #764ba2); border: none; padding: 12px 30px; }
+        .hero {
+            position: relative;
+            padding: 100px 0;
+            color: #fff;
+            z-index: 1;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(30, 30, 30, 0.55);
+            z-index: -1;
+            border-radius: 20px;
+        }
+        .feature-card {
+            background: #fff;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            color: #222;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            padding: 12px 30px;
+            font-weight: bold;
+        }
+        h1, h3, p, .lead {
+            color: #fff !important;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.25);
+        }
+        .feature-card h3, .feature-card p {
+            color: #222 !important;
+            text-shadow: none;
+        }
     </style>
 </head>
 <body>
@@ -31,19 +64,19 @@ LANDING_HTML = """
                 <div class="col-md-4">
                     <div class="feature-card">
                         <h3>📝 Multi-Platform Content</h3>
-                        <p>Generate content for LinkedIn, Facebook, Instagram, Twitter, YouTube, and blogs.</p>
+                        <p>Generate content for <b>LinkedIn, Facebook, Instagram, Twitter, YouTube, and blogs</b>.</p>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="feature-card">
                         <h3>🎯 Smart Direction</h3>
-                        <p>18 content directions with regional and cultural context.</p>
+                        <p>18 content directions with <b>regional and cultural context</b>.</p>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="feature-card">
                         <h3>🤖 AI-Powered</h3>
-                        <p>Advanced AI content generation with tone and style customization.</p>
+                        <p>Advanced AI content generation with <b>tone and style customization</b>.</p>
                     </div>
                 </div>
             </div>
