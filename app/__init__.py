@@ -25,6 +25,8 @@ def create_app(config_name='development'):
         app.config.from_object('config.development.DevelopmentConfig')
     elif config_name == 'production':
         app.config.from_object('config.production.ProductionConfig')
+    elif config_name == 'vercel':
+        app.config.from_object('config.vercel.VercelConfig')
     else:
         app.config.from_object('config.testing.TestingConfig')
     
@@ -43,8 +45,12 @@ def create_app(config_name='development'):
     app.register_blueprint(api_bp, url_prefix='/api')
     app.register_blueprint(auth_bp, url_prefix='/auth')
     
-    # Create database tables
-    with app.app_context():
-        db.create_all()
+    # Create database tables only if database is configured
+    if app.config.get('SQLALCHEMY_DATABASE_URI'):
+        with app.app_context():
+            try:
+                db.create_all()
+            except Exception as e:
+                print(f"Database initialization error: {e}")
     
     return app 

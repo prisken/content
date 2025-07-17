@@ -52,26 +52,30 @@ def generate_content():
             direction_context=direction_context
         )
         
-        # Save to database if user_id provided
-        if user_id:
-            content = Content(
-                user_id=user_id,
-                content_direction=content_direction,
-                content_type=content_type,
-                source_type=source_type,
-                source_data=specific_content,
-                generated_content=generated_content['content'],
-                tone=tone,
-                region=region,
-                language=language
-            )
-            content.cultural_context_dict = generated_content.get('cultural_context', {})
-            content.direction_context_dict = direction_context
-            
-            db.session.add(content)
-            db.session.commit()
-            
-            generated_content['content_id'] = content.id
+        # Save to database if user_id provided and database is available
+        if user_id and current_app.config.get('SQLALCHEMY_DATABASE_URI'):
+            try:
+                content = Content(
+                    user_id=user_id,
+                    content_direction=content_direction,
+                    content_type=content_type,
+                    source_type=source_type,
+                    generated_content=generated_content['content'],
+                    tone=tone,
+                    region=region,
+                    language=language
+                )
+                content.source_data = specific_content
+                content.cultural_context_dict = generated_content.get('cultural_context', {})
+                content.direction_context_dict = direction_context
+                
+                db.session.add(content)
+                db.session.commit()
+                
+                generated_content['content_id'] = content.id
+            except Exception as e:
+                print(f"Database save error: {e}")
+                # Continue without saving to database
         
         return jsonify({
             'success': True,
@@ -88,6 +92,13 @@ def generate_content():
 def update_content(content_id):
     """Update content with manual edits"""
     try:
+        # Check if database is available
+        if not current_app.config.get('SQLALCHEMY_DATABASE_URI'):
+            return jsonify({
+                'success': False,
+                'error': 'Database not available in serverless mode'
+            }), 503
+        
         data = request.get_json()
         content = Content.query.get_or_404(content_id)
         
@@ -100,13 +111,17 @@ def update_content(content_id):
         
         # Create version history
         if 'edited_content' in data and data['edited_content'] != content.generated_content:
-            version = ContentVersion(
-                content_id=content_id,
-                version_number=len(content.versions) + 1,
-                content_text=data['edited_content'],
-                edited_by=data.get('user_id')
-            )
-            db.session.add(version)
+            try:
+                version = ContentVersion(
+                    content_id=content_id,
+                    version_number=len(content.versions) + 1,
+                    content_text=data['edited_content'],
+                    edited_by=data.get('user_id')
+                )
+                db.session.add(version)
+            except Exception as e:
+                print(f"Version creation error: {e}")
+                # Continue without version history
         
         db.session.commit()
         
