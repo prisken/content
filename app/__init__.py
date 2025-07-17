@@ -1,18 +1,44 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from flask_cors import CORS
-from flask_jwt_extended import JWTManager
 import os
 from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
 
-# Initialize extensions
-db = SQLAlchemy()
-migrate = Migrate()
-jwt = JWTManager()
+# Check if we're in serverless mode
+IS_SERVERLESS = os.environ.get('VERCEL_ENV') == 'production'
+
+# Initialize extensions conditionally
+if not IS_SERVERLESS:
+    from flask_sqlalchemy import SQLAlchemy
+    from flask_migrate import Migrate
+    from flask_jwt_extended import JWTManager
+    from flask_cors import CORS
+    
+    db = SQLAlchemy()
+    migrate = Migrate()
+    jwt = JWTManager()
+    cors = CORS
+else:
+    # Dummy objects for serverless mode
+    class DummyDB:
+        def init_app(self, app): pass
+        def create_all(self): pass
+        def session(self): return None
+    
+    class DummyMigrate:
+        def init_app(self, app, db): pass
+    
+    class DummyJWT:
+        def init_app(self, app): pass
+    
+    class DummyCORS:
+        def __init__(self, app): pass
+    
+    db = DummyDB()
+    migrate = DummyMigrate()
+    jwt = DummyJWT()
+    cors = DummyCORS
 
 def create_app(config_name='development'):
     """Application factory pattern"""
@@ -34,7 +60,7 @@ def create_app(config_name='development'):
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
-    CORS(app)
+    cors(app)
     
     # Register blueprints
     from app.routes.main import main_bp
