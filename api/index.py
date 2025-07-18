@@ -302,6 +302,7 @@ GENERATOR_CONTENT = """
                 <div class="step">2</div>
                 <div class="step">3</div>
                 <div class="step">4</div>
+                <div class="step">5</div>
             </div>
             
             <div class="card">
@@ -541,6 +542,86 @@ GENERATOR_CONTENT = """
                             </div>
                         </div>
                         
+                        <!-- Step 3.5: Topic Selection -->
+                        <div id="step3_5" class="step-content" style="display: none;">
+                            <h3 class="text-center mb-4">Step 3.5: Choose Your Topic</h3>
+                            
+                            <!-- Input fields for specific sources -->
+                            <div id="sourceInputs" class="mb-4" style="display: none;">
+                                <!-- Books input -->
+                                <div id="booksInput" class="source-input" style="display: none;">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Book Title</label>
+                                            <input type="text" class="form-control" id="bookTitle" placeholder="Enter book title...">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Author</label>
+                                            <input type="text" class="form-control" id="bookAuthor" placeholder="Enter author name...">
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-outline-primary" onclick="loadBookTopics()">
+                                        <i class="fas fa-search me-2"></i>Find Topics
+                                    </button>
+                                </div>
+                                
+                                <!-- Podcast input -->
+                                <div id="podcastInput" class="source-input" style="display: none;">
+                                    <div class="mb-3">
+                                        <label class="form-label">Podcast Link</label>
+                                        <input type="url" class="form-control" id="podcastLink" placeholder="Enter podcast URL...">
+                                    </div>
+                                    <button type="button" class="btn btn-outline-primary" onclick="loadPodcastTopics()">
+                                        <i class="fas fa-search me-2"></i>Find Topics
+                                    </button>
+                                </div>
+                                
+                                <!-- Video input -->
+                                <div id="videoInput" class="source-input" style="display: none;">
+                                    <div class="mb-3">
+                                        <label class="form-label">YouTube Video Link</label>
+                                        <input type="url" class="form-control" id="videoLink" placeholder="Enter YouTube video URL...">
+                                    </div>
+                                    <button type="button" class="btn btn-outline-primary" onclick="loadVideoTopics()">
+                                        <i class="fas fa-search me-2"></i>Find Topics
+                                    </button>
+                                </div>
+                                
+                                <!-- Research paper input -->
+                                <div id="researchInput" class="source-input" style="display: none;">
+                                    <div class="mb-3">
+                                        <label class="form-label">Research Paper (PDF)</label>
+                                        <input type="file" class="form-control" id="researchFile" accept=".pdf">
+                                    </div>
+                                    <button type="button" class="btn btn-outline-primary" onclick="loadResearchTopics()">
+                                        <i class="fas fa-upload me-2"></i>Upload & Find Topics
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Topic choices -->
+                            <div id="topicChoices" class="mb-4" style="display: none;">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 id="topicTitle">Available Topics</h5>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="refreshTopics()">
+                                        <i class="fas fa-sync-alt me-1"></i>Refresh
+                                    </button>
+                                </div>
+                                <div class="row" id="topicsGrid">
+                                    <!-- Topics will be loaded here dynamically -->
+                                </div>
+                            </div>
+                            
+                            <div class="text-center mt-4">
+                                <button type="button" class="btn btn-secondary btn-lg me-3" onclick="prevStep()">
+                                    <i class="fas fa-arrow-left me-2"></i>Previous
+                                </button>
+                                <button type="button" class="btn btn-primary btn-lg" onclick="nextStep()" id="nextStepBtn" disabled>
+                                    Next Step <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
                         <!-- Step 4: Tone -->
                         <div id="step4" class="step-content" style="display: none;">
                             <h3 class="text-center mb-4">Step 4: How Should It Sound?</h3>
@@ -596,7 +677,9 @@ GENERATOR_CONTENT = """
                         <input type="hidden" id="selectedDirection" name="direction">
                         <input type="hidden" id="selectedPlatform" name="platform">
                         <input type="hidden" id="selectedSource" name="source">
+                        <input type="hidden" id="selectedTopic" name="topic">
                         <input type="hidden" id="selectedTone" name="tone">
+                        <input type="hidden" id="sourceDetails" name="sourceDetails">
                     </form>
                 </div>
             </div>
@@ -624,7 +707,9 @@ let currentStep = 1;
 let selectedDirection = '';
 let selectedPlatform = '';
 let selectedSource = '';
+let selectedTopic = '';
 let selectedTone = '';
+let sourceDetails = {};
 
 // Direction card selection
 document.querySelectorAll('[data-direction]').forEach(card => {
@@ -667,6 +752,21 @@ document.querySelectorAll('[data-tone]').forEach(card => {
 });
 
 function nextStep() {
+    if (currentStep === 3 && selectedSource) {
+        // Show topic selection step
+        showTopicSelection();
+        return;
+    }
+    
+    if (currentStep === 3.5 && selectedTopic) {
+        // Move to tone selection
+        document.getElementById('step3_5').style.display = 'none';
+        document.getElementById('step4').style.display = 'block';
+        currentStep = 4;
+        updateStepProgress();
+        return;
+    }
+    
     if (currentStep < 4) {
         document.getElementById('step' + currentStep).style.display = 'none';
         currentStep++;
@@ -676,6 +776,24 @@ function nextStep() {
 }
 
 function prevStep() {
+    if (currentStep === 4) {
+        // Go back from tone to topic selection
+        document.getElementById('step4').style.display = 'none';
+        document.getElementById('step3_5').style.display = 'block';
+        currentStep = 3.5;
+        updateStepProgress();
+        return;
+    }
+    
+    if (currentStep === 3.5) {
+        // Go back from topic selection to source selection
+        document.getElementById('step3_5').style.display = 'none';
+        document.getElementById('step3').style.display = 'block';
+        currentStep = 3;
+        updateStepProgress();
+        return;
+    }
+    
     if (currentStep > 1) {
         document.getElementById('step' + currentStep).style.display = 'none';
         currentStep--;
@@ -684,10 +802,275 @@ function prevStep() {
     }
 }
 
+function showTopicSelection() {
+    document.getElementById('step3').style.display = 'none';
+    document.getElementById('step3_5').style.display = 'block';
+    currentStep = 3.5;
+    updateStepProgress();
+    
+    // Show appropriate input based on source
+    showSourceInput();
+}
+
+function showSourceInput() {
+    // Hide all source inputs
+    document.querySelectorAll('.source-input').forEach(input => input.style.display = 'none');
+    document.getElementById('sourceInputs').style.display = 'none';
+    document.getElementById('topicChoices').style.display = 'none';
+    
+    // Show appropriate input for the selected source
+    switch(selectedSource) {
+        case 'books':
+            document.getElementById('booksInput').style.display = 'block';
+            document.getElementById('sourceInputs').style.display = 'block';
+            break;
+        case 'podcasts':
+            document.getElementById('podcastInput').style.display = 'block';
+            document.getElementById('sourceInputs').style.display = 'block';
+            break;
+        case 'videos':
+            document.getElementById('videoInput').style.display = 'block';
+            document.getElementById('sourceInputs').style.display = 'block';
+            break;
+        case 'research':
+            document.getElementById('researchInput').style.display = 'block';
+            document.getElementById('sourceInputs').style.display = 'block';
+            break;
+        default:
+            // For news, threads, case_studies, trends - load topics directly
+            loadTopics();
+            break;
+    }
+}
+
+function loadBookTopics() {
+    const bookTitle = document.getElementById('bookTitle').value;
+    const bookAuthor = document.getElementById('bookAuthor').value;
+    
+    if (!bookTitle || !bookAuthor) {
+        alert('Please enter both book title and author.');
+        return;
+    }
+    
+    sourceDetails = { bookTitle, bookAuthor };
+    document.getElementById('sourceDetails').value = JSON.stringify(sourceDetails);
+    loadTopics();
+}
+
+function loadPodcastTopics() {
+    const podcastLink = document.getElementById('podcastLink').value;
+    
+    if (!podcastLink) {
+        alert('Please enter a podcast link.');
+        return;
+    }
+    
+    sourceDetails = { podcastLink };
+    document.getElementById('sourceDetails').value = JSON.stringify(sourceDetails);
+    loadTopics();
+}
+
+function loadVideoTopics() {
+    const videoLink = document.getElementById('videoLink').value;
+    
+    if (!videoLink) {
+        alert('Please enter a YouTube video link.');
+        return;
+    }
+    
+    sourceDetails = { videoLink };
+    document.getElementById('sourceDetails').value = JSON.stringify(sourceDetails);
+    loadTopics();
+}
+
+function loadResearchTopics() {
+    const researchFile = document.getElementById('researchFile').files[0];
+    
+    if (!researchFile) {
+        alert('Please select a PDF file.');
+        return;
+    }
+    
+    sourceDetails = { fileName: researchFile.name };
+    document.getElementById('sourceDetails').value = JSON.stringify(sourceDetails);
+    loadTopics();
+}
+
+function loadTopics() {
+    // Hide source inputs and show topic choices
+    document.getElementById('sourceInputs').style.display = 'none';
+    document.getElementById('topicChoices').style.display = 'block';
+    
+    // Generate topics based on direction and source
+    const topics = generateTopics(selectedDirection, selectedSource);
+    displayTopics(topics);
+}
+
+function generateTopics(direction, source) {
+    const topicTemplates = {
+        'business_finance': {
+            'news': [
+                'Market Analysis: Latest Trends in Financial Markets',
+                'Startup Success: Key Strategies for New Entrepreneurs',
+                'Investment Insights: Where to Invest in 2024',
+                'Corporate Leadership: Building Effective Teams',
+                'Economic Outlook: Global Market Predictions'
+            ],
+            'books': [
+                'Key Business Principles from the Book',
+                'Leadership Lessons and Management Insights',
+                'Financial Strategies and Investment Tips',
+                'Entrepreneurial Mindset and Growth Tactics',
+                'Corporate Culture and Team Building'
+            ],
+            'threads': [
+                'Viral Business Tips from Social Media',
+                'Entrepreneur Success Stories and Lessons',
+                'Investment Strategies Discussed Online',
+                'Leadership Insights from Business Leaders',
+                'Market Trends and Industry Analysis'
+            ],
+            'podcasts': [
+                'Key Insights from the Podcast Episode',
+                'Business Strategies and Best Practices',
+                'Leadership Lessons and Management Tips',
+                'Industry Trends and Market Analysis',
+                'Entrepreneurial Advice and Growth Tactics'
+            ],
+            'videos': [
+                'Main Takeaways from the Video Content',
+                'Business Strategies and Implementation Tips',
+                'Leadership Insights and Management Lessons',
+                'Industry Analysis and Market Trends',
+                'Practical Business Advice and Tactics'
+            ],
+            'research': [
+                'Key Findings from the Research Paper',
+                'Data-Driven Business Insights and Trends',
+                'Statistical Analysis and Market Predictions',
+                'Academic Insights Applied to Business',
+                'Research-Based Strategic Recommendations'
+            ],
+            'case_studies': [
+                'Success Factors from the Case Study',
+                'Strategic Decisions and Their Outcomes',
+                'Business Model Analysis and Insights',
+                'Lessons Learned and Best Practices',
+                'Implementation Strategies and Results'
+            ],
+            'trends': [
+                'Emerging Business Trends and Opportunities',
+                'Industry Disruption and Innovation',
+                'Market Shifts and Strategic Responses',
+                'Technology Impact on Business Models',
+                'Future of Work and Leadership'
+            ]
+        },
+        'technology': {
+            'news': [
+                'Latest Tech Innovations and Breakthroughs',
+                'AI and Machine Learning Developments',
+                'Cybersecurity Threats and Solutions',
+                'Digital Transformation Strategies',
+                'Tech Industry Trends and Predictions'
+            ],
+            'books': [
+                'Technology Insights from the Book',
+                'Digital Innovation and Future Trends',
+                'Tech Leadership and Management',
+                'AI and Automation Strategies',
+                'Digital Transformation Roadmap'
+            ],
+            'threads': [
+                'Viral Tech Tips and Hacks',
+                'Developer Insights and Best Practices',
+                'Tech Industry Gossip and Trends',
+                'Productivity Tools and Apps',
+                'Future Technology Predictions'
+            ],
+            'podcasts': [
+                'Tech Insights from the Podcast',
+                'Digital Innovation and Trends',
+                'Tech Leadership and Strategy',
+                'AI and Automation Discussions',
+                'Digital Transformation Insights'
+            ],
+            'videos': [
+                'Tech Tutorials and How-To Guides',
+                'Product Reviews and Comparisons',
+                'Tech News and Industry Updates',
+                'Coding Tips and Best Practices',
+                'Future Technology Trends'
+            ],
+            'research': [
+                'Cutting-Edge Research Findings',
+                'Technical Innovations and Breakthroughs',
+                'AI and ML Algorithm Insights',
+                'Digital Technology Trends',
+                'Scientific Computing Advances'
+            ],
+            'case_studies': [
+                'Tech Implementation Success Stories',
+                'Digital Transformation Case Studies',
+                'AI Integration and Results',
+                'Cybersecurity Incident Analysis',
+                'Technology ROI and Impact'
+            ],
+            'trends': [
+                'Emerging Technology Trends',
+                'AI and Automation Developments',
+                'Cybersecurity Evolution',
+                'Digital Innovation Trends',
+                'Future of Technology'
+            ]
+        }
+    };
+    
+    // Get topics for the selected direction and source, or use default topics
+    const directionTopics = topicTemplates[direction] || topicTemplates['business_finance'];
+    const sourceTopics = directionTopics[source] || directionTopics['news'];
+    
+    return sourceTopics;
+}
+
+function displayTopics(topics) {
+    const topicsGrid = document.getElementById('topicsGrid');
+    topicsGrid.innerHTML = '';
+    
+    topics.forEach((topic, index) => {
+        const topicCard = document.createElement('div');
+        topicCard.className = 'col-md-6 mb-3';
+        topicCard.innerHTML = `
+            <div class="direction-card topic-card" data-topic="${index}">
+                <i class="fas fa-lightbulb"></i>
+                <div>${topic}</div>
+            </div>
+        `;
+        topicsGrid.appendChild(topicCard);
+    });
+    
+    // Add click handlers for topic selection
+    document.querySelectorAll('.topic-card').forEach(card => {
+        card.addEventListener('click', function() {
+            document.querySelectorAll('.topic-card').forEach(c => c.classList.remove('selected'));
+            this.classList.add('selected');
+            selectedTopic = this.dataset.topic;
+            document.getElementById('selectedTopic').value = selectedTopic;
+            document.getElementById('nextStepBtn').disabled = false;
+        });
+    });
+}
+
+function refreshTopics() {
+    loadTopics();
+}
+
 function updateStepProgress() {
     document.querySelectorAll('.step').forEach((step, index) => {
         step.classList.remove('active', 'completed');
-        if (index + 1 < currentStep) {
+        if (currentStep === 3.5 && index === 3) {
+            step.classList.add('active');
+        } else if (index + 1 < currentStep || (currentStep === 3.5 && index < 3)) {
             step.classList.add('completed');
         } else if (index + 1 === currentStep) {
             step.classList.add('active');
@@ -699,7 +1082,7 @@ function updateStepProgress() {
 document.getElementById('generatorForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
-    if (!selectedDirection || !selectedPlatform || !selectedSource || !selectedTone) {
+    if (!selectedDirection || !selectedPlatform || !selectedSource || !selectedTopic || !selectedTone) {
         alert('Please complete all steps before generating content.');
         return;
     }
@@ -710,14 +1093,16 @@ document.getElementById('generatorForm').addEventListener('submit', function(e) 
     
     // Simulate content generation (replace with actual API call)
     setTimeout(() => {
+        const topics = generateTopics(selectedDirection, selectedSource);
+        const selectedTopicText = topics[selectedTopic];
+        
         document.getElementById('generatedContent').innerHTML = `
             <div class="alert alert-success">
                 <h5>Generated Content for ${selectedDirection} - ${selectedPlatform}</h5>
-                <p>This is a sample generated content based on your selections. In the full implementation, this would be AI-generated content from the selected source with the chosen tone.</p>
-                <p><strong>Direction:</strong> ${selectedDirection}</p>
-                <p><strong>Platform:</strong> ${selectedPlatform}</p>
+                <p><strong>Topic:</strong> ${selectedTopicText}</p>
                 <p><strong>Source:</strong> ${selectedSource}</p>
                 <p><strong>Tone:</strong> ${selectedTone}</p>
+                <p>This is a sample generated content based on your selections. In the full implementation, this would be AI-generated content from the selected source with the chosen tone.</p>
             </div>
         `;
     }, 2000);
