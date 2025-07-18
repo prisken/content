@@ -600,8 +600,6 @@ def generate_social_media_manager_content(user_email, social_content, selected_p
     """Generate social media manager content for all platforms"""
     user_name = user_email.split('@')[0] if '@' in user_email else user_email
     
-    print(f"DEBUG: Generating content for {len(social_content)} social content items")
-    
     # Calculate stats for all platforms
     total_posts = len(social_content)
     published_posts = len([c for c in social_content if c.get('status') == 'published'])
@@ -611,9 +609,6 @@ def generate_social_media_manager_content(user_email, social_content, selected_p
     # Safely calculate performance metrics
     total_views = sum(c.get('performance', {}).get('views', 0) for c in social_content)
     total_likes = sum(c.get('performance', {}).get('likes', 0) for c in social_content)
-    
-    print(f"DEBUG: Calculated stats - total: {total_posts}, published: {published_posts}, scheduled: {scheduled_posts}, draft: {draft_posts}")
-    print(f"DEBUG: Performance - views: {total_views}, likes: {total_likes}")
     
     # Platform-specific stats
     platform_stats = {}
@@ -2031,7 +2026,7 @@ BASE_TEMPLATE = """
     
     // Translation functions
     function switchLanguage(lang) {
-        console.log('Switching language to:', lang);
+
         currentLanguage = lang;
         
         // Update UI to show current language
@@ -2048,16 +2043,16 @@ BASE_TEMPLATE = """
                 'X-Requested-With': 'XMLHttpRequest'
             },
             success: function(response) {
-                console.log('Language switch response:', response);
+    
             },
             error: function(xhr, status, error) {
-                console.log('Language switch error:', xhr, status, error);
+
             }
         });
     }
     
     function updateLanguageDisplay(lang) {
-        console.log('Updating language display for:', lang);
+
         const languageNames = {
             'en': 'English',
             'zh': '中文'
@@ -2079,14 +2074,13 @@ BASE_TEMPLATE = """
     }
     
     function translatePage(lang) {
-        console.log('Translating page to:', lang);
+
         const langDict = translations[lang] || translations['en'];
-        console.log('Translation dictionary keys:', Object.keys(langDict).length);
-        console.log('Available translation keys:', Object.keys(langDict));
+
         
         // Count elements to translate
         const elementsToTranslate = $('[data-translate]');
-        console.log('Elements with data-translate attribute found:', elementsToTranslate.length);
+
         
         // Translate all elements with data-translate attribute
         $('[data-translate]').each(function() {
@@ -2094,9 +2088,9 @@ BASE_TEMPLATE = """
             const translation = langDict[key];
             if (translation) {
                 $(this).text(translation);
-                console.log('Translated ' + key + ' to:', translation);
+                // Translation applied
             } else {
-                console.log('No translation found for key: ' + key);
+                // No translation found
             }
         });
         
@@ -2106,37 +2100,37 @@ BASE_TEMPLATE = """
             const translation = langDict[key];
             if (translation) {
                 $(this).attr('placeholder', translation);
-                console.log('Translated placeholder ' + key + ' to:', translation);
+                // Placeholder translated
             } else {
-                console.log('No translation found for placeholder key: ' + key);
+                // No placeholder translation found
             }
         });
         
         // Update HTML lang attribute
         $('html').attr('lang', lang);
-        console.log('Page translation completed');
+
     }
     
     // Initialize on page load
     $(document).ready(function() {
-        console.log('Document ready, initializing translation system...');
+
         
         // Set up event listeners for language selector
         $('.language-option').on('click', function(e) {
-            console.log('Language option clicked:', $(this).data('lang'));
+
             e.preventDefault();
             const lang = $(this).data('lang');
             switchLanguage(lang);
         });
         
         // Test if language options exist
-        console.log('Language options found:', $('.language-option').length);
+
         $('.language-option').each(function() {
-            console.log('Language option:', $(this).data('lang'), $(this).text());
+
         });
         
         // Initialize language system
-        console.log('Initializing language system...');
+
         updateLanguageDisplay(currentLanguage);
         translatePage(currentLanguage);
         
@@ -2148,7 +2142,7 @@ BASE_TEMPLATE = """
             }
         });
         
-        console.log('Translation system initialized');
+
     });
     </script>
     
@@ -3246,7 +3240,7 @@ function saveGeneratedContent(direction, platform, source, topic, tone, content)
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            console.log('Content saved successfully:', data.content_id);
+            
         } else {
             console.error('Failed to save content:', data.error);
         }
@@ -4456,19 +4450,14 @@ def social_media_manager():
         user_email = session.get('user', 'demo@contentcreator.com')
         platform = request.args.get('platform', 'all')
         
-        print(f"DEBUG: Processing social media manager for user: {user_email}, platform: {platform}")
-        
         # Get all social media content for the user
         user_content = content_manager.get_user_content(user_email, limit=50)
-        print(f"DEBUG: Retrieved {len(user_content)} total content items")
         
         social_content = [c for c in user_content if c.get('platform') in ['linkedin', 'twitter', 'facebook', 'instagram', 'youtube']]
-        print(f"DEBUG: Filtered to {len(social_content)} social media content items")
         
         # Filter by platform if specified
         if platform != 'all':
             social_content = [c for c in social_content if c.get('platform') == platform]
-            print(f"DEBUG: Further filtered to {len(social_content)} items for platform {platform}")
         
         # Generate social media manager content
         content = generate_social_media_manager_content(user_email, social_content, platform)
@@ -4478,10 +4467,6 @@ def social_media_manager():
                                     content=content,
                                     scripts=SOCIAL_MEDIA_MANAGER_SCRIPTS)
     except Exception as e:
-        import traceback
-        error_traceback = traceback.format_exc()
-        print(f"ERROR in social_media_manager: {str(e)}")
-        print(f"TRACEBACK: {error_traceback}")
         return render_template_string(BASE_TEMPLATE,
                                     title="Post Management",
                                     content=f"<div class='container'><div class='alert alert-danger'>Error loading Post Management: {str(e)}<br><small>Please try refreshing the page or contact support.</small></div></div>",
@@ -5046,7 +5031,6 @@ function createNewPost() {
 
 function editPost(postId) {
     // Open edit modal for post
-    console.log('Editing post:', postId);
     // Placeholder: Show edit modal
     alert('Edit post functionality - Post ID: ' + postId);
 }
@@ -5432,7 +5416,7 @@ function confirmSchedule() {
         return;
     }
     
-    console.log('Scheduling post:', { platform, dateTime, content, account });
+
     
     // Placeholder: Save schedule
     alert('Post scheduled successfully for ' + platform + '!');
@@ -5620,4 +5604,4 @@ function updateBulkActionsVisibility() {
 """
 
 if __name__ == '__main__':
-    app.run(debug=True) 
+    app.run(debug=False) 
