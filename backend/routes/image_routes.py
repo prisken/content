@@ -2,10 +2,20 @@ from flask import Blueprint, request, jsonify, session
 from models import db, Image, User
 from datetime import datetime
 import uuid
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
-from PIL import Image as PILImage, ImageDraw, ImageFont
+# Optional imports
+try:
+    import cloudinary
+    import cloudinary.uploader
+    import cloudinary.api
+    CLOUDINARY_AVAILABLE = True
+except ImportError:
+    CLOUDINARY_AVAILABLE = False
+
+try:
+    from PIL import Image as PILImage, ImageDraw, ImageFont
+    PIL_AVAILABLE = True
+except ImportError:
+    PIL_AVAILABLE = False
 import io
 import os
 
@@ -134,8 +144,11 @@ def extract_content_themes(content_text, direction):
 def create_mock_image(prompt, style, user_email):
     """Create a mock image and upload to Cloudinary"""
     try:
+        if not PIL_AVAILABLE:
+            return "https://via.placeholder.com/1200x630/667EEA/FFFFFF?text=AI+Generated+Image"
+            
         # Create a simple placeholder image using PIL
-        img = PILImage.new('RGB', (1200, 630), color='#667EEA')
+        img = PILImage.new('RGB', (1200, 630), color=0x667EEA)  # #667EEA as hex
         draw = ImageDraw.Draw(img)
         
         # Add text
@@ -154,33 +167,37 @@ def create_mock_image(prompt, style, user_email):
         img.save(img_bytes, format='PNG')
         img_bytes.seek(0)
         
-        # Upload to Cloudinary
-        result = cloudinary.uploader.upload(
-            img_bytes,
-            folder=f"content_creator/{user_email.replace('@', '_at_')}",
-            public_id=f"generated_{style}_{uuid.uuid4().hex[:8]}",
-            overwrite=True
-        )
-        
-        # Create database record
-        image_record = Image(
-            id=generate_image_id(),
-            user_email=user_email,
-            filename=result['public_id'],
-            original_filename=f"generated_{style}.png",
-            file_path=result['secure_url'],
-            file_size=result['bytes'],
-            mime_type='image/png',
-            width=1200,
-            height=630,
-            alt_text=f"AI generated image in {style} style",
-            caption=prompt[:100] + "..." if len(prompt) > 100 else prompt
-        )
-        
-        db.session.add(image_record)
-        db.session.commit()
-        
-        return result['secure_url']
+        if CLOUDINARY_AVAILABLE:
+            # Upload to Cloudinary
+            result = cloudinary.uploader.upload(
+                img_bytes,
+                folder=f"content_creator/{user_email.replace('@', '_at_')}",
+                public_id=f"generated_{style}_{uuid.uuid4().hex[:8]}",
+                overwrite=True
+            )
+            
+            # Create database record
+            image_record = Image(
+                id=generate_image_id(),
+                user_email=user_email,
+                filename=result['public_id'],
+                original_filename=f"generated_{style}.png",
+                file_path=result['secure_url'],
+                file_size=result['bytes'],
+                mime_type='image/png',
+                width=1200,
+                height=630,
+                alt_text=f"AI generated image in {style} style",
+                caption=prompt[:100] + "..." if len(prompt) > 100 else prompt
+            )
+            
+            db.session.add(image_record)
+            db.session.commit()
+            
+            return result['secure_url']
+        else:
+            # Return placeholder if Cloudinary not available
+            return "https://via.placeholder.com/1200x630/667EEA/FFFFFF?text=AI+Generated+Image"
         
     except Exception as e:
         # Fallback: return a placeholder URL
