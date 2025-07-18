@@ -156,6 +156,10 @@ BASE_TEMPLATE = """
         /* Dropdown visibility */
         .dropdown-menu { color: #333 !important; }
         .dropdown-item { color: #333 !important; }
+        .dropdown-item.active { 
+            background-color: #667eea !important; 
+            color: #fff !important; 
+        }
         
         /* Progress bar visibility */
         .progress { background: rgba(255,255,255,0.3) !important; }
@@ -406,6 +410,42 @@ BASE_TEMPLATE = """
             'upload_find_topics': 'Upload & Find Topics',
             'available_topics': 'Available Topics',
             'refresh': 'Refresh',
+            'podcast_link': 'Podcast Link',
+            'enter_podcast_url': 'Enter podcast URL...',
+            'youtube_video_link': 'YouTube Video Link',
+            'enter_youtube_video_url': 'Enter YouTube video URL...',
+            'research_paper_pdf': 'Research Paper (PDF)',
+            'generated_content': 'Generated Content',
+            'copy': 'Copy',
+            'save_to_library': 'Save to Library',
+            'humorous': 'Humorous',
+            'serious': 'Serious',
+            'welcome_back': 'Welcome back',
+            'your_focus': 'Your focus',
+            'quick_stats': 'Quick Stats',
+            'content_generated': 'Content Generated',
+            'this_month': 'This Month',
+            'library_items': 'Library Items',
+            'social_posts': 'Social Posts',
+            'quick_actions': 'Quick Actions',
+            'generate_new_content': 'Generate New Content',
+            'view_library': 'View Library',
+            'social_media': 'Social Media',
+            'analytics': 'Analytics',
+            'recent_content_by_direction': 'Recent Content by Direction',
+            'business': 'Business',
+            'tech': 'Tech',
+            'twitter_thread': 'Twitter Thread',
+            '2_hours_ago': '2 hours ago',
+            '1_day_ago': '1 day ago',
+            '3_days_ago': '3 days ago',
+            '1_week_ago': '1 week ago',
+            'linkedin': 'LinkedIn',
+            'twitter': 'Twitter',
+            'instagram': 'Instagram',
+            'blog': 'Blog',
+            'translate_to_chinese': 'Translate to Chinese',
+            'translate_to_english': 'Translate to English',
             
             // Tone options
             'professional': 'Professional',
@@ -560,6 +600,42 @@ BASE_TEMPLATE = """
             'upload_find_topics': '上传并查找主题',
             'available_topics': '可用主题',
             'refresh': '刷新',
+            'podcast_link': '播客链接',
+            'enter_podcast_url': '输入播客网址...',
+            'youtube_video_link': 'YouTube视频链接',
+            'enter_youtube_video_url': '输入YouTube视频网址...',
+            'research_paper_pdf': '研究论文 (PDF)',
+            'generated_content': '生成的内容',
+            'copy': '复制',
+            'save_to_library': '保存到库',
+            'humorous': '幽默',
+            'serious': '严肃',
+            'welcome_back': '欢迎回来',
+            'your_focus': '您的重点',
+            'quick_stats': '快速统计',
+            'content_generated': '生成的内容',
+            'this_month': '本月',
+            'library_items': '库项目',
+            'social_posts': '社交帖子',
+            'quick_actions': '快速操作',
+            'generate_new_content': '生成新内容',
+            'view_library': '查看库',
+            'social_media': '社交媒体',
+            'analytics': '分析',
+            'recent_content_by_direction': '按方向的最新内容',
+            'business': '商业',
+            'tech': '科技',
+            'twitter_thread': 'Twitter线程',
+            '2_hours_ago': '2小时前',
+            '1_day_ago': '1天前',
+            '3_days_ago': '3天前',
+            '1_week_ago': '1周前',
+            'linkedin': '领英',
+            'twitter': '推特',
+            'instagram': 'Instagram',
+            'blog': '博客',
+            'translate_to_chinese': '翻译成中文',
+            'translate_to_english': '翻译成英文',
             
             // Tone options
             'professional': '专业',
@@ -615,6 +691,16 @@ BASE_TEMPLATE = """
         };
         
         $('#current-language').text(languageNames[lang] || 'English');
+        
+        // Update the dropdown text as well
+        $('.language-option').each(function() {
+            const optionLang = $(this).data('lang');
+            if (optionLang === lang) {
+                $(this).addClass('active');
+            } else {
+                $(this).removeClass('active');
+            }
+        });
     }
     
     function translatePage(lang) {
@@ -678,6 +764,15 @@ BASE_TEMPLATE = """
         console.log('Initializing language system...');
         updateLanguageDisplay(currentLanguage);
         translatePage(currentLanguage);
+        
+        // Set active language option
+        $('.language-option').each(function() {
+            const optionLang = $(this).data('lang');
+            if (optionLang === currentLanguage) {
+                $(this).addClass('active');
+            }
+        });
+        
         console.log('Translation system initialized');
     });
     </script>
@@ -861,7 +956,7 @@ GENERATOR_CONTENT = """
                                 </div>
                             </div>
                             <div class="text-center mt-4">
-                                <button type="button" class="btn btn-primary btn-lg" onclick="nextStep()">
+                                <button type="button" class="btn btn-primary btn-lg" onclick="nextStep()" id="step1Next" disabled>
                                     <span data-translate="next_step">Next Step</span> <i class="fas fa-arrow-right ms-2"></i>
                                 </button>
                             </div>
@@ -907,14 +1002,6 @@ GENERATOR_CONTENT = """
                                         <div data-translate="blog_article">Blog Article</div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="text-center mt-4">
-                                <button type="button" class="btn btn-secondary btn-lg me-3" onclick="prevStep()">
-                                    <i class="fas fa-arrow-left me-2"></i>Previous
-                                </button>
-                                <button type="button" class="btn btn-primary btn-lg" onclick="nextStep()">
-                                    Next Step <i class="fas fa-arrow-right ms-2"></i>
-                                </button>
                             </div>
                             <div class="text-center mt-4">
                                 <button type="button" class="btn btn-secondary btn-lg me-3" onclick="prevStep()">
@@ -978,6 +1065,14 @@ GENERATOR_CONTENT = """
                                         <div data-translate="trending_topics">Trending Topics</div>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="text-center mt-4">
+                                <button type="button" class="btn btn-secondary btn-lg me-3" onclick="prevStep()">
+                                    <i class="fas fa-arrow-left me-2"></i><span data-translate="previous">Previous</span>
+                                </button>
+                                <button type="button" class="btn btn-primary btn-lg" onclick="nextStep()" id="step3Next" disabled>
+                                    <span data-translate="next_step">Next Step</span> <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
                             </div>
                         </div>
                         
@@ -1131,8 +1226,14 @@ GENERATOR_CONTENT = """
                         <button class="btn btn-success me-2" onclick="copyContent()">
                             <i class="fas fa-copy me-1"></i><span data-translate="copy">Copy</span>
                         </button>
-                        <button class="btn btn-primary" onclick="saveContent()">
+                        <button class="btn btn-primary me-2" onclick="saveContent()">
                             <i class="fas fa-save me-1"></i><span data-translate="save_to_library">Save to Library</span>
+                        </button>
+                        <button class="btn btn-outline-info me-2" id="translateToChinese" onclick="translateToChinese()" style="display: none;">
+                            <i class="fas fa-language me-1"></i><span data-translate="translate_to_chinese">Translate to Chinese</span>
+                        </button>
+                        <button class="btn btn-outline-info me-2" id="translateToEnglish" onclick="translateToEnglish()" style="display: none;">
+                            <i class="fas fa-language me-1"></i><span data-translate="translate_to_english">Translate to English</span>
                         </button>
                     </div>
                 </div>
@@ -1157,6 +1258,10 @@ document.querySelectorAll('[data-direction]').forEach(card => {
         this.classList.add('selected');
         selectedDirection = this.dataset.direction;
         document.getElementById('selectedDirection').value = selectedDirection;
+        
+        // Enable next button for step 1
+        const step1Next = document.getElementById('step1Next');
+        if (step1Next) step1Next.disabled = false;
     });
 });
 
@@ -1167,6 +1272,10 @@ document.querySelectorAll('[data-platform]').forEach(card => {
         this.classList.add('selected');
         selectedPlatform = this.dataset.platform;
         document.getElementById('selectedPlatform').value = selectedPlatform;
+        
+        // Enable next button for step 2
+        const step2Next = document.getElementById('step3Next');
+        if (step2Next) step2Next.disabled = false;
     });
 });
 
@@ -1177,6 +1286,10 @@ document.querySelectorAll('[data-source]').forEach(card => {
         this.classList.add('selected');
         selectedSource = this.dataset.source;
         document.getElementById('selectedSource').value = selectedSource;
+        
+        // Enable next button for step 3
+        const step3Next = document.getElementById('step3Next');
+        if (step3Next) step3Next.disabled = false;
     });
 });
 
@@ -1187,6 +1300,10 @@ document.querySelectorAll('[data-tone]').forEach(card => {
         this.classList.add('selected');
         selectedTone = this.dataset.tone;
         document.getElementById('selectedTone').value = selectedTone;
+        
+        // Enable generate button for step 4
+        const generateBtn = document.querySelector('#step4 button[type="submit"]');
+        if (generateBtn) generateBtn.disabled = false;
     });
 });
 
@@ -1507,9 +1624,17 @@ function refreshTopics() {
 function updateStepProgress() {
     document.querySelectorAll('.step').forEach((step, index) => {
         step.classList.remove('active', 'completed');
+        
+        // Handle step 3.5 (topic selection) - show as step 4
         if (currentStep === 3.5 && index === 3) {
             step.classList.add('active');
-        } else if (index + 1 < currentStep || (currentStep === 3.5 && index < 3)) {
+        } else if (currentStep === 4 && index === 3) {
+            step.classList.add('active');
+        } else if (currentStep === 4 && index < 3) {
+            step.classList.add('completed');
+        } else if (currentStep === 3.5 && index < 3) {
+            step.classList.add('completed');
+        } else if (index + 1 < currentStep) {
             step.classList.add('completed');
         } else if (index + 1 === currentStep) {
             step.classList.add('active');
@@ -1544,6 +1669,13 @@ document.getElementById('generatorForm').addEventListener('submit', function(e) 
                 <p>This is a sample generated content based on your selections. In the full implementation, this would be AI-generated content from the selected source with the chosen tone.</p>
             </div>
         `;
+        
+        // Show translation buttons based on current language
+        if (currentLanguage === 'zh') {
+            document.getElementById('translateToEnglish').style.display = 'inline-block';
+        } else {
+            document.getElementById('translateToChinese').style.display = 'inline-block';
+        }
     }, 2000);
 });
 
@@ -1555,6 +1687,55 @@ function copyContent() {
 function saveContent() {
     // Save functionality
     alert('Content saved to library!');
+}
+
+// Content translation functions
+function translateToEnglish() {
+    const contentElement = document.getElementById('generatedContent');
+    if (contentElement) {
+        const chineseContent = contentElement.innerHTML;
+        // Call translation API
+        $.ajax({
+            url: '/api/translate',
+            method: 'POST',
+            data: {
+                content: chineseContent,
+                target_language: 'en'
+            },
+            success: function(response) {
+                contentElement.innerHTML = response.translated_content;
+                document.getElementById('translateToEnglish').style.display = 'none';
+                document.getElementById('translateToChinese').style.display = 'inline-block';
+            },
+            error: function() {
+                alert('Translation failed. Please try again.');
+            }
+        });
+    }
+}
+
+function translateToChinese() {
+    const contentElement = document.getElementById('generatedContent');
+    if (contentElement) {
+        const englishContent = contentElement.innerHTML;
+        // Call translation API
+        $.ajax({
+            url: '/api/translate',
+            method: 'POST',
+            data: {
+                content: englishContent,
+                target_language: 'zh'
+            },
+            success: function(response) {
+                contentElement.innerHTML = response.translated_content;
+                document.getElementById('translateToEnglish').style.display = 'inline-block';
+                document.getElementById('translateToChinese').style.display = 'none';
+            },
+            error: function() {
+                alert('Translation failed. Please try again.');
+            }
+        });
+    }
 }
 </script>
 """
