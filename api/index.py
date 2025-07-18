@@ -34,6 +34,65 @@ BASE_TEMPLATE = """
         .card h3, .card p { color: #222 !important; text-shadow: none; }
         .form-control { border-radius: 10px; border: 2px solid #e0e0e0; }
         .form-control:focus { border-color: #667eea; box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25); }
+        
+        /* Direction Cards */
+        .direction-card {
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            color: #333;
+        }
+        .direction-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        .direction-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: #fff;
+        }
+        .direction-card i {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        
+        /* Step Progress */
+        .step-progress {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            font-weight: bold;
+        }
+        .step.active {
+            background: #667eea;
+        }
+        .step.completed {
+            background: #28a745;
+        }
+        
+        /* User Welcome */
+        .user-welcome {
+            color: #fff;
+            font-size: 14px;
+            margin-right: 15px;
+        }
     </style>
 </head>
 <body>
@@ -64,6 +123,11 @@ BASE_TEMPLATE = """
                         <a class="nav-link" href="/settings"><i class="fas fa-cog me-1"></i>Settings</a>
                     </li>
                     {% if 'user' in session %}
+                    <li class="nav-item">
+                        <span class="user-welcome">
+                            <i class="fas fa-user me-1"></i>Welcome, {{ session['user'] }}
+                        </span>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt me-1"></i>Logout</a>
                     </li>
@@ -129,74 +193,317 @@ LANDING_CONTENT = """
 </div>
 """
 
-# Generator page content
+# Generator page content - Updated to match wireframes
 GENERATOR_CONTENT = """
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
+        <div class="col-lg-10">
             <div class="text-center mb-5">
                 <h1><i class="fas fa-magic me-2"></i>Content Generator</h1>
                 <p class="lead">Create engaging content with AI assistance</p>
             </div>
             
+            <!-- Step Progress -->
+            <div class="step-progress">
+                <div class="step active">1</div>
+                <div class="step">2</div>
+                <div class="step">3</div>
+                <div class="step">4</div>
+            </div>
+            
             <div class="card">
                 <div class="card-body p-4">
                     <form id="generatorForm">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Content Direction</label>
-                                <select class="form-select" id="direction" required>
-                                    <option value="">Choose direction...</option>
-                                    {% for direction_key, direction_name in ALL_DIRECTIONS %}
-                                    <option value="{{ direction_key }}">{{ direction_name }}</option>
-                                    {% endfor %}
-                                </select>
+                        <!-- Step 1: Content Direction -->
+                        <div id="step1" class="step-content">
+                            <h3 class="text-center mb-4">Step 1: Choose Your Focus</h3>
+                            <div class="row">
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="business_finance">
+                                        <i class="fas fa-briefcase"></i>
+                                        <div>Business & Finance</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="technology">
+                                        <i class="fas fa-laptop-code"></i>
+                                        <div>Technology</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="health_wellness">
+                                        <i class="fas fa-heartbeat"></i>
+                                        <div>Health & Wellness</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="education">
+                                        <i class="fas fa-graduation-cap"></i>
+                                        <div>Education</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="entertainment">
+                                        <i class="fas fa-film"></i>
+                                        <div>Entertainment</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="travel_tourism">
+                                        <i class="fas fa-plane"></i>
+                                        <div>Travel & Tourism</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="food_cooking">
+                                        <i class="fas fa-utensils"></i>
+                                        <div>Food & Cooking</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="fashion_beauty">
+                                        <i class="fas fa-tshirt"></i>
+                                        <div>Fashion & Beauty</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="sports_fitness">
+                                        <i class="fas fa-dumbbell"></i>
+                                        <div>Sports & Fitness</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="science_research">
+                                        <i class="fas fa-microscope"></i>
+                                        <div>Science & Research</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="politics_current_events">
+                                        <i class="fas fa-newspaper"></i>
+                                        <div>Politics & News</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="environment_sustainability">
+                                        <i class="fas fa-leaf"></i>
+                                        <div>Environment</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="personal_development">
+                                        <i class="fas fa-chart-line"></i>
+                                        <div>Personal Dev</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="parenting_family">
+                                        <i class="fas fa-users"></i>
+                                        <div>Parenting & Family</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="art_creativity">
+                                        <i class="fas fa-palette"></i>
+                                        <div>Art & Creativity</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="real_estate">
+                                        <i class="fas fa-home"></i>
+                                        <div>Real Estate</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="automotive">
+                                        <i class="fas fa-car"></i>
+                                        <div>Automotive</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="pet_care">
+                                        <i class="fas fa-paw"></i>
+                                        <div>Pet Care</div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Platform</label>
-                                <select class="form-select" id="platform" required>
-                                    <option value="">Choose platform...</option>
-                                    <option value="linkedin">LinkedIn</option>
-                                    <option value="facebook">Facebook</option>
-                                    <option value="instagram">Instagram</option>
-                                    <option value="twitter">Twitter</option>
-                                    <option value="youtube">YouTube</option>
-                                    <option value="blog">Blog</option>
-                                </select>
+                            <div class="text-center mt-4">
+                                <button type="button" class="btn btn-primary btn-lg" onclick="nextStep()">
+                                    Next Step <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
                             </div>
                         </div>
                         
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Tone</label>
-                                <select class="form-select" id="tone">
-                                    <option value="professional">Professional</option>
-                                    <option value="casual">Casual</option>
-                                    <option value="inspirational">Inspirational</option>
-                                    <option value="educational">Educational</option>
-                                    <option value="humorous">Humorous</option>
-                                </select>
+                        <!-- Step 2: Content Type -->
+                        <div id="step2" class="step-content" style="display: none;">
+                            <h3 class="text-center mb-4">Step 2: What Type of Content?</h3>
+                            <div class="row">
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-platform="linkedin">
+                                        <i class="fab fa-linkedin"></i>
+                                        <div>LinkedIn Post</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-platform="facebook">
+                                        <i class="fab fa-facebook"></i>
+                                        <div>Facebook Post</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-platform="instagram">
+                                        <i class="fab fa-instagram"></i>
+                                        <div>Instagram Post</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-platform="twitter">
+                                        <i class="fab fa-twitter"></i>
+                                        <div>Twitter Post</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-platform="youtube">
+                                        <i class="fab fa-youtube"></i>
+                                        <div>YouTube Short</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-platform="blog">
+                                        <i class="fas fa-blog"></i>
+                                        <div>Blog Article</div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Length</label>
-                                <select class="form-select" id="length">
-                                    <option value="short">Short</option>
-                                    <option value="medium">Medium</option>
-                                    <option value="long">Long</option>
-                                </select>
+                            <div class="text-center mt-4">
+                                <button type="button" class="btn btn-secondary btn-lg me-3" onclick="prevStep()">
+                                    <i class="fas fa-arrow-left me-2"></i>Previous
+                                </button>
+                                <button type="button" class="btn btn-primary btn-lg" onclick="nextStep()">
+                                    Next Step <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
                             </div>
                         </div>
                         
-                        <div class="mb-3">
-                            <label class="form-label">Topic/Keywords</label>
-                            <textarea class="form-control" id="topic" rows="3" placeholder="Enter your topic or keywords..."></textarea>
+                        <!-- Step 3: Inspiration Source -->
+                        <div id="step3" class="step-content" style="display: none;">
+                            <h3 class="text-center mb-4">Step 3: What Inspires You?</h3>
+                            <div class="row">
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-source="news">
+                                        <i class="fas fa-newspaper"></i>
+                                        <div>Latest News</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-source="books">
+                                        <i class="fas fa-book"></i>
+                                        <div>Popular Books</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-source="threads">
+                                        <i class="fas fa-comments"></i>
+                                        <div>Trending Threads</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-source="podcasts">
+                                        <i class="fas fa-podcast"></i>
+                                        <div>Podcasts</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-source="videos">
+                                        <i class="fas fa-video"></i>
+                                        <div>YouTube Videos</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-source="research">
+                                        <i class="fas fa-file-alt"></i>
+                                        <div>Research Papers</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-source="case_studies">
+                                        <i class="fas fa-chart-bar"></i>
+                                        <div>Case Studies</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-source="trends">
+                                        <i class="fas fa-fire"></i>
+                                        <div>Trending Topics</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-4">
+                                <button type="button" class="btn btn-secondary btn-lg me-3" onclick="prevStep()">
+                                    <i class="fas fa-arrow-left me-2"></i>Previous
+                                </button>
+                                <button type="button" class="btn btn-primary btn-lg" onclick="nextStep()">
+                                    Next Step <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
                         </div>
                         
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-magic me-2"></i>Generate Content
-                            </button>
+                        <!-- Step 4: Tone -->
+                        <div id="step4" class="step-content" style="display: none;">
+                            <h3 class="text-center mb-4">Step 4: How Should It Sound?</h3>
+                            <div class="row">
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-tone="professional">
+                                        <i class="fas fa-user-tie"></i>
+                                        <div>Professional</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-tone="casual">
+                                        <i class="fas fa-smile"></i>
+                                        <div>Casual</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-tone="inspirational">
+                                        <i class="fas fa-star"></i>
+                                        <div>Inspirational</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-tone="educational">
+                                        <i class="fas fa-lightbulb"></i>
+                                        <div>Educational</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-tone="humorous">
+                                        <i class="fas fa-laugh"></i>
+                                        <div>Humorous</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-tone="serious">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        <div>Serious</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-4">
+                                <button type="button" class="btn btn-secondary btn-lg me-3" onclick="prevStep()">
+                                    <i class="fas fa-arrow-left me-2"></i>Previous
+                                </button>
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-magic me-2"></i>Generate Content
+                                </button>
+                            </div>
                         </div>
+                        
+                        <!-- Hidden form fields -->
+                        <input type="hidden" id="selectedDirection" name="direction">
+                        <input type="hidden" id="selectedPlatform" name="platform">
+                        <input type="hidden" id="selectedSource" name="source">
+                        <input type="hidden" id="selectedTone" name="tone">
                     </form>
                 </div>
             </div>
@@ -218,6 +525,121 @@ GENERATOR_CONTENT = """
         </div>
     </div>
 </div>
+
+<script>
+let currentStep = 1;
+let selectedDirection = '';
+let selectedPlatform = '';
+let selectedSource = '';
+let selectedTone = '';
+
+// Direction card selection
+document.querySelectorAll('[data-direction]').forEach(card => {
+    card.addEventListener('click', function() {
+        document.querySelectorAll('[data-direction]').forEach(c => c.classList.remove('selected'));
+        this.classList.add('selected');
+        selectedDirection = this.dataset.direction;
+        document.getElementById('selectedDirection').value = selectedDirection;
+    });
+});
+
+// Platform card selection
+document.querySelectorAll('[data-platform]').forEach(card => {
+    card.addEventListener('click', function() {
+        document.querySelectorAll('[data-platform]').forEach(c => c.classList.remove('selected'));
+        this.classList.add('selected');
+        selectedPlatform = this.dataset.platform;
+        document.getElementById('selectedPlatform').value = selectedPlatform;
+    });
+});
+
+// Source card selection
+document.querySelectorAll('[data-source]').forEach(card => {
+    card.addEventListener('click', function() {
+        document.querySelectorAll('[data-source]').forEach(c => c.classList.remove('selected'));
+        this.classList.add('selected');
+        selectedSource = this.dataset.source;
+        document.getElementById('selectedSource').value = selectedSource;
+    });
+});
+
+// Tone card selection
+document.querySelectorAll('[data-tone]').forEach(card => {
+    card.addEventListener('click', function() {
+        document.querySelectorAll('[data-tone]').forEach(c => c.classList.remove('selected'));
+        this.classList.add('selected');
+        selectedTone = this.dataset.tone;
+        document.getElementById('selectedTone').value = selectedTone;
+    });
+});
+
+function nextStep() {
+    if (currentStep < 4) {
+        document.getElementById('step' + currentStep).style.display = 'none';
+        currentStep++;
+        document.getElementById('step' + currentStep).style.display = 'block';
+        updateStepProgress();
+    }
+}
+
+function prevStep() {
+    if (currentStep > 1) {
+        document.getElementById('step' + currentStep).style.display = 'none';
+        currentStep--;
+        document.getElementById('step' + currentStep).style.display = 'block';
+        updateStepProgress();
+    }
+}
+
+function updateStepProgress() {
+    document.querySelectorAll('.step').forEach((step, index) => {
+        step.classList.remove('active', 'completed');
+        if (index + 1 < currentStep) {
+            step.classList.add('completed');
+        } else if (index + 1 === currentStep) {
+            step.classList.add('active');
+        }
+    });
+}
+
+// Form submission
+document.getElementById('generatorForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    if (!selectedDirection || !selectedPlatform || !selectedSource || !selectedTone) {
+        alert('Please complete all steps before generating content.');
+        return;
+    }
+    
+    // Show loading
+    document.getElementById('result').style.display = 'block';
+    document.getElementById('generatedContent').innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin fa-2x"></i><p>Generating content...</p></div>';
+    
+    // Simulate content generation (replace with actual API call)
+    setTimeout(() => {
+        document.getElementById('generatedContent').innerHTML = `
+            <div class="alert alert-success">
+                <h5>Generated Content for ${selectedDirection} - ${selectedPlatform}</h5>
+                <p>This is a sample generated content based on your selections. In the full implementation, this would be AI-generated content from the selected source with the chosen tone.</p>
+                <p><strong>Direction:</strong> ${selectedDirection}</p>
+                <p><strong>Platform:</strong> ${selectedPlatform}</p>
+                <p><strong>Source:</strong> ${selectedSource}</p>
+                <p><strong>Tone:</strong> ${selectedTone}</p>
+            </div>
+        `;
+    }, 2000);
+});
+
+function copyContent() {
+    // Copy functionality
+    alert('Content copied to clipboard!');
+}
+
+function saveContent() {
+    // Save functionality
+    alert('Content saved to library!');
+}
+</script>
 """
 
 # Dashboard page content
