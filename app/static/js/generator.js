@@ -376,4 +376,218 @@ window.GeneratorApp = {
     translateContent,
     updateTranslationButtons,
     showTranslationControls
-}; 
+};
+
+// Step navigation functions
+let currentStep = 1;
+const totalSteps = 4;
+
+function nextStep() {
+    if (currentStep < totalSteps) {
+        $('#step' + currentStep).hide();
+        currentStep++;
+        $('#step' + currentStep).show();
+        updateStepButtons();
+    }
+}
+
+function prevStep() {
+    if (currentStep > 1) {
+        $('#step' + currentStep).hide();
+        currentStep--;
+        $('#step' + (currentStep)).show();
+        updateStepButtons();
+    }
+}
+
+function updateStepButtons() {
+    // Update step indicators
+    $('.step-indicator').removeClass('active');
+    $('.step-indicator[data-step="' + currentStep + '"]').addClass('active');
+    
+    // Update navigation buttons
+    if (currentStep === 1) {
+        $('.btn-prev').hide();
+    } else {
+        $('.btn-prev').show();
+    }
+    
+    if (currentStep === totalSteps) {
+        $('.btn-next').hide();
+        $('#generateBtn').show();
+    } else {
+        $('.btn-next').show();
+        $('#generateBtn').hide();
+    }
+}
+
+// Content generation function
+function generateContent() {
+    if (!selectedDirection || !selectedContentType || !selectedTone) {
+        alert('Please complete all steps before generating content.');
+        return;
+    }
+    
+    // Show loading state
+    $('#generateBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Generating...');
+    
+    // Simulate content generation (replace with actual API call)
+    setTimeout(() => {
+        const directionContent = {
+            focus: selectedDirection,
+            keywords: ['Innovation', 'Technology', 'Digital Transformation', 'AI', 'Future']
+        };
+        
+        let sourceInfo = '';
+        if (selectedNewsSource) {
+            sourceInfo = '\n\nSource: ' + selectedNewsSource;
+        }
+        
+        let content = '';
+        switch (selectedContentType) {
+            case 'linkedin':
+                content = generateLinkedInPost(directionContent, sourceInfo);
+                break;
+            case 'facebook':
+                content = generateFacebookPost(directionContent, sourceInfo);
+                break;
+            case 'instagram':
+                content = generateInstagramPost(directionContent, sourceInfo);
+                break;
+            case 'twitter':
+                content = generateTwitterPost(directionContent, sourceInfo);
+                break;
+            case 'youtube_shorts':
+                content = generateYouTubeShorts(directionContent, sourceInfo);
+                break;
+            case 'blog':
+                content = generateBlogArticle(directionContent, sourceInfo);
+                break;
+            default:
+                content = 'Content generation failed. Please try again.';
+        }
+        
+        displayContent(content);
+        
+        // Reset button
+        $('#generateBtn').prop('disabled', false).html('<i class="fas fa-magic me-1"></i> Generate Content');
+    }, 2000);
+}
+
+// Content action functions
+function saveContent() {
+    if (generatedContent) {
+        // TODO: Implement save to library functionality
+        alert('Content saved to library!');
+    } else {
+        alert('No content to save. Please generate content first.');
+    }
+}
+
+function downloadContent() {
+    if (generatedContent) {
+        const blob = new Blob([generatedContent], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'generated-content.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    } else {
+        alert('No content to download. Please generate content first.');
+    }
+}
+
+function copyContent() {
+    if (generatedContent) {
+        navigator.clipboard.writeText(generatedContent).then(() => {
+            alert('Content copied to clipboard!');
+        }).catch(err => {
+            console.error('Failed to copy content: ', err);
+            alert('Failed to copy content. Please try again.');
+        });
+    } else {
+        alert('No content to copy. Please generate content first.');
+    }
+}
+
+// Quick start with preferences
+function quickStartWithPreferences() {
+    // TODO: Implement quick start with saved preferences
+    alert('Quick start with preferences feature coming soon!');
+}
+
+// News sources update
+function updateNewsSources() {
+    const region = $('#newsRegion').val();
+    if (region) {
+        $('#newsSourcesContainer').show();
+        
+        // Mock news sources based on region
+        const newsSources = {
+            'north_america': ['CNN', 'BBC News', 'Reuters', 'Associated Press', 'The New York Times'],
+            'europe': ['BBC News', 'Reuters', 'Associated Press', 'Euronews', 'Deutsche Welle'],
+            'asia_pacific': ['BBC News', 'Reuters', 'Associated Press', 'Al Jazeera', 'South China Morning Post'],
+            'latin_america': ['BBC News', 'Reuters', 'Associated Press', 'Al Jazeera', 'El País'],
+            'middle_east': ['BBC News', 'Reuters', 'Associated Press', 'Al Jazeera', 'The Jerusalem Post'],
+            'africa': ['BBC News', 'Reuters', 'Associated Press', 'Al Jazeera', 'AllAfrica']
+        };
+        
+        const sources = newsSources[region] || [];
+        let html = '';
+        
+        sources.forEach(source => {
+            html += '<div class="col-md-6 mb-2">' +
+                   '<div class="form-check">' +
+                   '<input class="form-check-input" type="radio" name="newsSource" id="' + source.replace(/\s+/g, '') + '" value="' + source + '">' +
+                   '<label class="form-check-label" for="' + source.replace(/\s+/g, '') + '">' + source + '</label>' +
+                   '</div>' +
+                   '</div>';
+        });
+        
+        $('#newsSourcesGrid').html(html);
+        
+        // Enable next button
+        $('#step3_5Next').prop('disabled', false);
+    } else {
+        $('#newsSourcesContainer').hide();
+        $('#step3_5Next').prop('disabled', true);
+    }
+}
+
+// Initialize generator on page load
+$(document).ready(function() {
+    console.log('Generator page loaded, initializing...');
+    
+    // Set up event listeners for direction cards
+    $('.direction-card').on('click', function() {
+        $('.direction-card').removeClass('selected');
+        $(this).addClass('selected');
+        
+        const direction = $(this).data('direction');
+        const contentType = $(this).data('content-type');
+        const sourceType = $(this).data('source-type');
+        const tone = $(this).data('tone');
+        
+        if (direction) selectedDirection = direction;
+        if (contentType) selectedContentType = contentType;
+        if (sourceType) selectedSourceType = sourceType;
+        if (tone) selectedTone = tone;
+        
+        // Enable next button for current step
+        const currentStepBtn = $('#step' + currentStep + 'Next');
+        if (currentStepBtn.length) {
+            currentStepBtn.prop('disabled', false);
+        }
+    });
+    
+    // Set up news source selection
+    $(document).on('change', 'input[name="newsSource"]', function() {
+        selectedNewsSource = $(this).val();
+        $('#step3_5Next').prop('disabled', false);
+    });
+    
+    console.log('Generator initialization completed');
+}); 
