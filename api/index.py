@@ -1309,6 +1309,7 @@ BASE_TEMPLATE = """
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }} - Content Creator Pro</title>
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNCIgZmlsbD0iIzY2N0VFQSIvPgo8cGF0aCBkPSJNOCAxMkwyNCAxMkwyNCAyMEg4VjEyWiIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iTTEwIDE0TDE2IDE0TDE2IDE4SDEwVjE0WiIgZmlsbD0iIzY2N0VFQSIvPgo8cGF0aCBkPSJNMTggMTRMMjIgMTRMMjIgMThIMThWMTQiIGZpbGw9IiM2NjdFRUEiLz4KPHBhdGggZD0iTTggMjJMMjQgMjJMMjQgMjRIMFYyMloiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -4682,6 +4683,20 @@ def translate_to_english(content):
     # For now, just return the original content since we're translating from Chinese to English
     # In a real implementation, this would translate Chinese back to English
     return content
+
+@app.route('/favicon.ico')
+def favicon():
+    """Serve favicon"""
+    # Return a simple SVG favicon as data URI
+    svg_data = """<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="32" height="32" rx="4" fill="#667EEA"/>
+<path d="M8 12L24 12L24 20H8V12Z" fill="white"/>
+<path d="M10 14L16 14L16 18H10V14Z" fill="#667EEA"/>
+<path d="M18 14L22 14L22 18H18V14" fill="#667EEA"/>
+<path d="M8 22L24 22L24 24H8V22Z" fill="white"/>
+</svg>"""
+    from flask import Response
+    return Response(svg_data, mimetype='image/svg+xml')
 
 @app.route('/health')
 def health():
