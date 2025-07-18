@@ -1,8 +1,10 @@
 import os
 from datetime import datetime
-from flask import Flask, render_template_string, jsonify, request, session, redirect, url_for, flash
+from flask import Flask, render_template_string, jsonify, request, session, redirect, url_for, flash, send_file
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 # Set environment variable to indicate serverless mode
 os.environ['VERCEL_ENV'] = 'production'
@@ -10,77 +12,305 @@ os.environ['VERCEL_ENV'] = 'production'
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-here-change-in-production'  # Required for session management
 
-# Content Management System
+# Database Configuration
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///content_creator.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    'pool_pre_ping': True,
+    'pool_recycle': 300,
+}
+
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+
+# Database Models
+class User(db.Model):
+    __tablename__ = 'users'
+    email = db.Column(db.String(120), primary_key=True)
+    password_hash = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    is_active = db.Column(db.Boolean, default=True)
+    
+    # User limits and subscription info
+    subscription_tier = db.Column(db.String(20), default='free')  # free, pro, enterprise
+    content_limit = db.Column(db.Integer, default=50)
+    image_limit = db.Column(db.Integer, default=10)
+    storage_limit_mb = db.Column(db.Integer, default=100)
+    
+    # Relationships
+    contents = db.relationship('Content', backref='user', lazy=True, cascade='all, delete-orphan')
+    images = db.relationship('Image', backref='user', lazy=True, cascade='all, delete-orphan')
+
+class Content(db.Model):
+    __tablename__ = 'contents'
+    id = db.Column(db.String(20), primary_key=True)
+    user_email = db.Column(db.String(120), db.ForeignKey('users.email'), nullable=False)
+    direction = db.Column(db.String(50), nullable=False)
+    platform = db.Column(db.String(20), nullable=False)
+    source = db.Column(db.String(50), nullable=False)
+    topic = db.Column(db.String(200), nullable=False)
+    tone = db.Column(db.String(20), nullable=False)
+    content_text = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Status and scheduling
+    status = db.Column(db.String(20), default='draft')  # draft, scheduled, published, failed
+    scheduled_time = db.Column(db.DateTime, nullable=True)
+    published_time = db.Column(db.DateTime, nullable=True)
+    
+    # Performance metrics
+    views = db.Column(db.Integer, default=0)
+    likes = db.Column(db.Integer, default=0)
+    shares = db.Column(db.Integer, default=0)
+    comments = db.Column(db.Integer, default=0)
+    
+    # Language and regional info
+    language = db.Column(db.String(10), default='en')
+    region = db.Column(db.String(50), nullable=True)
+    
+    # Relationships
+    images = db.relationship('Image', backref='content', lazy=True, cascade='all, delete-orphan')
+
+class Image(db.Model):
+    __tablename__ = 'images'
+    id = db.Column(db.String(20), primary_key=True)
+    user_email = db.Column(db.String(120), db.ForeignKey('users.email'), nullable=False)
+    content_id = db.Column(db.String(20), db.ForeignKey('contents.id'), nullable=True)
+    filename = db.Column(db.String(255), nullable=False)
+    original_filename = db.Column(db.String(255), nullable=False)
+    file_path = db.Column(db.String(500), nullable=False)
+    file_size = db.Column(db.Integer, nullable=False)  # in bytes
+    mime_type = db.Column(db.String(100), nullable=False)
+    width = db.Column(db.Integer, nullable=True)
+    height = db.Column(db.Integer, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Image metadata
+    alt_text = db.Column(db.String(500), nullable=True)
+    caption = db.Column(db.String(500), nullable=True)
+    tags = db.Column(db.String(500), nullable=True)  # JSON string of tags
+
+# Initialize database
+def init_database():
+    """Initialize database tables"""
+    with app.app_context():
+        db.create_all()
+        
+        # Create default admin user if not exists
+        admin_email = 'admin@contentcreator.com'
+        if not User.query.get(admin_email):
+            admin_user = User(
+                email=admin_email,
+                password_hash=generate_password_hash('admin123'),
+                subscription_tier='enterprise',
+                content_limit=10000,
+                image_limit=1000,
+                storage_limit_mb=10000
+            )
+            db.session.add(admin_user)
+            db.session.commit()
+
+# Enhanced Content Manager with Database
 class ContentManager:
     def __init__(self):
         self.content_id_counter = 1000
-        self.user_content = {}  # Store content by user
     
     def generate_content_id(self):
         """Generate unique content ID"""
         self.content_id_counter += 1
         return f"CC{self.content_id_counter:06d}"
     
-    def create_content(self, user_email, direction, platform, source, topic, tone, content_text):
-        """Create new content entry"""
+    def create_content(self, user_email, direction, platform, source, topic, tone, content_text, language='en', region=None):
+        """Create new content entry in database"""
         content_id = self.generate_content_id()
-        timestamp = datetime.now().isoformat()
         
-        content_entry = {
-            'id': content_id,
-            'user_email': user_email,
-            'direction': direction,
-            'platform': platform,
-            'source': source,
-            'topic': topic,
-            'tone': tone,
-            'content': content_text,
-            'created_at': timestamp,
-            'performance': {
-                'views': 0,
-                'likes': 0,
-                'shares': 0,
-                'comments': 0
-            }
-        }
+        content_entry = Content(
+            id=content_id,
+            user_email=user_email,
+            direction=direction,
+            platform=platform,
+            source=source,
+            topic=topic,
+            tone=tone,
+            content_text=content_text,
+            language=language,
+            region=region
+        )
         
-        if user_email not in self.user_content:
-            self.user_content[user_email] = []
-        
-        self.user_content[user_email].append(content_entry)
+        db.session.add(content_entry)
+        db.session.commit()
         return content_entry
     
     def get_user_content(self, user_email, limit=10):
-        """Get user's content sorted by creation date"""
-        if user_email not in self.user_content:
-            return []
-        return sorted(self.user_content[user_email], 
-                     key=lambda x: x['created_at'], reverse=True)[:limit]
+        """Get user's content from database"""
+        return Content.query.filter_by(user_email=user_email)\
+                           .order_by(Content.created_at.desc())\
+                           .limit(limit).all()
     
     def get_content_by_direction(self, user_email, direction):
         """Get user's content filtered by direction"""
-        if user_email not in self.user_content:
-            return []
-        return [c for c in self.user_content[user_email] if c['direction'] == direction]
+        return Content.query.filter_by(user_email=user_email, direction=direction)\
+                           .order_by(Content.created_at.desc()).all()
     
     def update_performance(self, content_id, platform, views=None, likes=None, shares=None, comments=None):
         """Update content performance metrics"""
-        for user_content in self.user_content.values():
-            for content in user_content:
-                if content['id'] == content_id and content['platform'] == platform:
-                    if views is not None:
-                        content['performance']['views'] = views
-                    if likes is not None:
-                        content['performance']['likes'] = likes
-                    if shares is not None:
-                        content['performance']['shares'] = shares
-                    if comments is not None:
-                        content['performance']['comments'] = comments
-                    return content
+        content = Content.query.get(content_id)
+        if content and content.platform == platform:
+            if views is not None:
+                content.views = views
+            if likes is not None:
+                content.likes = likes
+            if shares is not None:
+                content.shares = shares
+            if comments is not None:
+                content.comments = comments
+            db.session.commit()
+            return content
         return None
+    
+    def delete_content(self, content_id, user_email):
+        """Delete content (only if user owns it)"""
+        content = Content.query.get(content_id)
+        if content and content.user_email == user_email:
+            db.session.delete(content)
+            db.session.commit()
+            return True
+        return False
+    
+    def get_content_count(self, user_email):
+        """Get total content count for user"""
+        return Content.query.filter_by(user_email=user_email).count()
+    
+    def get_user_stats(self, user_email):
+        """Get user content statistics"""
+        contents = Content.query.filter_by(user_email=user_email).all()
+        total_views = sum(c.views for c in contents)
+        total_likes = sum(c.likes for c in contents)
+        total_shares = sum(c.shares for c in contents)
+        total_comments = sum(c.comments for c in contents)
+        
+        return {
+            'total_content': len(contents),
+            'total_views': total_views,
+            'total_likes': total_likes,
+            'total_shares': total_shares,
+            'total_comments': total_comments,
+            'published_content': len([c for c in contents if c.status == 'published']),
+            'scheduled_content': len([c for c in contents if c.status == 'scheduled']),
+            'draft_content': len([c for c in contents if c.status == 'draft'])
+        }
 
 # Initialize content manager
 content_manager = ContentManager()
+
+# Image upload and file storage system
+import uuid
+import os
+from werkzeug.utils import secure_filename
+from PIL import Image as PILImage
+import io
+import base64
+
+# File storage configuration
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
+
+# Ensure upload directory exists
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+def allowed_file(filename):
+    """Check if file extension is allowed"""
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def generate_image_id():
+    """Generate unique image ID"""
+    return f"IMG{uuid.uuid4().hex[:8].upper()}"
+
+def save_image_file(file, user_email, content_id=None):
+    """Save uploaded image file"""
+    try:
+        # Generate unique filename
+        image_id = generate_image_id()
+        original_filename = secure_filename(file.filename)
+        file_extension = original_filename.rsplit('.', 1)[1].lower()
+        filename = f"{image_id}.{file_extension}"
+        
+        # Create user-specific directory
+        user_upload_dir = os.path.join(UPLOAD_FOLDER, user_email.replace('@', '_at_'))
+        os.makedirs(user_upload_dir, exist_ok=True)
+        
+        # Save file path
+        file_path = os.path.join(user_upload_dir, filename)
+        
+        # Get file size
+        file.seek(0, 2)  # Seek to end
+        file_size = file.tell()
+        file.seek(0)  # Reset to beginning
+        
+        # Check file size limit
+        if file_size > MAX_FILE_SIZE:
+            raise ValueError(f"File size exceeds limit ({MAX_FILE_SIZE / 1024 / 1024}MB)")
+        
+        # Save file
+        file.save(file_path)
+        
+        # Get image dimensions
+        try:
+            with PILImage.open(file_path) as img:
+                width, height = img.size
+        except Exception:
+            width, height = None, None
+        
+        # Create database record
+        image_record = Image(
+            id=image_id,
+            user_email=user_email,
+            content_id=content_id,
+            filename=filename,
+            original_filename=original_filename,
+            file_path=file_path,
+            file_size=file_size,
+            mime_type=f"image/{file_extension}",
+            width=width,
+            height=height
+        )
+        
+        db.session.add(image_record)
+        db.session.commit()
+        
+        return image_record
+        
+    except Exception as e:
+        db.session.rollback()
+        raise e
+
+def get_user_storage_usage(user_email):
+    """Get user's current storage usage in MB"""
+    images = Image.query.filter_by(user_email=user_email).all()
+    total_bytes = sum(img.file_size for img in images)
+    return total_bytes / (1024 * 1024)  # Convert to MB
+
+def delete_image_file(image_id, user_email):
+    """Delete image file and database record"""
+    image = Image.query.get(image_id)
+    if image and image.user_email == user_email:
+        try:
+            # Delete file
+            if os.path.exists(image.file_path):
+                os.remove(image.file_path)
+            
+            # Delete database record
+            db.session.delete(image)
+            db.session.commit()
+            return True
+        except Exception as e:
+            db.session.rollback()
+            raise e
+    return False
 
 # Sample content for demo purposes
 def initialize_demo_content():
@@ -4349,11 +4579,68 @@ function showDemo() {
 </script>
 """
 
-# In-memory user store for demo (replace with DB in production)
-USERS = {
-    'demo@contentcreator.com': generate_password_hash('demo123'),
-    'test@example.com': generate_password_hash('test123')
-}
+# Database user management functions
+def get_user(email):
+    """Get user from database"""
+    return User.query.get(email)
+
+def create_user(email, password):
+    """Create new user in database"""
+    if get_user(email):
+        return None  # User already exists
+    
+    user = User(
+        email=email,
+        password_hash=generate_password_hash(password),
+        subscription_tier='free',
+        content_limit=50,
+        image_limit=10,
+        storage_limit_mb=100
+    )
+    db.session.add(user)
+    db.session.commit()
+    return user
+
+def verify_user(email, password):
+    """Verify user credentials"""
+    user = get_user(email)
+    if user and check_password_hash(user.password_hash, password):
+        return user
+    return None
+
+def update_user_limits(email, subscription_tier):
+    """Update user subscription limits"""
+    user = get_user(email)
+    if user:
+        if subscription_tier == 'pro':
+            user.content_limit = 500
+            user.image_limit = 100
+            user.storage_limit_mb = 1000
+        elif subscription_tier == 'enterprise':
+            user.content_limit = 10000
+            user.image_limit = 1000
+            user.storage_limit_mb = 10000
+        else:  # free
+            user.content_limit = 50
+            user.image_limit = 10
+            user.storage_limit_mb = 100
+        
+        user.subscription_tier = subscription_tier
+        db.session.commit()
+        return user
+    return None
+
+# Initialize demo users if they don't exist
+def init_demo_users():
+    """Initialize demo users in database"""
+    demo_users = [
+        ('demo@contentcreator.com', 'demo123'),
+        ('test@example.com', 'test123')
+    ]
+    
+    for email, password in demo_users:
+        if not get_user(email):
+            create_user(email, password)
 
 # Expanded content directions (18+)
 ALL_DIRECTIONS = [
@@ -4486,12 +4773,20 @@ def register():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        if email in USERS:
+        
+        # Check if user already exists
+        if get_user(email):
             flash('Email already registered.', 'danger')
             return redirect(url_for('register'))
-        USERS[email] = generate_password_hash(password)
-        flash('Registration successful. Please log in.', 'success')
-        return redirect(url_for('login'))
+        
+        # Create new user
+        user = create_user(email, password)
+        if user:
+            flash('Registration successful. Please log in.', 'success')
+            return redirect(url_for('login'))
+        else:
+            flash('Registration failed. Please try again.', 'danger')
+            return redirect(url_for('register'))
     return render_template_string(BASE_TEMPLATE, title="Register", content='''
     <div class="container">
         <div class="row justify-content-center">
@@ -4529,8 +4824,10 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        user_hash = USERS.get(email)
-        if user_hash and check_password_hash(user_hash, password):
+        
+        # Verify user credentials
+        user = verify_user(email, password)
+        if user:
             session['user'] = email
             flash('Logged in successfully.', 'success')
             return redirect(url_for('index'))
@@ -4691,184 +4988,1139 @@ def favicon():
     svg_data = """<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
 <rect width="32" height="32" rx="4" fill="#667EEA"/>
 <path d="M8 12L24 12L24 20H8V12Z" fill="white"/>
-<path d="M10 14L16 14L16 18H10V14Z" fill="#667EEA"/>
-<path d="M18 14L22 14L22 18H18V14" fill="#667EEA"/>
-<path d="M8 22L24 22L24 24H8V22Z" fill="white"/>
-</svg>"""
-    from flask import Response
-    return Response(svg_data, mimetype='image/svg+xml')
-
-@app.route('/health')
-def health():
-    """Health check endpoint"""
-    return jsonify({
-        "status": "healthy",
-        "mode": "serverless",
-        "message": "Content Creator Pro is running in serverless mode",
-        "pages": ["/", "/generator", "/dashboard", "/library", "/settings"]
-    })
-
-@app.route('/api/directions')
-def get_directions():
-    """Get available content directions"""
-    directions_data = [
-        {
-            'id': 1,
-            'direction_key': 'business_finance',
-            'name': 'Business & Finance',
-            'description': 'Content related to business strategies, financial markets, entrepreneurship, and corporate insights.'
-        },
-        {
-            'id': 2,
-            'direction_key': 'technology',
-            'name': 'Technology',
-            'description': 'Latest tech trends, software development, AI, and digital innovation.'
-        },
-        {
-            'id': 3,
-            'direction_key': 'health_wellness',
-            'name': 'Health & Wellness',
-            'description': 'Physical health, mental wellness, nutrition, and lifestyle tips.'
-        },
-        {
-            'id': 4,
-            'direction_key': 'education',
-            'name': 'Education',
-            'description': 'Learning resources, academic insights, and educational content.'
-        },
-        {
-            'id': 5,
-            'direction_key': 'entertainment',
-            'name': 'Entertainment',
-            'description': 'Movies, music, gaming, and pop culture content.'
-        },
-        {
-            'id': 6,
-            'direction_key': 'travel_tourism',
-            'name': 'Travel & Tourism',
-            'description': 'Travel guides, destination reviews, and tourism insights.'
+<path d="M10 14L16 14L16 18SDEwVjE0WiIgZmlsbD0iIzY2N0VFQSIvPgo8cGF0aCBkPSJNMTggMTRMMjIgMTRMMjIgMThIMThWMTQiIGZpbGw9IiM2NjdFRUEiLz4KPHBhdGggZD0iTTggMjJMMjQgMjJMMjQgMjRIMFYyMloiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        .navbar { 
+            background: rgba(255,255,255,0.1) !important; 
+            backdrop-filter: blur(10px); 
+            position: fixed !important;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
         }
-    ]
-    return jsonify({
-        'success': True,
-        'directions': directions_data
-    })
-
-@app.route('/api/news-sources')
-def get_news_sources():
-    """Get available news sources by region"""
-    news_sources = {
-        'north_america': {
-            'general': [
-                {'name': 'CNN', 'url': 'cnn.com', 'category': 'General News'},
-                {'name': 'Fox News', 'url': 'foxnews.com', 'category': 'General News'},
-                {'name': 'NBC News', 'url': 'nbcnews.com', 'category': 'General News'},
-                {'name': 'ABC News', 'url': 'abcnews.go.com', 'category': 'General News'}
-            ],
-            'business': [
-                {'name': 'Bloomberg', 'url': 'bloomberg.com', 'category': 'Business News'},
-                {'name': 'CNBC', 'url': 'cnbc.com', 'category': 'Business News'},
-                {'name': 'Wall Street Journal', 'url': 'wsj.com', 'category': 'Business News'},
-                {'name': 'Forbes', 'url': 'forbes.com', 'category': 'Business News'}
-            ],
-            'tech': [
-                {'name': 'TechCrunch', 'url': 'techcrunch.com', 'category': 'Tech News'},
-                {'name': 'The Verge', 'url': 'theverge.com', 'category': 'Tech News'},
-                {'name': 'Wired', 'url': 'wired.com', 'category': 'Tech News'},
-                {'name': 'Ars Technica', 'url': 'arstechnica.com', 'category': 'Tech News'}
-            ]
-        },
-        'europe': {
-            'general': [
-                {'name': 'BBC', 'url': 'bbc.com', 'category': 'General News'},
-                {'name': 'Reuters', 'url': 'reuters.com', 'category': 'General News'},
-                {'name': 'The Guardian', 'url': 'theguardian.com', 'category': 'General News'},
-                {'name': 'Le Monde', 'url': 'lemonde.fr', 'category': 'General News'}
-            ],
-            'business': [
-                {'name': 'Financial Times', 'url': 'ft.com', 'category': 'Business News'},
-                {'name': 'The Economist', 'url': 'economist.com', 'category': 'Business News'},
-                {'name': 'Handelsblatt', 'url': 'handelsblatt.com', 'category': 'Business News'}
-            ],
-            'tech': [
-                {'name': 'Tech.eu', 'url': 'tech.eu', 'category': 'Tech News'},
-                {'name': 'The Next Web', 'url': 'thenextweb.com', 'category': 'Tech News'},
-                {'name': 'EU-Startups', 'url': 'eu-startups.com', 'category': 'Tech News'}
-            ]
-        },
-        'asia_pacific': {
-            'general': [
-                {'name': 'Nikkei', 'url': 'asia.nikkei.com', 'category': 'General News'},
-                {'name': 'South China Morning Post', 'url': 'scmp.com', 'category': 'General News'},
-                {'name': 'Straits Times', 'url': 'straitstimes.com', 'category': 'General News'}
-            ],
-            'business': [
-                {'name': 'Bloomberg Asia', 'url': 'bloomberg.com/asia', 'category': 'Business News'},
-                {'name': 'CNBC Asia', 'url': 'cnbc.com/asia', 'category': 'Business News'},
-                {'name': 'Nikkei Business', 'url': 'business.nikkei.com', 'category': 'Business News'}
-            ],
-            'tech': [
-                {'name': 'Tech in Asia', 'url': 'techinasia.com', 'category': 'Tech News'},
-                {'name': 'KrASIA', 'url': 'kr-asia.com', 'category': 'Tech News'},
-                {'name': '36Kr', 'url': '36kr.com', 'category': 'Tech News'}
-            ]
-        },
-        'latin_america': {
-            'general': [
-                {'name': 'El País', 'url': 'elpais.com', 'category': 'General News'},
-                {'name': 'Folha de S.Paulo', 'url': 'folha.uol.com.br', 'category': 'General News'},
-                {'name': 'Clarín', 'url': 'clarin.com', 'category': 'General News'}
-            ],
-            'business': [
-                {'name': 'América Economía', 'url': 'americaeconomia.com', 'category': 'Business News'},
-                {'name': 'Valor Econômico', 'url': 'valor.com.br', 'category': 'Business News'}
-            ],
-            'tech': [
-                {'name': 'TechCrunch Latin America', 'url': 'techcrunch.com/latam', 'category': 'Tech News'},
-                {'name': 'Contxto', 'url': 'contxto.com', 'category': 'Tech News'},
-                {'name': 'PulsoSocial', 'url': 'pulsosocial.com', 'category': 'Tech News'}
-            ]
-        },
-        'middle_east': {
-            'general': [
-                {'name': 'Al Jazeera', 'url': 'aljazeera.com', 'category': 'General News'},
-                {'name': 'Gulf News', 'url': 'gulfnews.com', 'category': 'General News'},
-                {'name': 'The National', 'url': 'thenational.ae', 'category': 'General News'}
-            ],
-            'business': [
-                {'name': 'Arabian Business', 'url': 'arabianbusiness.com', 'category': 'Business News'},
-                {'name': 'MEED', 'url': 'meed.com', 'category': 'Business News'},
-                {'name': 'Gulf Business', 'url': 'gulfbusiness.com', 'category': 'Business News'}
-            ],
-            'tech': [
-                {'name': 'Wamda', 'url': 'wamda.com', 'category': 'Tech News'},
-                {'name': 'MENAbytes', 'url': 'menabytes.com', 'category': 'Tech News'},
-                {'name': 'Magnitt', 'url': 'magnitt.com', 'category': 'Tech News'}
-            ]
-        },
-        'africa': {
-            'general': [
-                {'name': 'Business Day', 'url': 'businessday.ng', 'category': 'General News'},
-                {'name': 'Daily Nation', 'url': 'nation.co.ke', 'category': 'General News'},
-                {'name': 'The East African', 'url': 'theeastafrican.co.ke', 'category': 'General News'}
-            ],
-            'business': [
-                {'name': 'African Business', 'url': 'africanbusinessmagazine.com', 'category': 'Business News'},
-                {'name': 'Ventures Africa', 'url': 'venturesafrica.com', 'category': 'Business News'}
-            ],
-            'tech': [
-                {'name': 'TechCabal', 'url': 'techcabal.com', 'category': 'Tech News'},
-                {'name': 'Disrupt Africa', 'url': 'disrupt-africa.com', 'category': 'Tech News'},
-                {'name': 'WeeTracker', 'url': 'weetracker.com', 'category': 'Tech News'}
-            ]
+        .navbar-brand { color: #fff !important; font-weight: bold; }
+        .nav-link { color: #fff !important; }
+        .nav-link:hover { color: #f0f0f0 !important; }
+        .main-content { padding: 100px 0 50px 0; color: #fff; }
+        .card { background: rgba(255,255,255,0.95); border: none; border-radius: 15px; }
+        .btn-primary { background: linear-gradient(45deg, #667eea, #764ba2); border: none; }
+        .feature-card { background: #fff; border-radius: 15px; padding: 30px; margin: 20px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.1); color: #222; }
+        .feature-card h3, .feature-card p { color: #222 !important; text-shadow: none; }
+        h1, h2, h3, p, .lead { color: #fff !important; text-shadow: 0 2px 8px rgba(0,0,0,0.25); }
+        
+        /* Card text visibility fixes */
+        .card h3, .card h4, .card h5, .card h6 { color: #333 !important; text-shadow: none; }
+        .card p, .card span, .card div { color: #333 !important; text-shadow: none; }
+        .card label { color: #333 !important; font-weight: 600; text-shadow: none; }
+        .card .text-muted { color: #666 !important; text-shadow: none; }
+        .card .badge { color: #fff !important; text-shadow: none; }
+        .card strong { color: #333 !important; text-shadow: none; }
+        .card small { color: #666 !important; text-shadow: none; }
+        
+        /* Form elements visibility */
+        .form-control, .form-select { 
+            border-radius: 10px; 
+            border: 2px solid #e0e0e0; 
+            color: #333 !important;
+            background: #fff !important;
         }
+        .form-control:focus, .form-select:focus { 
+            border-color: #667eea; 
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25); 
+            color: #333 !important;
+        }
+        .form-label { color: #333 !important; font-weight: 600; text-shadow: none; }
+        
+        /* Button text visibility */
+        .btn { color: #fff !important; text-shadow: none; }
+        .btn-outline-secondary { color: #6c757d !important; border-color: #6c757d; }
+        .btn-outline-primary { color: #667eea !important; border-color: #667eea; }
+        .btn-outline-success { color: #28a745 !important; border-color: #28a745; }
+        .btn-outline-info { color: #17a2b8 !important; border-color: #17a2b8; }
+        .btn-outline-warning { color: #ffc107 !important; border-color: #ffc107; }
+        .btn-outline-danger { color: #dc3545 !important; border-color: #dc3545; }
+        
+        /* Direction Cards */
+        .direction-card {
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            color: #333 !important;
+        }
+        .direction-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        .direction-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: #fff !important;
+        }
+        .direction-card i {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        .direction-card div {
+            color: inherit !important;
+            text-shadow: none;
+        }
+        
+        /* Step Progress */
+        .step-progress {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            font-weight: bold;
+        }
+        .step.active {
+            background: #667eea;
+        }
+        .step.completed {
+            background: #28a745;
+        }
+        
+        /* User Welcome */
+        .user-welcome {
+            color: #fff;
+            font-size: 14px;
+            margin-right: 15px;
+        }
+        
+        /* Alert and notification visibility */
+        .alert { color: #333 !important; text-shadow: none; }
+        .alert h5 { color: #333 !important; text-shadow: none; }
+        .alert p { color: #333 !important; text-shadow: none; }
+        
+        /* Input group visibility */
+        .input-group-text { 
+            background: #f8f9fa !important; 
+            color: #495057 !important; 
+            border-color: #e0e0e0;
+        }
+        
+        /* Table visibility */
+        .table { color: #333 !important; }
+        .table th { color: #333 !important; }
+        .table td { color: #333 !important; }
+        
+        /* List visibility */
+        .list-group-item { color: #333 !important; }
+        
+        /* Modal visibility */
+        .modal-content { color: #333 !important; }
+        .modal-header { color: #333 !important; }
+        .modal-body { color: #333 !important; }
+        .modal-footer { color: #333 !important; }
+        
+        /* Dropdown visibility */
+        .dropdown-menu { color: #333 !important; }
+        .dropdown-item { color: #333 !important; }
+        .dropdown-item.active { 
+            background-color: #667eea !important; 
+            color: #fff !important; 
+        }
+        
+        /* Progress bar visibility */
+        .progress { background: rgba(255,255,255,0.3) !important; }
+        .progress-bar { color: #fff !important; }
+        
+        /* Spinner visibility */
+        .fa-spinner { color: #667eea !important; }
+        
+        /* Ensure all text in cards is visible */
+        .card * { color: inherit !important; }
+        .card .text-primary { color: #667eea !important; }
+        .card .text-success { color: #28a745 !important; }
+        .card .text-warning { color: #ffc107 !important; }
+        .card .text-info { color: #17a2b8 !important; }
+        .card .text-danger { color: #dc3545 !important; }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-rocket me-2"></i>Content Creator Pro
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <!-- Language Selector -->
+                    <li class="nav-item dropdown me-3">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-globe me-1"></i>
+                            <span id="current-language" data-translate="english">English</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item language-option" href="#" data-lang="en">
+                                <i class="fas fa-flag me-2"></i><span data-translate="english">English</span>
+                            </a></li>
+                            <li><a class="dropdown-item language-option" href="#" data-lang="zh">
+                                <i class="fas fa-flag me-2"></i><span data-translate="chinese">中文</span>
+                            </a></li>
+                        </ul>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home"><i class="fas fa-home me-1"></i><span data-translate="home">Home</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/generator"><i class="fas fa-magic me-1"></i><span data-translate="generator">Generator</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard"><i class="fas fa-chart-line me-1"></i><span data-translate="dashboard">Dashboard</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/library"><i class="fas fa-book me-1"></i><span data-translate="library">Library</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/social-media-manager"><i class="fas fa-share-alt me-1"></i><span data-translate="post_management">Post Management</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/settings"><i class="fas fa-cog me-1"></i><span data-translate="settings">Settings</span></a>
+                    </li>
+                    {% if 'user' in session %}
+                    <li class="nav-item">
+                        <span class="user-welcome">
+                            <i class="fas fa-user me-1"></i><span data-translate="welcome">Welcome</span>, {{ session['user'].split('@')[0] if '@' in session['user'] else session['user'] }}
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt me-1"></i><span data-translate="logout">Logout</span></a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login"><i class="fas fa-sign-in-alt me-1"></i><span data-translate="login">Login</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/register"><i class="fas fa-user-plus me-1"></i><span data-translate="register">Register</span></a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+        
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="container mb-4">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                            <i class="fas fa-{{ 'exclamation-triangle' if category == 'error' or category == 'danger' else 'check-circle' if category == 'success' else 'info-circle' }} me-2"></i>
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        {{ content | safe }}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Translation System -->
+    <script>
+    // Global variables
+    let currentLanguage = '{{ session.get("language", "en") }}';
+    
+    // Translation dictionary
+    const translations = {
+        en: {
+            // Navigation
+            'dashboard': 'Dashboard',
+            'generator': 'Generator',
+            'library': 'Library',
+            'settings': 'Settings',
+            'account': 'Account',
+            'logout': 'Logout',
+            'login': 'Login',
+            'register': 'Register',
+            'english': 'English',
+            'chinese': '中文',
+            'home': 'Home',
+            'welcome': 'Welcome',
+            
+            // Common
+            'loading': 'Loading...',
+            'error': 'Error',
+            'success': 'Success',
+            'cancel': 'Cancel',
+            'save': 'Save',
+            'edit': 'Edit',
+            'delete': 'Delete',
+            'close': 'Close',
+            'submit': 'Submit',
+            'back': 'Back',
+            'next': 'Next',
+            'previous': 'Previous',
+            'continue': 'Continue',
+            'finish': 'Finish',
+            
+            // Generator page
+            'content_generator': 'Content Generator',
+            'step_1': 'Step 1',
+            'step_2': 'Step 2',
+            'step_3': 'Step 3',
+            'step_4': 'Step 4',
+            'step_5': 'Step 5',
+            'choose_direction': 'Choose Your Content Direction',
+            'choose_platform': 'Choose Your Platform',
+            'what_inspires': 'What Inspires You?',
+            'generate_content': 'Generate Content',
+            'linkedin': 'LinkedIn',
+            'facebook': 'Facebook',
+            'instagram': 'Instagram',
+            'twitter': 'Twitter',
+            'youtube_shorts': 'YouTube Shorts',
+            'blog_article': 'Blog Article',
+            'professional': 'Professional',
+            'casual': 'Casual',
+            'inspirational': 'Inspirational',
+            'educational': 'Educational',
+            'entertaining': 'Entertaining',
+            
+            // Landing page
+            'content_creator_pro': 'Content Creator Pro',
+            'ai_powered_platform': 'AI-Powered Content Generation Platform',
+            'multi_platform_content': 'Multi-Platform Content',
+            'generate_content_for': 'Generate content for',
+            'platforms_list': 'LinkedIn, Facebook, Instagram, Twitter, YouTube, and blogs',
+            'smart_direction': 'Smart Direction',
+            'content_directions_desc': '18 content directions with',
+            'regional_context': 'regional and cultural context',
+            'ai_powered': 'AI-Powered',
+            'advanced_ai_generation': 'Advanced AI content generation with',
+            'tone_customization': 'tone and style customization',
+            'start_creating': 'Start Creating',
+            'try_demo': 'Try Demo',
+            
+            // Content directions
+            'business_finance': 'Business & Finance',
+            'technology': 'Technology',
+            'health_wellness': 'Health & Wellness',
+            'education': 'Education',
+            'entertainment': 'Entertainment',
+            'travel_tourism': 'Travel & Tourism',
+            'food_cooking': 'Food & Cooking',
+            'fashion_beauty': 'Fashion & Beauty',
+            'sports_fitness': 'Sports & Fitness',
+            'science_research': 'Science & Research',
+            'politics_news': 'Politics & News',
+            'environment': 'Environment',
+            'personal_dev': 'Personal Dev',
+            'parenting_family': 'Parenting & Family',
+            'art_creativity': 'Art & Creativity',
+            'real_estate': 'Real Estate',
+            'automotive': 'Automotive',
+            'pet_care': 'Pet Care',
+            
+            // Generator page
+            'create_engaging_content': 'Create engaging content with AI assistance',
+            'choose_your_focus': 'Choose Your Focus',
+            'next_step': 'Next Step',
+            
+            // Step titles
+            'step_2': 'Step 2',
+            'step_3': 'Step 3',
+            'step_3_5': 'Step 3.5',
+            'step_4': 'Step 4',
+            'what_type_content': 'What Type of Content?',
+            'what_inspires_you': 'What Inspires You?',
+            'choose_your_topic': 'Choose Your Topic',
+            'how_should_sound': 'How Should It Sound?',
+            
+            // Content types
+            'linkedin_post': 'LinkedIn Post',
+            'facebook_post': 'Facebook Post',
+            'instagram_post': 'Instagram Post',
+            'twitter_post': 'Twitter Post',
+            'youtube_short': 'YouTube Short',
+            'blog_article': 'Blog Article',
+            
+            // Inspiration sources
+            'latest_news': 'Latest News',
+            'popular_books': 'Popular Books',
+            'trending_threads': 'Trending Threads',
+            'podcasts': 'Podcasts',
+            'youtube_videos': 'YouTube Videos',
+            'research_papers': 'Research Papers',
+            'case_studies': 'Case Studies',
+            'trending_topics': 'Trending Topics',
+            
+            // Topic selection
+            'book_title': 'Book Title',
+            'author': 'Author',
+            'enter_book_title': 'Enter book title...',
+            'enter_author_name': 'Enter author name...',
+            'find_topics': 'Find Topics',
+            'podcast_link': 'Podcast Link',
+            'enter_podcast_url': 'Enter podcast URL...',
+            'youtube_video_link': 'YouTube Video Link',
+            'enter_youtube_video_url': 'Enter YouTube video URL...',
+            'research_paper_pdf': 'Research Paper (PDF)',
+            'upload_find_topics': 'Upload & Find Topics',
+            'available_topics': 'Available Topics',
+            'refresh': 'Refresh',
+            'podcast_link': 'Podcast Link',
+            'enter_podcast_url': 'Enter podcast URL...',
+            'youtube_video_link': 'YouTube Video Link',
+            'enter_youtube_video_url': 'Enter YouTube video URL...',
+            'research_paper_pdf': 'Research Paper (PDF)',
+            'generated_content': 'Generated Content',
+            'copy': 'Copy',
+            'save_to_library': 'Save to Library',
+            'humorous': 'Humorous',
+            'serious': 'Serious',
+            'welcome_back': 'Welcome back',
+            'your_focus': 'Your focus',
+            'quick_stats': 'Quick Stats',
+            'content_generated': 'Content Generated',
+            'this_month': 'This Month',
+            'library_items': 'Library Items',
+            'social_posts': 'Social Posts',
+            'quick_actions': 'Quick Actions',
+            'generate_new_content': 'Generate New Content',
+            'view_library': 'View Library',
+            'social_media': 'Social Media',
+            'analytics': 'Analytics',
+            'recent_content_by_direction': 'Recent Content by Direction',
+            'business': 'Business',
+            'tech': 'Tech',
+            'twitter_thread': 'Twitter Thread',
+            '2_hours_ago': '2 hours ago',
+            '1_day_ago': '1 day ago',
+            '3_days_ago': '3 days ago',
+            '1_week_ago': '1 week ago',
+            'linkedin': 'LinkedIn',
+            'twitter': 'Twitter',
+            'instagram': 'Instagram',
+            'blog': 'Blog',
+            'email': 'Email',
+            'password': 'Password',
+            'already_have_account': 'Already have an account?',
+            'login_here': 'Login here',
+            'dont_have_account': "Don't have an account?",
+            'register_here': 'Register here',
+            'demo_credentials': 'Demo Credentials:',
+            'social_media_performance': 'Social Media Performance',
+            'content_performance_by_direction': 'Content Performance by Direction',
+            'no_content_generated_yet': 'No content generated yet.',
+            'no_social_media_content_yet': 'No social media content yet.',
+            'no_posts_yet': 'No posts yet',
+            'linkedin_manager': 'LinkedIn Manager',
+        'social_media_manager': 'Social Media Manager',
+        'post_management': 'Post Management',
+        'account_management': 'Account Management',
+        'connect_account': 'Connect Account',
+        'disconnect_account': 'Disconnect Account',
+        'manage_account': 'Manage Account',
+        'account_status': 'Account Status',
+        'permissions': 'Permissions',
+        'security': 'Security',
+        'export_data': 'Export Data',
+        'revoke_permissions': 'Revoke Permissions',
+            'translate_to_chinese': 'Translate to Chinese',
+            'translate_to_english': 'Translate to English',
+            'step_5': 'Step 5',
+            'review_and_generate': 'Review & Generate',
+            'your_selections': 'Your Selections',
+            'direction': 'Direction',
+            'platform': 'Platform',
+            'source': 'Source',
+            'topic': 'Topic',
+            'tone': 'Tone',
+            'review_message': 'Review your selections above. Click Generate to create your content.',
+            
+            // Tone options
+            'professional': 'Professional',
+            'casual': 'Casual',
+            'inspirational': 'Inspirational',
+            'educational': 'Educational',
+            'humorous': 'Humorous',
+            'serious': 'Serious',
+            
+            // Navigation buttons
+            'previous': 'Previous',
+            'generate_content': 'Generate Content',
+            
+            // Result section
+            'generated_content': 'Generated Content',
+            'copy': 'Copy',
+            'save_to_library': 'Save to Library'
+        },
+        zh: {
+            // Navigation
+            'dashboard': '仪表板',
+            'generator': '生成器',
+            'library': '库',
+            'settings': '设置',
+            'account': '账户',
+            'logout': '登出',
+            'login': '登录',
+            'register': '注册',
+            'english': 'English',
+            'chinese': '中文',
+            'home': '首页',
+            'welcome': '欢迎',
+            
+            // Common
+            'loading': '加载中...',
+            'error': '错误',
+            'success': '成功',
+            'cancel': '取消',
+            'save': '保存',
+            'edit': '编辑',
+            'delete': '删除',
+            'close': '关闭',
+            'submit': '提交',
+            'back': '返回',
+            'next': '下一步',
+            'previous': '上一步',
+            'continue': '继续',
+            'finish': '完成',
+            
+            // Generator page
+            'content_generator': '内容生成器',
+            'step_1': '第1步',
+            'step_2': '第2步',
+            'step_3': '第3步',
+            'step_4': '第4步',
+            'step_5': '第5步',
+            'choose_direction': '选择您的内容方向',
+            'choose_platform': '选择您的平台',
+            'what_inspires': '什么激励着您？',
+            'generate_content': '生成内容',
+            'linkedin': '领英',
+            'facebook': '脸书',
+            'instagram': 'Instagram',
+            'twitter': '推特',
+            'youtube_shorts': 'YouTube短视频',
+            'blog_article': '博客文章',
+            'professional': '专业',
+            'casual': '随意',
+            'inspirational': '励志',
+            'educational': '教育',
+            'entertaining': '娱乐',
+            
+            // Landing page
+            'content_creator_pro': '内容创作者专业版',
+            'ai_powered_platform': 'AI驱动的内容生成平台',
+            'multi_platform_content': '多平台内容',
+            'generate_content_for': '为以下平台生成内容',
+            'platforms_list': '领英、脸书、Instagram、推特、YouTube和博客',
+            'smart_direction': '智能方向',
+            'content_directions_desc': '18个内容方向，具有',
+            'regional_context': '区域和文化背景',
+            'ai_powered': 'AI驱动',
+            'advanced_ai_generation': '先进的AI内容生成，具有',
+            'tone_customization': '语气和风格定制',
+            'start_creating': '开始创作',
+            'try_demo': '试用演示',
+            
+            // Content directions
+            'business_finance': '商业与金融',
+            'technology': '技术',
+            'health_wellness': '健康与保健',
+            'education': '教育',
+            'entertainment': '娱乐',
+            'travel_tourism': '旅游',
+            'food_cooking': '美食烹饪',
+            'fashion_beauty': '时尚美容',
+            'sports_fitness': '运动健身',
+            'science_research': '科学研究',
+            'politics_news': '政治新闻',
+            'environment': '环境',
+            'personal_dev': '个人发展',
+            'parenting_family': '育儿家庭',
+            'art_creativity': '艺术创意',
+            'real_estate': '房地产',
+            'automotive': '汽车',
+            'pet_care': '宠物护理',
+            
+            // Generator page
+            'create_engaging_content': '使用AI辅助创建引人入胜的内容',
+            'choose_your_focus': '选择您的重点',
+            'next_step': '下一步',
+            
+            // Step titles
+            'step_2': '第2步',
+            'step_3': '第3步',
+            'step_3_5': '第3.5步',
+            'step_4': '第4步',
+            'what_type_content': '什么类型的内容？',
+            'what_inspires_you': '什么激励着您？',
+            'choose_your_topic': '选择您的主题',
+            'how_should_sound': '应该听起来如何？',
+            
+            // Content types
+            'linkedin_post': '领英帖子',
+            'facebook_post': '脸书帖子',
+            'instagram_post': 'Instagram帖子',
+            'twitter_post': '推特帖子',
+            'youtube_short': 'YouTube短视频',
+            'blog_article': '博客文章',
+            
+            // Inspiration sources
+            'latest_news': '最新新闻',
+            'popular_books': '热门书籍',
+            'trending_threads': '热门讨论',
+            'podcasts': '播客',
+            'youtube_videos': 'YouTube视频',
+            'research_papers': '研究论文',
+            'case_studies': '案例研究',
+            'trending_topics': '热门话题',
+            
+            // Topic selection
+            'book_title': '书名',
+            'author': '作者',
+            'enter_book_title': '输入书名...',
+            'enter_author_name': '输入作者姓名...',
+            'find_topics': '查找主题',
+            'podcast_link': '播客链接',
+            'enter_podcast_url': '输入播客URL...',
+            'youtube_video_link': 'YouTube视频链接',
+            'enter_youtube_video_url': '输入YouTube视频URL...',
+            'research_paper_pdf': '研究论文(PDF)',
+            'upload_find_topics': '上传并查找主题',
+            'available_topics': '可用主题',
+            'refresh': '刷新',
+            'podcast_link': '播客链接',
+            'enter_podcast_url': '输入播客网址...',
+            'youtube_video_link': 'YouTube视频链接',
+            'enter_youtube_video_url': '输入YouTube视频网址...',
+            'research_paper_pdf': '研究论文 (PDF)',
+            'generated_content': '生成的内容',
+            'copy': '复制',
+            'save_to_library': '保存到库',
+            'humorous': '幽默',
+            'serious': '严肃',
+            'welcome_back': '欢迎回来',
+            'your_focus': '您的重点',
+            'quick_stats': '快速统计',
+            'content_generated': '生成的内容',
+            'this_month': '本月',
+            'library_items': '库项目',
+            'social_posts': '社交帖子',
+            'quick_actions': '快速操作',
+            'generate_new_content': '生成新内容',
+            'view_library': '查看库',
+            'social_media': '社交媒体',
+            'analytics': '分析',
+            'recent_content_by_direction': '按方向的最新内容',
+            'business': '商业',
+            'tech': '科技',
+            'twitter_thread': 'Twitter线程',
+            '2_hours_ago': '2小时前',
+            '1_day_ago': '1天前',
+            '3_days_ago': '3天前',
+            '1_week_ago': '1周前',
+            'linkedin': '领英',
+            'twitter': '推特',
+            'instagram': 'Instagram',
+            'blog': '博客',
+            'email': '邮箱',
+            'password': '密码',
+            'already_have_account': '已有账户？',
+            'login_here': '在此登录',
+            'dont_have_account': '没有账户？',
+            'register_here': '在此注册',
+            'demo_credentials': '演示凭据：',
+            'social_media_performance': '社交媒体表现',
+            'content_performance_by_direction': '按方向的内容表现',
+            'no_content_generated_yet': '尚未生成内容。',
+            'no_social_media_content_yet': '尚无社交媒体内容。',
+            'no_posts_yet': '尚无帖子',
+            'linkedin_manager': 'LinkedIn管理器',
+        'social_media_manager': '社交媒体管理器',
+        'post_management': '帖子管理',
+        'account_management': '账户管理',
+        'connect_account': '连接账户',
+        'disconnect_account': '断开连接',
+        'manage_account': '管理账户',
+        'account_status': '账户状态',
+        'permissions': '权限',
+        'security': '安全',
+        'export_data': '导出数据',
+        'revoke_permissions': '撤销权限',
+            'translate_to_chinese': '翻译成中文',
+            'translate_to_english': '翻译成英文',
+            'step_5': '第5步',
+            'review_and_generate': '审查和生成',
+            'your_selections': '您的选择',
+            'direction': '方向',
+            'platform': '平台',
+            'source': '来源',
+            'topic': '主题',
+            'tone': '语调',
+            'review_message': '查看上面的选择。点击生成来创建您的内容。',
+            
+            // Tone options
+            'professional': '专业',
+            'casual': '随意',
+            'inspirational': '励志',
+            'educational': '教育',
+            'humorous': '幽默',
+            'serious': '严肃',
+            
+            // Navigation buttons
+            'previous': '上一步',
+            'generate_content': '生成内容',
+            
+            // Result section
+            'generated_content': '生成的内容',
+            'copy': '复制',
+            'save_to_library': '保存到库'
+        }
+    };
+    
+    // Translation functions
+    function switchLanguage(lang) {
+
+        currentLanguage = lang;
+        
+        // Update UI to show current language
+        updateLanguageDisplay(lang);
+        
+        // Translate the entire page
+        translatePage(lang);
+        
+        // Send AJAX request to update server-side language preference
+        $.ajax({
+            url: '/language/' + lang,
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            success: function(response) {
+    
+            },
+            error: function(xhr, status, error) {
+
+            }
+        });
     }
     
-    return jsonify({
-        'success': True,
-        'news_sources': news_sources
-    })
+    function updateLanguageDisplay(lang) {
 
+        const languageNames = {
+            'en': 'English',
+            'zh': '中文'
+        };
+        
+        $('#current-language').text(languageNames[lang] || 'English');
+        
+        // Update the dropdown text as well
+        $('.language-option').each(function() {
+            const optionLang = $(this).data('lang');
+            if (optionLang === lang) {
+                $(this).addClass('active');
+                // Update the dropdown toggle text
+                $('#current-language').text(languageNames[optionLang]);
+            } else {
+                $(this).removeClass('active');
+            }
+        });
+    }
+    
+    function translatePage(lang) {
+
+        const langDict = translations[lang] || translations['en'];
+
+        
+        // Count elements to translate
+        const elementsToTranslate = $('[data-translate]');
+
+        
+        // Translate all elements with data-translate attribute
+        $('[data-translate]').each(function() {
+            const key = $(this).data('translate');
+            const translation = langDict[key];
+            if (translation) {
+                $(this).text(translation);
+                // Translation applied
+            } else {
+                // No translation found
+            }
+        });
+        
+        // Translate placeholders
+        $('[data-translate-placeholder]').each(function() {
+            const key = $(this).data('translate-placeholder');
+            const translation = langDict[key];
+            if (translation) {
+                $(this).attr('placeholder', translation);
+                // Placeholder translated
+            } else {
+                // No placeholder translation found
+            }
+        });
+        
+        // Update HTML lang attribute
+        $('html').attr('lang', lang);
+
+    }
+    
+    // Initialize on page load
+    $(document).ready(function() {
+
+        
+        // Set up event listeners for language selector
+        $('.language-option').on('click', function(e) {
+
+            e.preventDefault();
+            const lang = $(this).data('lang');
+            switchLanguage(lang);
+        });
+        
+        // Test if language options exist
+
+        $('.language-option').each(function() {
+
+        });
+        
+        // Initialize language system
+
+        updateLanguageDisplay(currentLanguage);
+        translatePage(currentLanguage);
+        
+        // Set active language option
+        $('.language-option').each(function() {
+            const optionLang = $(this).data('lang');
+            if (optionLang === currentLanguage) {
+                $(this).addClass('active');
+            }
+        });
+        
+
+    });
+    </script>
+    
+    {{ scripts | safe if scripts else '' }}
+</body>
+</html>
+"""
+
+# Landing page content
+LANDING_CONTENT = """
+<div class="container">
+    <div class="text-center">
+        <h1 class="display-4 mb-4">🚀 <span data-translate="content_creator_pro">Content Creator Pro</span></h1>
+        <p class="lead mb-5"><span data-translate="ai_powered_platform">AI-Powered Content Generation Platform</span></p>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <h3><i class="fas fa-share-alt me-2"></i><span data-translate="multi_platform_content">Multi-Platform Content</span></h3>
+                    <p><span data-translate="generate_content_for">Generate content for</span> <b><span data-translate="platforms_list">LinkedIn, Facebook, Instagram, Twitter, YouTube, and blogs</span></b>.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <h3><i class="fas fa-bullseye me-2"></i><span data-translate="smart_direction">Smart Direction</span></h3>
+                    <p><span data-translate="content_directions_desc">18 content directions with</span> <b><span data-translate="regional_context">regional and cultural context</span></b>.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <h3><i class="fas fa-brain me-2"></i><span data-translate="ai_powered">AI-Powered</span></h3>
+                    <p><span data-translate="advanced_ai_generation">Advanced AI content generation with</span> <b><span data-translate="tone_customization">tone and style customization</span></b>.</p>
+                </div>
+            </div>
+        </div>
+        <div class="mt-5">
+            <a href="/generator" class="btn btn-primary btn-lg me-3">
+                <i class="fas fa-magic me-2"></i><span data-translate="start_creating">Start Creating</span>
+            </a>
+            <button class="btn btn-outline-light btn-lg" onclick="showDemo()">
+                <i class="fas fa-play me-2"></i><span data-translate="try_demo">Try Demo</span>
+            </button>
+        </div>
+    </div>
+</div>
+"""
+
+# Generator page content - Updated to match wireframes
+GENERATOR_CONTENT = """
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="text-center mb-5">
+                <h1><i class="fas fa-magic me-2"></i><span data-translate="content_generator">Content Generator</span></h1>
+                <p class="lead"><span data-translate="create_engaging_content">Create engaging content with AI assistance</span></p>
+            </div>
+            
+            <!-- Step Progress -->
+            <div class="step-progress">
+                <div class="step active">1</div>
+                <div class="step">2</div>
+                <div class="step">3</div>
+                <div class="step">4</div>
+                <div class="step">5</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body p-4">
+                    <form id="generatorForm">
+                        <!-- Step 1: Content Direction -->
+                        <div id="step1" class="step-content">
+                            <h3 class="text-center mb-4"><span data-translate="step_1">Step 1</span>: <span data-translate="choose_your_focus">Choose Your Focus</span></h3>
+                            <div class="row">
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="business_finance">
+                                        <i class="fas fa-briefcase"></i>
+                                        <div data-translate="business_finance">Business & Finance</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="technology">
+                                        <i class="fas fa-laptop-code"></i>
+                                        <div data-translate="technology">Technology</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="health_wellness">
+                                        <i class="fas fa-heartbeat"></i>
+                                        <div data-translate="health_wellness">Health & Wellness</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="education">
+                                        <i class="fas fa-graduation-cap"></i>
+                                        <div data-translate="education">Education</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="entertainment">
+                                        <i class="fas fa-film"></i>
+                                        <div data-translate="entertainment">Entertainment</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="travel_tourism">
+                                        <i class="fas fa-plane"></i>
+                                        <div data-translate="travel_tourism">Travel & Tourism</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="food_cooking">
+                                        <i class="fas fa-utensils"></i>
+                                        <div data-translate="food_cooking">Food & Cooking</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="fashion_beauty">
+                                        <i class="fas fa-tshirt"></i>
+                                        <div data-translate="fashion_beauty">Fashion & Beauty</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="sports_fitness">
+                                        <i class="fas fa-dumbbell"></i>
+                                        <div data-translate="sports_fitness">Sports & Fitness</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="science_research">
+                                        <i class="fas fa-microscope"></i>
+                                        <div data-translate="science_research">Science & Research</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="politics_current_events">
+                                        <i class="fas fa-newspaper"></i>
+                                        <div data-translate="politics_news">Politics & News</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="environment_sustainability">
+                                        <i class="fas fa-leaf"></i>
+                                        <div data-translate="environment">Environment</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="personal_development">
+                                        <i class="fas fa-chart-line"></i>
+                                        <div data-translate="personal_dev">Personal Dev</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="parenting_family">
+                                        <i class="fas fa-users"></i>
+                                        <div data-translate="parenting_family">Parenting & Family</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="art_creativity">
+                                        <i class="fas fa-palette"></i>
+                                        <div data-translate="art_creativity">Art & Creativity</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="real_estate">
+                                        <i class="fas fa-home"></i>
+                                        <div data-translate="real_estate">Real Estate</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="automotive">
+                                        <i class="fas fa-car"></i>
+                                        <div data-translate="automotive">Automotive</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="direction-card" data-direction="pet_care">
+                                        <i class="fas fa-paw"></i>
+                                        <div data-translate="pet_care">Pet Care</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-4">
+                                <button type="button" class="btn btn-primary btn-lg" onclick="nextStep()" id="step1Next" disabled>
+                                    <span data-translate="next_step">Next Step</span> <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 2: Content Type -->
+                        <div id="step2" class="step-content" style="display: none;">
+                            <h3 class="text-center mb-4"><span data-translate="step_2">Step 2</span>: <span data-translate="what_type_content">What Type of Content?</span></h3>
+                            <div class="row">
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-platform="linkedin">
+                                        <i class="fab fa-linkedin"></i>
+                                        <div data-translate="linkedin_post">LinkedIn Post</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-platform="facebook">
+                                        <i class="fab fa-facebook"></i>
+                                        <div data-translate="facebook_post">Facebook Post</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-platform="instagram">
+                                        <i class="fab fa-instagram"></i>
+                                        <div data-translate="instagram_post">Instagram Post</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-platform="twitter">
+                                        <i class="fab fa-twitter"></i>
+                                        <div data-translate="twitter_post">Twitter Post</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-platform="youtube">
+                                        <i class="fab fa-youtube"></i>
+                                        <div data-translate="youtube_short">YouTube Short</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-platform="blog">
+                                        <i class="fas fa-blog"></i>
+                                        <div data-translate="blog_article">Blog Article</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-4">
+                                <button type="button" class="btn btn-secondary btn-lg me-3" onclick="prevStep()">
+                                    <i class="fas fa-arrow-left me-2"></i><span data-translate="previous">Previous</span>
+                                </button>
+                                <button type="button" class="btn btn-primary btn-lg" onclick="nextStep()">
+                                    <span data-translate="next_step">Next Step</span> <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 3: Inspiration Source -->
+                        <div id="step3" class="step-content" style="display: none;">
+                            <h3 class="text-center mb-4"><span data-translate="step_3">Step 3</span>: <span data-translate="what_inspires_you">What Inspires You?</span></h3>
+                            <div class="row">
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-source="news">
+                                        <i class="fas fa-newspaper"></i>
+                                        <div data-translate="latest_news">Latest News</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-source="books">
+                                        <i class="fas fa-book"></i>
+                                        <div data-translate="popular_books">Popular Books</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-source="threads">
+                                        <i class="fas fa-comments"></i>
+                                        <div data-translate="trending_threads">Trending Threads</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-source="podcasts">
+                                        <i class="fas fa-podcast"></i>
+                                        <div data-translate="podcasts">Podcasts</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-source="videos">
+                                        <i class="fas fa-video"></i>
+                                        <div data-translate="youtube_videos">YouTube Videos</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-source="research">
+                                        <i class="fas fa-file-alt"></i>
+                                        <div data-translate="research_papers">Research Papers</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-source="case_studies">
+                                        <i class="fas fa-chart-bar"></i>
+                                        <div data-translate="case_studies">Case Studies</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-source="trends">
+                                        <i class="fas fa-fire"></i>
+                                        <div data-translate="trending_topics">Trending Topics</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-4">
+                                <button type="button" class="btn btn-secondary btn-lg me-3" onclick="prevStep()">
+                                    <i class="fas fa-arrow-left me-2"></i><span data-translate="previous">Previous</span>
+                               
+
+# Database initialization and API routes
 @app.route('/api/save-content', methods=['POST'])
 def save_content():
     """Save generated content to user's library"""
@@ -4882,6 +6134,21 @@ def save_content():
         data = request.get_json()
         user_email = session['user']
         
+        # Check user content limits
+        user = get_user(user_email)
+        if not user:
+            return jsonify({
+                'success': False,
+                'error': 'User not found'
+            }), 404
+        
+        current_content_count = content_manager.get_content_count(user_email)
+        if current_content_count >= user.content_limit:
+            return jsonify({
+                'success': False,
+                'error': f'Content limit reached ({user.content_limit}). Upgrade your subscription for more content.'
+            }), 403
+        
         content_entry = content_manager.create_content(
             user_email=user_email,
             direction=data.get('direction'),
@@ -4889,12 +6156,14 @@ def save_content():
             source=data.get('source'),
             topic=data.get('topic'),
             tone=data.get('tone'),
-            content_text=data.get('content')
+            content_text=data.get('content'),
+            language=data.get('language', 'en'),
+            region=data.get('region')
         )
         
         return jsonify({
             'success': True,
-            'content_id': content_entry['id'],
+            'content_id': content_entry.id,
             'message': 'Content saved successfully'
         })
         
@@ -4904,719 +6173,251 @@ def save_content():
             'error': str(e)
         }), 500
 
-@app.route('/api/linkedin/schedule', methods=['POST'])
-def schedule_linkedin_post():
-    """Schedule a LinkedIn post"""
-    try:
-        if 'user' not in session:
-            return jsonify({
-                'success': False,
-                'error': 'User not logged in'
-            }), 401
-        
-        data = request.get_json()
-        content_id = data.get('content_id')
-        scheduled_time = data.get('scheduled_time')
-        account = data.get('account', 'primary')
-        
-        # Update content status
-        for user_content in content_manager.user_content.values():
-            for content in user_content:
-                if content['id'] == content_id:
-                    content['status'] = 'scheduled'
-                    content['scheduled_time'] = scheduled_time
-                    content['linkedin_account'] = account
-                    
-                    return jsonify({
-                        'success': True,
-                        'message': 'Post scheduled successfully',
-                        'scheduled_time': scheduled_time
-                    })
-        
+@app.route('/api/user/stats', methods=['GET'])
+def get_user_stats():
+    """Get user statistics and limits"""
+    if 'user' not in session:
         return jsonify({
             'success': False,
-            'error': 'Content not found'
+            'error': 'User not logged in'
+        }), 401
+    
+    user_email = session['user']
+    user = get_user(user_email)
+    
+    if not user:
+        return jsonify({
+            'success': False,
+            'error': 'User not found'
         }), 404
-        
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
-
-@app.route('/api/linkedin/publish', methods=['POST'])
-def publish_linkedin_post():
-    """Publish a LinkedIn post immediately"""
-    try:
-        if 'user' not in session:
-            return jsonify({
-                'success': False,
-                'error': 'User not logged in'
-            }), 401
-        
-        data = request.get_json()
-        content_id = data.get('content_id')
-        account = data.get('account', 'primary')
-        
-        # Update content status
-        for user_content in content_manager.user_content.values():
-            for content in user_content:
-                if content['id'] == content_id:
-                    content['status'] = 'published'
-                    content['published_time'] = datetime.now().isoformat()
-                    content['linkedin_account'] = account
-                    
-                    return jsonify({
-                        'success': True,
-                        'message': 'Post published successfully',
-                        'published_time': content['published_time']
-                    })
-        
-        return jsonify({
-            'success': False,
-            'error': 'Content not found'
-        }), 404
-        
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
-
-@app.route('/api/linkedin/update-status', methods=['POST'])
-def update_linkedin_post_status():
-    """Update LinkedIn post status"""
-    try:
-        if 'user' not in session:
-            return jsonify({
-                'success': False,
-                'error': 'User not logged in'
-            }), 401
-        
-        data = request.get_json()
-        content_id = data.get('content_id')
-        status = data.get('status')
-        
-        # Update content status
-        for user_content in content_manager.user_content.values():
-            for content in user_content:
-                if content['id'] == content_id:
-                    content['status'] = status
-                    
-                    return jsonify({
-                        'success': True,
-                        'message': f'Post status updated to {status}',
-                        'status': status
-                    })
-        
-        return jsonify({
-            'success': False,
-            'error': 'Content not found'
-        }), 404
-        
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
-
-@app.route('/api/generate', methods=['POST'])
-def generate_content():
-    """Generate content (demo mode)"""
-    data = request.get_json() or {}
+    
+    stats = content_manager.get_user_stats(user_email)
+    
     return jsonify({
         'success': True,
-        'data': {
-            'content': 'This is a demo content generation. Full AI integration coming soon!',
-            'message': 'Serverless mode active - AI features will be available in full deployment.',
-            'request_data': data
-        }
+        'user': {
+            'email': user.email,
+            'subscription_tier': user.subscription_tier,
+            'content_limit': user.content_limit,
+            'image_limit': user.image_limit,
+            'storage_limit_mb': user.storage_limit_mb,
+            'created_at': user.created_at.isoformat()
+        },
+        'stats': stats
     })
 
-# LinkedIn Manager Scripts
-LINKEDIN_MANAGER_SCRIPTS = """
-<script>
-// LinkedIn Manager JavaScript Functions
-
-// Post Management Functions
-function createNewPost() {
-    // Redirect to content generator with LinkedIn pre-selected
-    window.location.href = '/generator?platform=linkedin';
-}
-
-function editPost(postId) {
-    // Open edit modal for post
-    // Placeholder: Show edit modal
-    alert('Edit post functionality - Post ID: ' + postId);
-}
-
-function duplicatePost(postId) {
-    // Duplicate existing post
-    
-    // Placeholder: Duplicate post
-    alert('Duplicate post functionality - Post ID: ' + postId);
-}
-
-function deletePost(postId) {
-    if (confirm('Are you sure you want to delete this post?')) {
+@app.route('/api/init-db', methods=['POST'])
+def initialize_database_api():
+    """Initialize database tables and demo data"""
+    try:
+        # Initialize database
+        init_database()
         
-        // Placeholder: Delete post
-        alert('Delete post functionality - Post ID: ' + postId);
-    }
-}
-
-// Scheduling Functions
-function schedulePost(postId = null) {
-    if (postId) {
-        // Schedule specific post
+        # Initialize demo users
+        init_demo_users()
         
-        showScheduleModal(postId);
-    } else {
-        // Schedule new post
+        # Initialize demo content
+        initialize_demo_content()
         
-        showScheduleModal();
-    }
-}
-
-function showScheduleModal(postId = null) {
-    // Show scheduling modal
-    const modalHtml = `
-    <div class="modal fade" id="scheduleModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Schedule Post</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Schedule Date & Time</label>
-                        <input type="datetime-local" class="form-control" id="scheduleDateTime">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Post Content</label>
-                        <textarea class="form-control" id="scheduleContent" rows="4" placeholder="Enter your post content..."></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">LinkedIn Account</label>
-                        <select class="form-select" id="linkedinAccount">
-                            <option value="primary">Primary Account</option>
-                            <option value="company">Company Page</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="confirmSchedule()">Schedule Post</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    `;
-    
-    // Remove existing modal if any
-    const existingModal = document.getElementById('scheduleModal');
-    if (existingModal) {
-        existingModal.remove();
-    }
-    
-    // Add modal to body
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-    
-    // Show modal
-    const modal = new bootstrap.Modal(document.getElementById('scheduleModal'));
-    modal.show();
-}
-
-function confirmSchedule() {
-    const dateTime = document.getElementById('scheduleDateTime').value;
-    const content = document.getElementById('scheduleContent').value;
-    const account = document.getElementById('linkedinAccount').value;
-    
-    if (!dateTime || !content) {
-        alert('Please fill in all required fields');
-        return;
-    }
-    
-    
-    
-    // Placeholder: Save schedule
-    alert('Post scheduled successfully!');
-    
-    // Close modal
-    const modal = bootstrap.Modal.getInstance(document.getElementById('scheduleModal'));
-    modal.hide();
-}
-
-function cancelSchedule(postId) {
-    if (confirm('Are you sure you want to cancel this scheduled post?')) {
+        return jsonify({
+            'success': True,
+            'message': 'Database initialized successfully'
+        })
         
-        // Placeholder: Cancel schedule
-        alert('Schedule canceled for post: ' + postId);
-    }
-}
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
 
-// Publishing Functions
-function publishNow(postId = null) {
-    if (postId) {
-        // Publish specific post
+@app.route('/api/upload-image', methods=['POST'])
+def upload_image():
+    """Upload image file"""
+    try:
+        if 'user' not in session:
+            return jsonify({
+                'success': False,
+                'error': 'User not logged in'
+            }), 401
         
-        confirmPublish(postId);
-    } else {
-        // Publish new post
+        user_email = session['user']
+        user = get_user(user_email)
         
-        showPublishModal();
-    }
-}
-
-function confirmPublish(postId) {
-    if (confirm('Are you sure you want to publish this post now?')) {
+        if not user:
+            return jsonify({
+                'success': False,
+                'error': 'User not found'
+            }), 404
         
-        // Placeholder: Publish post
-        alert('Post published successfully!');
-    }
-}
-
-function showPublishModal() {
-    // Show publish modal
-    const modalHtml = `
-    <div class="modal fade" id="publishModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Publish Post Now</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Post Content</label>
-                        <textarea class="form-control" id="publishContent" rows="4" placeholder="Enter your post content..."></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">LinkedIn Account</label>
-                        <select class="form-select" id="publishAccount">
-                            <option value="primary">Primary Account</option>
-                            <option value="company">Company Page</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success" onclick="confirmPublishNow()">Publish Now</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    `;
-    
-    // Remove existing modal if any
-    const existingModal = document.getElementById('publishModal');
-    if (existingModal) {
-        existingModal.remove();
-    }
-    
-    // Add modal to body
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-    
-    // Show modal
-    const modal = new bootstrap.Modal(document.getElementById('publishModal'));
-    modal.show();
-}
-
-function confirmPublishNow() {
-    const content = document.getElementById('publishContent').value;
-    const account = document.getElementById('publishAccount').value;
-    
-    if (!content) {
-        alert('Please enter post content');
-        return;
-    }
-    
-    
-    
-    // Placeholder: Publish immediately
-    alert('Post published successfully!');
-    
-    // Close modal
-    const modal = bootstrap.Modal.getInstance(document.getElementById('publishModal'));
-    modal.hide();
-}
-
-// Filter Functions
-function applyFilters() {
-    const statusFilter = document.getElementById('statusFilter').value;
-    const directionFilter = document.getElementById('directionFilter').value;
-    const dateFilter = document.getElementById('dateFilter').value;
-    
-    
-    
-    // Placeholder: Apply filters
-    alert('Filters applied: ' + JSON.stringify({ statusFilter, directionFilter, dateFilter }));
-}
-
-// Bulk Actions
-function bulkActions() {
-    const selectedPosts = document.querySelectorAll('.post-item input[type="checkbox"]:checked');
-    
-    if (selectedPosts.length === 0) {
-        alert('Please select posts for bulk actions');
-        return;
-    }
-    
-    const action = prompt('Choose action: schedule, publish, delete');
-    if (action) {
+        # Check if file was uploaded
+        if 'image' not in request.files:
+            return jsonify({
+                'success': False,
+                'error': 'No image file provided'
+            }), 400
         
-        // Placeholder: Perform bulk action
-        alert('Bulk action "' + action + '" performed on ' + selectedPosts.length + ' posts');
-    }
-}
-
-// Analytics Functions
-function analyzePerformance() {
-    
-    // Placeholder: Open analytics
-    alert('Performance analysis - This would open detailed analytics dashboard');
-}
-
-function exportData() {
-    
-    // Placeholder: Export data
-    alert('Data export - This would download LinkedIn performance data as CSV');
-}
-
-// Settings Functions
-function openLinkedInSettings() {
-    
-    // Placeholder: Open settings
-    alert('LinkedIn Settings - This would open account connection and preferences');
-}
-
-// Initialize LinkedIn Manager
-document.addEventListener('DOMContentLoaded', function() {
-    
-    
-    // Add event listeners for checkboxes
-    document.querySelectorAll('.post-item input[type="checkbox"]').forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            updateBulkActionsVisibility();
-        });
-    });
-});
-
-function updateBulkActionsVisibility() {
-    const selectedPosts = document.querySelectorAll('.post-item input[type="checkbox"]:checked');
-    const bulkActionsBtn = document.querySelector('button[onclick="bulkActions()"]');
-    
-    if (bulkActionsBtn) {
-        bulkActionsBtn.disabled = selectedPosts.length === 0;
-    }
-}
-</script>
-"""
-
-# Social Media Manager Scripts
-SOCIAL_MEDIA_MANAGER_SCRIPTS = """
-<script>
-// Social Media Manager JavaScript Functions
-
-// Post Management Functions
-function createNewPost() {
-    // Redirect to content generator
-    window.location.href = '/generator';
-}
-
-function editPost(postId) {
-    // Open edit modal for post
-    
-    // Placeholder: Show edit modal
-    alert('Edit post functionality - Post ID: ' + postId);
-}
-
-function duplicatePost(postId) {
-    // Duplicate existing post
-    
-    // Placeholder: Duplicate post
-    alert('Duplicate post functionality - Post ID: ' + postId);
-}
-
-function deletePost(postId) {
-    if (confirm('Are you sure you want to delete this post?')) {
+        file = request.files['image']
+        if file.filename == '':
+            return jsonify({
+                'success': False,
+                'error': 'No image file selected'
+            }), 400
         
-        // Placeholder: Delete post
-        alert('Delete post functionality - Post ID: ' + postId);
-    }
-}
-
-// Scheduling Functions
-function schedulePost(postId = null) {
-    if (postId) {
-        // Schedule specific post
+        # Check file extension
+        if not allowed_file(file.filename):
+            return jsonify({
+                'success': False,
+                'error': f'File type not allowed. Allowed types: {", ".join(ALLOWED_EXTENSIONS)}'
+            }), 400
         
-        showScheduleModal(postId);
-    } else {
-        // Schedule new post
+        # Check user image limits
+        current_image_count = Image.query.filter_by(user_email=user_email).count()
+        if current_image_count >= user.image_limit:
+            return jsonify({
+                'success': False,
+                'error': f'Image limit reached ({user.image_limit}). Upgrade your subscription for more images.'
+            }), 403
         
-        showScheduleModal();
-    }
-}
-
-function showScheduleModal(postId = null) {
-    // Show scheduling modal
-    const modalHtml = `
-    <div class="modal fade" id="scheduleModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Schedule Post</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Platform</label>
-                        <select class="form-select" id="schedulePlatform">
-                            <option value="linkedin">LinkedIn</option>
-                            <option value="twitter">Twitter</option>
-                            <option value="facebook">Facebook</option>
-                            <option value="instagram">Instagram</option>
-                            <option value="youtube">YouTube</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Schedule Date & Time</label>
-                        <input type="datetime-local" class="form-control" id="scheduleDateTime">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Post Content</label>
-                        <textarea class="form-control" id="scheduleContent" rows="4" placeholder="Enter your post content..."></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Account</label>
-                        <select class="form-select" id="scheduleAccount">
-                            <option value="primary">Primary Account</option>
-                            <option value="company">Company Page</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="confirmSchedule()">Schedule Post</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    `;
-    
-    // Remove existing modal if any
-    const existingModal = document.getElementById('scheduleModal');
-    if (existingModal) {
-        existingModal.remove();
-    }
-    
-    // Add modal to body
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-    
-    // Show modal
-    const modal = new bootstrap.Modal(document.getElementById('scheduleModal'));
-    modal.show();
-}
-
-function confirmSchedule() {
-    const platform = document.getElementById('schedulePlatform').value;
-    const dateTime = document.getElementById('scheduleDateTime').value;
-    const content = document.getElementById('scheduleContent').value;
-    const account = document.getElementById('scheduleAccount').value;
-    
-    if (!dateTime || !content) {
-        alert('Please fill in all required fields');
-        return;
-    }
-    
-
-    
-    // Placeholder: Save schedule
-    alert('Post scheduled successfully for ' + platform + '!');
-    
-    // Close modal
-    const modal = bootstrap.Modal.getInstance(document.getElementById('scheduleModal'));
-    modal.hide();
-}
-
-function cancelSchedule(postId) {
-    if (confirm('Are you sure you want to cancel this scheduled post?')) {
+        # Check storage limits
+        current_storage = get_user_storage_usage(user_email)
+        if current_storage >= user.storage_limit_mb:
+            return jsonify({
+                'success': False,
+                'error': f'Storage limit reached ({user.storage_limit_mb}MB). Upgrade your subscription for more storage.'
+            }), 403
         
-        // Placeholder: Cancel schedule
-        alert('Schedule canceled for post: ' + postId);
-    }
-}
-
-// Publishing Functions
-function publishNow(postId = null) {
-    if (postId) {
-        // Publish specific post
+        # Get content_id if provided
+        content_id = request.form.get('content_id')
         
-        confirmPublish(postId);
-    } else {
-        // Publish new post
+        # Save image
+        image_record = save_image_file(file, user_email, content_id)
         
-        showPublishModal();
-    }
-}
-
-function confirmPublish(postId) {
-    if (confirm('Are you sure you want to publish this post now?')) {
+        return jsonify({
+            'success': True,
+            'image_id': image_record.id,
+            'filename': image_record.original_filename,
+            'file_size': image_record.file_size,
+            'width': image_record.width,
+            'height': image_record.height,
+            'message': 'Image uploaded successfully'
+        })
         
-        // Placeholder: Publish post
-        alert('Post published successfully!');
-    }
-}
+    except ValueError as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 400
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
 
-function showPublishModal() {
-    // Show publish modal
-    const modalHtml = `
-    <div class="modal fade" id="publishModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Publish Post Now</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Platform</label>
-                        <select class="form-select" id="publishPlatform">
-                            <option value="linkedin">LinkedIn</option>
-                            <option value="twitter">Twitter</option>
-                            <option value="facebook">Facebook</option>
-                            <option value="instagram">Instagram</option>
-                            <option value="youtube">YouTube</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Post Content</label>
-                        <textarea class="form-control" id="publishContent" rows="4" placeholder="Enter your post content..."></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Account</label>
-                        <select class="form-select" id="publishAccount">
-                            <option value="primary">Primary Account</option>
-                            <option value="company">Company Page</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success" onclick="confirmPublishNow()">Publish Now</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    `;
-    
-    // Remove existing modal if any
-    const existingModal = document.getElementById('publishModal');
-    if (existingModal) {
-        existingModal.remove();
-    }
-    
-    // Add modal to body
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-    
-    // Show modal
-    const modal = new bootstrap.Modal(document.getElementById('publishModal'));
-    modal.show();
-}
-
-function confirmPublishNow() {
-    const platform = document.getElementById('publishPlatform').value;
-    const content = document.getElementById('publishContent').value;
-    const account = document.getElementById('publishAccount').value;
-    
-    if (!content) {
-        alert('Please enter post content');
-        return;
-    }
-    
-    
-    
-    // Placeholder: Publish immediately
-    alert('Post published successfully on ' + platform + '!');
-    
-    // Close modal
-    const modal = bootstrap.Modal.getInstance(document.getElementById('publishModal'));
-    modal.hide();
-}
-
-// Filter Functions
-function applyFilters() {
-    const statusFilter = document.getElementById('statusFilter').value;
-    const directionFilter = document.getElementById('directionFilter').value;
-    const dateFilter = document.getElementById('dateFilter').value;
-    
-    
-    
-    // Placeholder: Apply filters
-    alert('Filters applied: ' + JSON.stringify({ statusFilter, directionFilter, dateFilter }));
-}
-
-// Bulk Actions
-function bulkActions() {
-    const selectedPosts = document.querySelectorAll('.post-item input[type="checkbox"]:checked');
-    
-    if (selectedPosts.length === 0) {
-        alert('Please select posts for bulk actions');
-        return;
-    }
-    
-    const action = prompt('Choose action: schedule, publish, delete');
-    if (action) {
+@app.route('/api/images/<image_id>', methods=['GET'])
+def get_image(image_id):
+    """Get image file"""
+    try:
+        image = Image.query.get(image_id)
+        if not image:
+            return jsonify({
+                'success': False,
+                'error': 'Image not found'
+            }), 404
         
-        // Placeholder: Perform bulk action
-        alert('Bulk action "' + action + '" performed on ' + selectedPosts.length + ' posts');
-    }
-}
+        # Check if file exists
+        if not os.path.exists(image.file_path):
+            return jsonify({
+                'success': False,
+                'error': 'Image file not found'
+            }), 404
+        
+        # Return image file
+        return send_file(image.file_path, mimetype=image.mime_type)
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
 
-// Analytics Functions
-function analyzePerformance() {
-    
-    // Placeholder: Open analytics
-    alert('Performance analysis - This would open detailed analytics dashboard');
-}
+@app.route('/api/images/<image_id>', methods=['DELETE'])
+def delete_image(image_id):
+    """Delete image file"""
+    try:
+        if 'user' not in session:
+            return jsonify({
+                'success': False,
+                'error': 'User not logged in'
+            }), 401
+        
+        user_email = session['user']
+        
+        # Delete image
+        if delete_image_file(image_id, user_email):
+            return jsonify({
+                'success': True,
+                'message': 'Image deleted successfully'
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': 'Image not found or access denied'
+            }), 404
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
 
-function exportData() {
-    
-    // Placeholder: Export data
-    alert('Data export - This would download social media performance data as CSV');
-}
+@app.route('/api/user/images', methods=['GET'])
+def get_user_images():
+    """Get user's images"""
+    try:
+        if 'user' not in session:
+            return jsonify({
+                'success': False,
+                'error': 'User not logged in'
+            }), 401
+        
+        user_email = session['user']
+        images = Image.query.filter_by(user_email=user_email).order_by(Image.created_at.desc()).all()
+        
+        image_list = []
+        for img in images:
+            image_list.append({
+                'id': img.id,
+                'filename': img.original_filename,
+                'file_size': img.file_size,
+                'width': img.width,
+                'height': img.height,
+                'mime_type': img.mime_type,
+                'created_at': img.created_at.isoformat(),
+                'content_id': img.content_id,
+                'alt_text': img.alt_text,
+                'caption': img.caption
+            })
+        
+        return jsonify({
+            'success': True,
+            'images': image_list,
+            'total': len(image_list)
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
 
-// Settings Functions
-function openSocialMediaSettings() {
-    
-    // Placeholder: Open settings
-    alert('Social Media Settings - This would open account connections and preferences for all platforms');
-}
-
-// Initialize Social Media Manager
-document.addEventListener('DOMContentLoaded', function() {
-    
-    
-    // Add event listeners for checkboxes
-    document.querySelectorAll('.post-item input[type="checkbox"]').forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            updateBulkActionsVisibility();
-        });
-    });
-});
-
-function updateBulkActionsVisibility() {
-    const selectedPosts = document.querySelectorAll('.post-item input[type="checkbox"]:checked');
-    const bulkActionsBtn = document.querySelector('button[onclick="bulkActions()"]');
-    
-    if (bulkActionsBtn) {
-        bulkActionsBtn.disabled = selectedPosts.length === 0;
-    }
-}
-</script>
-"""
+# Initialize database on startup
+with app.app_context():
+    try:
+        init_database()
+        init_demo_users()
+        initialize_demo_content()
+    except Exception as e:
+        print(f"Database initialization error: {e}")
 
 if __name__ == '__main__':
-    app.run() 
+    app.run()
