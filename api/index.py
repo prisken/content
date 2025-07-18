@@ -7,6 +7,7 @@ from functools import wraps
 os.environ['VERCEL_ENV'] = 'production'
 
 app = Flask(__name__)
+app.secret_key = 'your-secret-key-here-change-in-production'  # Required for session management
 
 # Base template with navigation
 BASE_TEMPLATE = """
