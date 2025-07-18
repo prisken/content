@@ -1044,10 +1044,20 @@ function hideTranslationControls() {
     $('#translationControls').hide();
 }
 
-// Initialize language on page load
+// Initialize app on page load
 $(document).ready(function() {
-    const savedLang = getLocalStorage('preferred_language', 'en');
-    updateLanguageDisplay(savedLang);
+    console.log('Document ready, initializing app...');
+    
+    // Initialize the app
+    initializeApp();
+    
+    // Setup event listeners
+    setupEventListeners();
+    
+    // Initialize language system
+    initializeLanguage();
+    
+    console.log('App initialization completed');
 });
 
 // Export functions for use in other modules
