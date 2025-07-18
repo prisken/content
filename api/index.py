@@ -600,6 +600,8 @@ def generate_social_media_manager_content(user_email, social_content, selected_p
     """Generate social media manager content for all platforms"""
     user_name = user_email.split('@')[0] if '@' in user_email else user_email
     
+    print(f"DEBUG: Generating content for {len(social_content)} social content items")
+    
     # Calculate stats for all platforms
     total_posts = len(social_content)
     published_posts = len([c for c in social_content if c.get('status') == 'published'])
@@ -609,6 +611,9 @@ def generate_social_media_manager_content(user_email, social_content, selected_p
     # Safely calculate performance metrics
     total_views = sum(c.get('performance', {}).get('views', 0) for c in social_content)
     total_likes = sum(c.get('performance', {}).get('likes', 0) for c in social_content)
+    
+    print(f"DEBUG: Calculated stats - total: {total_posts}, published: {published_posts}, scheduled: {scheduled_posts}, draft: {draft_posts}")
+    print(f"DEBUG: Performance - views: {total_views}, likes: {total_likes}")
     
     # Platform-specific stats
     platform_stats = {}
@@ -4428,13 +4433,19 @@ def social_media_manager():
         user_email = session.get('user', 'demo@contentcreator.com')
         platform = request.args.get('platform', 'all')
         
+        print(f"DEBUG: Processing social media manager for user: {user_email}, platform: {platform}")
+        
         # Get all social media content for the user
         user_content = content_manager.get_user_content(user_email, limit=50)
+        print(f"DEBUG: Retrieved {len(user_content)} total content items")
+        
         social_content = [c for c in user_content if c.get('platform') in ['linkedin', 'twitter', 'facebook', 'instagram', 'youtube']]
+        print(f"DEBUG: Filtered to {len(social_content)} social media content items")
         
         # Filter by platform if specified
         if platform != 'all':
             social_content = [c for c in social_content if c.get('platform') == platform]
+            print(f"DEBUG: Further filtered to {len(social_content)} items for platform {platform}")
         
         # Generate social media manager content
         content = generate_social_media_manager_content(user_email, social_content, platform)
@@ -4444,10 +4455,13 @@ def social_media_manager():
                                     content=content,
                                     scripts=SOCIAL_MEDIA_MANAGER_SCRIPTS)
     except Exception as e:
-        print(f"Error in social_media_manager: {str(e)}")
+        import traceback
+        error_traceback = traceback.format_exc()
+        print(f"ERROR in social_media_manager: {str(e)}")
+        print(f"TRACEBACK: {error_traceback}")
         return render_template_string(BASE_TEMPLATE,
                                     title="Post Management",
-                                    content=f"<div class='container'><div class='alert alert-danger'>Error loading Post Management: {str(e)}</div></div>",
+                                    content=f"<div class='container'><div class='alert alert-danger'>Error loading Post Management: {str(e)}<br><small>Please try refreshing the page or contact support.</small></div></div>",
                                     scripts="")
 
 @app.route('/settings')
