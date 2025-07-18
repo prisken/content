@@ -144,11 +144,72 @@ def initialize_demo_content():
         else:  # Other posts - draft
             content_entry['status'] = 'draft'
     
-    # Add some performance data
+    # Add more sample content for other platforms
+    additional_content = [
+        {
+            'direction': 'technology',
+            'platform': 'facebook',
+            'source': 'news',
+            'topic': 'Latest Tech Trends: AI and Machine Learning',
+            'tone': 'casual',
+            'content': 'Hey everyone! 👋 Just discovered some amazing new AI developments that are going to change everything! The pace of innovation is incredible. What tech trends are you most excited about? Share your thoughts below! #TechTrends #AI #Innovation #Community'
+        },
+        {
+            'direction': 'health_wellness',
+            'platform': 'youtube',
+            'source': 'videos',
+            'topic': 'Wellness Tips: Mental Health and Productivity',
+            'tone': 'educational',
+            'content': '🎥 New video alert! Just uploaded a comprehensive guide on maintaining mental wellness while working remotely. The key is finding balance and setting boundaries. Check it out and let me know what wellness tips work best for you! #MentalHealth #Wellness #Productivity #RemoteWork'
+        },
+        {
+            'direction': 'education',
+            'platform': 'linkedin',
+            'source': 'research',
+            'topic': 'Educational Innovation: Online Learning Trends',
+            'tone': 'professional',
+            'content': '📚 Fascinating research on the evolution of online education! The data shows a 300% increase in digital learning adoption. This represents a fundamental shift in how we approach education. What are your thoughts on the future of learning? #Education #Innovation #OnlineLearning #ProfessionalDevelopment'
+        },
+        {
+            'direction': 'entertainment',
+            'platform': 'instagram',
+            'source': 'reviews',
+            'topic': 'Movie Review: Latest Blockbuster',
+            'tone': 'casual',
+            'content': '🎬 Just watched the most incredible movie! The cinematography was breathtaking and the story was so compelling. Highly recommend checking it out! What\'s the best movie you\'ve seen recently? Drop your recommendations below! #MovieReview #Entertainment #Cinema #Recommendations'
+        }
+    ]
+    
+    # Add additional content
+    for i, content_data in enumerate(additional_content):
+        content_entry = content_manager.create_content(
+            demo_user,
+            content_data['direction'],
+            content_data['platform'],
+            content_data['source'],
+            content_data['topic'],
+            content_data['tone'],
+            content_data['content']
+        )
+        
+        # Add status information
+        if i == 0:  # Facebook post - published
+            content_entry['status'] = 'published'
+        elif i == 1:  # YouTube post - scheduled
+            content_entry['status'] = 'scheduled'
+            content_entry['scheduled_time'] = '2024-07-22 02:00 PM'
+        else:  # Other posts - draft
+            content_entry['status'] = 'draft'
+    
+    # Add performance data for all content
     content_manager.update_performance('CC1001', 'linkedin', views=156, likes=23, shares=5, comments=8)
     content_manager.update_performance('CC1002', 'twitter', views=89, likes=45, shares=12, comments=15)
     content_manager.update_performance('CC1003', 'instagram', views=234, likes=67, shares=8, comments=12)
     content_manager.update_performance('CC1004', 'blog', views=567, likes=89, shares=23, comments=34)
+    content_manager.update_performance('CC1005', 'facebook', views=445, likes=78, shares=15, comments=22)
+    content_manager.update_performance('CC1006', 'youtube', views=1234, likes=156, shares=45, comments=67)
+    content_manager.update_performance('CC1007', 'linkedin', views=289, likes=34, shares=7, comments=12)
+    content_manager.update_performance('CC1008', 'instagram', views=567, likes=89, shares=12, comments=18)
 
 # Initialize demo content
 initialize_demo_content()
@@ -535,9 +596,264 @@ def generate_direction_performance_html(user_content):
     html += '</div>'
     return html
 
-def generate_linkedin_manager_content(user_email, linkedin_content):
-    """Generate LinkedIn manager content"""
+def generate_social_media_manager_content(user_email, social_content, selected_platform='all'):
+    """Generate social media manager content for all platforms"""
     user_name = user_email.split('@')[0] if '@' in user_email else user_email
+    
+    # Calculate stats for all platforms
+    total_posts = len(social_content)
+    published_posts = len([c for c in social_content if c.get('status') == 'published'])
+    scheduled_posts = len([c for c in social_content if c.get('status') == 'scheduled'])
+    draft_posts = len([c for c in social_content if c.get('status') == 'draft'])
+    total_views = sum(c['performance']['views'] for c in social_content)
+    total_likes = sum(c['performance']['likes'] for c in social_content)
+    
+    # Platform-specific stats
+    platform_stats = {}
+    for platform in ['linkedin', 'twitter', 'facebook', 'instagram', 'youtube']:
+        platform_content = [c for c in social_content if c.get('platform') == platform]
+        platform_stats[platform] = {
+            'total': len(platform_content),
+            'published': len([c for c in platform_content if c.get('status') == 'published']),
+            'scheduled': len([c for c in platform_content if c.get('status') == 'scheduled']),
+            'draft': len([c for c in platform_content if c.get('status') == 'draft']),
+            'views': sum(c['performance']['views'] for c in platform_content),
+            'likes': sum(c['performance']['likes'] for c in platform_content)
+        }
+    
+    # Platform icons and colors
+    platform_info = {
+        'linkedin': {'icon': 'fab fa-linkedin', 'color': 'primary', 'name': 'LinkedIn'},
+        'twitter': {'icon': 'fab fa-twitter', 'color': 'info', 'name': 'Twitter'},
+        'facebook': {'icon': 'fab fa-facebook', 'color': 'primary', 'name': 'Facebook'},
+        'instagram': {'icon': 'fab fa-instagram', 'color': 'danger', 'name': 'Instagram'},
+        'youtube': {'icon': 'fab fa-youtube', 'color': 'danger', 'name': 'YouTube'}
+    }
+    
+    # Generate platform filter buttons
+    platform_filters = ''
+    for platform, info in platform_info.items():
+        active_class = 'active' if selected_platform == platform else ''
+        platform_filters += f'''
+        <a href="/social-media-manager?platform={platform}" class="btn btn-outline-{info['color']} {active_class}">
+            <i class="{info['icon']} me-1"></i>{info['name']} ({platform_stats[platform]['total']})
+        </a>'''
+    
+    return f"""
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h2 class="mb-2"><i class="fas fa-share-alt me-2"></i>Social Media Manager</h2>
+                                <p class="mb-0">Manage and deploy your content across all social media platforms</p>
+                            </div>
+                            <div class="text-end">
+                                <button class="btn btn-light" onclick="openSocialMediaSettings()">
+                                    <i class="fas fa-cog me-2"></i>Platform Settings
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Platform Filters -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="mb-3"><i class="fas fa-filter me-2"></i>Platform Filters</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a href="/social-media-manager" class="btn btn-outline-secondary {'active' if selected_platform == 'all' else ''}">
+                                <i class="fas fa-globe me-1"></i>All Platforms ({total_posts})
+                            </a>
+                            {platform_filters}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Stats -->
+        <div class="row mb-4">
+            <div class="col-md-2 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-file-alt fa-2x text-primary mb-2"></i>
+                        <h3 class="mb-1">{total_posts}</h3>
+                        <p class="text-muted mb-0">Total Posts</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                        <h3 class="mb-1">{published_posts}</h3>
+                        <p class="text-muted mb-0">Published</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+                        <h3 class="mb-1">{scheduled_posts}</h3>
+                        <p class="text-muted mb-0">Scheduled</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-edit fa-2x text-info mb-2"></i>
+                        <h3 class="mb-1">{draft_posts}</h3>
+                        <p class="text-muted mb-0">Drafts</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-eye fa-2x text-primary mb-2"></i>
+                        <h3 class="mb-1">{total_views:,}</h3>
+                        <p class="text-muted mb-0">Total Views</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-thumbs-up fa-2x text-success mb-2"></i>
+                        <h3 class="mb-1">{total_likes:,}</h3>
+                        <p class="text-muted mb-0">Total Likes</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="row">
+            <!-- Post Management -->
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-list me-2"></i>Post Management</h5>
+                            <div>
+                                <button class="btn btn-primary btn-sm me-2" onclick="createNewPost()">
+                                    <i class="fas fa-plus me-1"></i>New Post
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm" onclick="bulkActions()">
+                                    <i class="fas fa-tasks me-1"></i>Bulk Actions
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Filters -->
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <select class="form-select" id="statusFilter">
+                                    <option value="">All Status</option>
+                                    <option value="draft">Drafts</option>
+                                    <option value="scheduled">Scheduled</option>
+                                    <option value="published">Published</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select" id="directionFilter">
+                                    <option value="">All Directions</option>
+                                    <option value="business_finance">Business & Finance</option>
+                                    <option value="technology">Technology</option>
+                                    <option value="health_wellness">Health & Wellness</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="date" class="form-control" id="dateFilter" placeholder="Filter by date">
+                            </div>
+                            <div class="col-md-3">
+                                <button class="btn btn-outline-primary w-100" onclick="applyFilters()">
+                                    <i class="fas fa-filter me-1"></i>Apply Filters
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Posts List -->
+                        <div id="postsList">
+                            {generate_social_media_posts_list(social_content)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Quick Actions -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary" onclick="schedulePost()">
+                                <i class="fas fa-calendar-plus me-2"></i>Schedule Post
+                            </button>
+                            <button class="btn btn-success" onclick="publishNow()">
+                                <i class="fas fa-paper-plane me-2"></i>Publish Now
+                            </button>
+                            <button class="btn btn-info" onclick="analyzePerformance()">
+                                <i class="fas fa-chart-line me-2"></i>Analyze Performance
+                            </button>
+                            <button class="btn btn-warning" onclick="exportData()">
+                                <i class="fas fa-download me-2"></i>Export Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Platform Performance -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Platform Performance</h6>
+                    </div>
+                    <div class="card-body">
+                        {generate_platform_performance_summary(platform_stats, platform_info)}
+                    </div>
+                </div>
+                
+                <!-- Scheduled Posts -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="fas fa-clock me-2"></i>Upcoming Posts</h6>
+                    </div>
+                    <div class="card-body">
+                        {generate_scheduled_posts_list(social_content)}
+                    </div>
+                </div>
+                
+                <!-- Performance Insights -->
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Performance Insights</h6>
+                    </div>
+                    <div class="card-body">
+                        {generate_performance_insights(social_content)}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    """
+
+def generate_linkedin_manager_content(user_email, linkedin_content):
+    """Generate LinkedIn manager content (legacy function)"""
+    return generate_social_media_manager_content(user_email, linkedin_content, 'linkedin')
     
     # Calculate LinkedIn stats
     total_posts = len(linkedin_content)
@@ -732,10 +1048,106 @@ def generate_linkedin_manager_content(user_email, linkedin_content):
     </div>
     """
 
+def generate_social_media_posts_list(social_content):
+    """Generate social media posts list HTML for all platforms"""
+    if not social_content:
+        return '<p class="text-muted text-center">No social media posts found. Create your first post!</p>'
+    
+    html = ""
+    for content in social_content:
+        platform = content.get('platform', 'unknown')
+        platform_info = {
+            'linkedin': {'icon': 'fab fa-linkedin', 'color': 'primary', 'name': 'LinkedIn'},
+            'twitter': {'icon': 'fab fa-twitter', 'color': 'info', 'name': 'Twitter'},
+            'facebook': {'icon': 'fab fa-facebook', 'color': 'primary', 'name': 'Facebook'},
+            'instagram': {'icon': 'fab fa-instagram', 'color': 'danger', 'name': 'Instagram'},
+            'youtube': {'icon': 'fab fa-youtube', 'color': 'danger', 'name': 'YouTube'}
+        }.get(platform, {'icon': 'fas fa-share-alt', 'color': 'secondary', 'name': platform.title()})
+        
+        status_badge = get_status_badge(content.get('status', 'draft'))
+        direction_icon = get_direction_icon(content.get('direction', 'business_finance'))
+        direction_name = get_direction_name(content.get('direction', 'business_finance'))
+        time_ago = get_time_ago(content.get('created_at', ''))
+        
+        html += f"""
+        <div class="card mb-3 post-item" data-id="{content.get('id', '')}" data-status="{content.get('status', 'draft')}" data-direction="{content.get('direction', 'business_finance')}" data-platform="{platform}">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="d-flex align-items-center">
+                        <i class="{platform_info['icon']} text-{platform_info['color']} me-2"></i>
+                        <span class="badge bg-{platform_info['color']} me-2">{platform_info['name']}</span>
+                        {status_badge}
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="editPost('{content.get('id', '')}')">
+                                <i class="fas fa-edit me-2"></i>Edit
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="duplicatePost('{content.get('id', '')}')">
+                                <i class="fas fa-copy me-2"></i>Duplicate
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="#" onclick="deletePost('{content.get('id', '')}')">
+                                <i class="fas fa-trash me-2"></i>Delete
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <p class="mb-2">{content.get('content', '')[:150]}{'...' if len(content.get('content', '')) > 150 else ''}</p>
+                        <div class="d-flex gap-2">
+                            {direction_icon}
+                            <div>
+                                <h6 class="mb-1">{content.get('topic', 'Untitled Post')[:60]}{'...' if len(content.get('topic', '')) > 60 else ''}</h6>
+                                <small class="text-muted">{direction_name} • {time_ago}</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <div class="small text-muted">
+                            <div><i class="fas fa-eye me-1"></i>{content['performance']['views']:,} views</div>
+                            <div><i class="fas fa-thumbs-up me-1"></i>{content['performance']['likes']:,} likes</div>
+                            <div><i class="fas fa-share me-1"></i>{content['performance']['shares']:,} shares</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        """
+    
+    return html
+
+def generate_platform_performance_summary(platform_stats, platform_info):
+    """Generate platform performance summary HTML"""
+    html = ""
+    for platform, stats in platform_stats.items():
+        if stats['total'] > 0:
+            info = platform_info.get(platform, {'icon': 'fas fa-share-alt', 'color': 'secondary', 'name': platform.title()})
+            html += f"""
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <i class="{info['icon']} text-{info['color']} me-2"></i>
+                    <strong>{info['name']}</strong>
+                </div>
+                <div class="text-end">
+                    <div>{stats['views']:,} views, {stats['likes']:,} likes</div>
+                    <small class="text-muted">{stats['total']} posts</small>
+                </div>
+            </div>"""
+    
+    if not html:
+        html = '<p class="text-muted text-center">No performance data available</p>'
+    
+    return html
+
 def generate_linkedin_posts_list(linkedin_content):
-    """Generate LinkedIn posts list HTML"""
-    if not linkedin_content:
-        return '<p class="text-muted text-center">No LinkedIn posts found. Create your first post!</p>'
+    """Generate LinkedIn posts list HTML (legacy function)"""
+    return generate_social_media_posts_list(linkedin_content)
     
     html = ""
     for content in linkedin_content:
@@ -1322,6 +1734,7 @@ BASE_TEMPLATE = """
             'no_social_media_content_yet': 'No social media content yet.',
             'no_posts_yet': 'No posts yet',
             'linkedin_manager': 'LinkedIn Manager',
+        'social_media_manager': 'Social Media Manager',
             'translate_to_chinese': 'Translate to Chinese',
             'translate_to_english': 'Translate to English',
             'step_5': 'Step 5',
@@ -1534,6 +1947,7 @@ BASE_TEMPLATE = """
             'no_social_media_content_yet': '尚无社交媒体内容。',
             'no_posts_yet': '尚无帖子',
             'linkedin_manager': 'LinkedIn管理器',
+        'social_media_manager': '社交媒体管理器',
             'translate_to_chinese': '翻译成中文',
             'translate_to_english': '翻译成英文',
             'step_5': '第5步',
@@ -3981,17 +4395,31 @@ def library():
 @app.route('/linkedin-manager')
 @login_required
 def linkedin_manager():
-    """LinkedIn post management and deployment page"""
+    """LinkedIn Manager page (legacy route)"""
+    return redirect('/social-media-manager?platform=linkedin')
+
+@app.route('/social-media-manager')
+@login_required
+def social_media_manager():
+    """Social Media Manager page for all platforms"""
     user_email = session.get('user', '')
-    user_content = content_manager.get_user_content(user_email, limit=50)
-    linkedin_content = [c for c in user_content if c['platform'] == 'linkedin']
+    platform = request.args.get('platform', 'all')
     
-    linkedin_manager_content = generate_linkedin_manager_content(user_email, linkedin_content)
+    # Get all social media content for the user
+    user_content = content_manager.get_user_content(user_email, limit=50)
+    social_content = [c for c in user_content if c.get('platform') in ['linkedin', 'twitter', 'facebook', 'instagram', 'youtube']]
+    
+    # Filter by platform if specified
+    if platform != 'all':
+        social_content = [c for c in social_content if c.get('platform') == platform]
+    
+    # Generate social media manager content
+    content = generate_social_media_manager_content(user_email, social_content, platform)
     
     return render_template_string(BASE_TEMPLATE,
-                                title="LinkedIn Manager",
-                                content=linkedin_manager_content,
-                                scripts=LINKEDIN_MANAGER_SCRIPTS)
+                                title="Social Media Manager",
+                                content=content,
+                                scripts=SOCIAL_MEDIA_MANAGER_SCRIPTS)
 
 @app.route('/settings')
 def settings():
@@ -4801,6 +5229,310 @@ function openLinkedInSettings() {
 // Initialize LinkedIn Manager
 document.addEventListener('DOMContentLoaded', function() {
     console.log('LinkedIn Manager initialized');
+    
+    // Add event listeners for checkboxes
+    document.querySelectorAll('.post-item input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            updateBulkActionsVisibility();
+        });
+    });
+});
+
+function updateBulkActionsVisibility() {
+    const selectedPosts = document.querySelectorAll('.post-item input[type="checkbox"]:checked');
+    const bulkActionsBtn = document.querySelector('button[onclick="bulkActions()"]');
+    
+    if (bulkActionsBtn) {
+        bulkActionsBtn.disabled = selectedPosts.length === 0;
+    }
+}
+</script>
+"""
+
+# Social Media Manager Scripts
+SOCIAL_MEDIA_MANAGER_SCRIPTS = """
+<script>
+// Social Media Manager JavaScript Functions
+
+// Post Management Functions
+function createNewPost() {
+    // Redirect to content generator
+    window.location.href = '/generator';
+}
+
+function editPost(postId) {
+    // Open edit modal for post
+    console.log('Editing post:', postId);
+    // Placeholder: Show edit modal
+    alert('Edit post functionality - Post ID: ' + postId);
+}
+
+function duplicatePost(postId) {
+    // Duplicate existing post
+    console.log('Duplicating post:', postId);
+    // Placeholder: Duplicate post
+    alert('Duplicate post functionality - Post ID: ' + postId);
+}
+
+function deletePost(postId) {
+    if (confirm('Are you sure you want to delete this post?')) {
+        console.log('Deleting post:', postId);
+        // Placeholder: Delete post
+        alert('Delete post functionality - Post ID: ' + postId);
+    }
+}
+
+// Scheduling Functions
+function schedulePost(postId = null) {
+    if (postId) {
+        // Schedule specific post
+        console.log('Scheduling post:', postId);
+        showScheduleModal(postId);
+    } else {
+        // Schedule new post
+        console.log('Schedule new post');
+        showScheduleModal();
+    }
+}
+
+function showScheduleModal(postId = null) {
+    // Show scheduling modal
+    const modalHtml = `
+    <div class="modal fade" id="scheduleModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Schedule Post</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Platform</label>
+                        <select class="form-select" id="schedulePlatform">
+                            <option value="linkedin">LinkedIn</option>
+                            <option value="twitter">Twitter</option>
+                            <option value="facebook">Facebook</option>
+                            <option value="instagram">Instagram</option>
+                            <option value="youtube">YouTube</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Schedule Date & Time</label>
+                        <input type="datetime-local" class="form-control" id="scheduleDateTime">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Post Content</label>
+                        <textarea class="form-control" id="scheduleContent" rows="4" placeholder="Enter your post content..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Account</label>
+                        <select class="form-select" id="scheduleAccount">
+                            <option value="primary">Primary Account</option>
+                            <option value="company">Company Page</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="confirmSchedule()">Schedule Post</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    `;
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById('scheduleModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Add modal to body
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('scheduleModal'));
+    modal.show();
+}
+
+function confirmSchedule() {
+    const platform = document.getElementById('schedulePlatform').value;
+    const dateTime = document.getElementById('scheduleDateTime').value;
+    const content = document.getElementById('scheduleContent').value;
+    const account = document.getElementById('scheduleAccount').value;
+    
+    if (!dateTime || !content) {
+        alert('Please fill in all required fields');
+        return;
+    }
+    
+    console.log('Scheduling post:', { platform, dateTime, content, account });
+    
+    // Placeholder: Save schedule
+    alert('Post scheduled successfully for ' + platform + '!');
+    
+    // Close modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('scheduleModal'));
+    modal.hide();
+}
+
+function cancelSchedule(postId) {
+    if (confirm('Are you sure you want to cancel this scheduled post?')) {
+        console.log('Canceling schedule for post:', postId);
+        // Placeholder: Cancel schedule
+        alert('Schedule canceled for post: ' + postId);
+    }
+}
+
+// Publishing Functions
+function publishNow(postId = null) {
+    if (postId) {
+        // Publish specific post
+        console.log('Publishing post now:', postId);
+        confirmPublish(postId);
+    } else {
+        // Publish new post
+        console.log('Publish new post now');
+        showPublishModal();
+    }
+}
+
+function confirmPublish(postId) {
+    if (confirm('Are you sure you want to publish this post now?')) {
+        console.log('Confirming publish for post:', postId);
+        // Placeholder: Publish post
+        alert('Post published successfully!');
+    }
+}
+
+function showPublishModal() {
+    // Show publish modal
+    const modalHtml = `
+    <div class="modal fade" id="publishModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Publish Post Now</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Platform</label>
+                        <select class="form-select" id="publishPlatform">
+                            <option value="linkedin">LinkedIn</option>
+                            <option value="twitter">Twitter</option>
+                            <option value="facebook">Facebook</option>
+                            <option value="instagram">Instagram</option>
+                            <option value="youtube">YouTube</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Post Content</label>
+                        <textarea class="form-control" id="publishContent" rows="4" placeholder="Enter your post content..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Account</label>
+                        <select class="form-select" id="publishAccount">
+                            <option value="primary">Primary Account</option>
+                            <option value="company">Company Page</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="confirmPublishNow()">Publish Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    `;
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById('publishModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Add modal to body
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('publishModal'));
+    modal.show();
+}
+
+function confirmPublishNow() {
+    const platform = document.getElementById('publishPlatform').value;
+    const content = document.getElementById('publishContent').value;
+    const account = document.getElementById('publishAccount').value;
+    
+    if (!content) {
+        alert('Please enter post content');
+        return;
+    }
+    
+    console.log('Publishing now:', { platform, content, account });
+    
+    // Placeholder: Publish immediately
+    alert('Post published successfully on ' + platform + '!');
+    
+    // Close modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('publishModal'));
+    modal.hide();
+}
+
+// Filter Functions
+function applyFilters() {
+    const statusFilter = document.getElementById('statusFilter').value;
+    const directionFilter = document.getElementById('directionFilter').value;
+    const dateFilter = document.getElementById('dateFilter').value;
+    
+    console.log('Applying filters:', { statusFilter, directionFilter, dateFilter });
+    
+    // Placeholder: Apply filters
+    alert('Filters applied: ' + JSON.stringify({ statusFilter, directionFilter, dateFilter }));
+}
+
+// Bulk Actions
+function bulkActions() {
+    const selectedPosts = document.querySelectorAll('.post-item input[type="checkbox"]:checked');
+    
+    if (selectedPosts.length === 0) {
+        alert('Please select posts for bulk actions');
+        return;
+    }
+    
+    const action = prompt('Choose action: schedule, publish, delete');
+    if (action) {
+        console.log('Bulk action:', action, 'on', selectedPosts.length, 'posts');
+        // Placeholder: Perform bulk action
+        alert('Bulk action "' + action + '" performed on ' + selectedPosts.length + ' posts');
+    }
+}
+
+// Analytics Functions
+function analyzePerformance() {
+    console.log('Opening performance analysis');
+    // Placeholder: Open analytics
+    alert('Performance analysis - This would open detailed analytics dashboard');
+}
+
+function exportData() {
+    console.log('Exporting social media data');
+    // Placeholder: Export data
+    alert('Data export - This would download social media performance data as CSV');
+}
+
+// Settings Functions
+function openSocialMediaSettings() {
+    console.log('Opening social media settings');
+    // Placeholder: Open settings
+    alert('Social Media Settings - This would open account connections and preferences for all platforms');
+}
+
+// Initialize Social Media Manager
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Social Media Manager initialized');
     
     // Add event listeners for checkboxes
     document.querySelectorAll('.post-item input[type="checkbox"]').forEach(checkbox => {
