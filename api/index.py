@@ -1962,16 +1962,16 @@ LIBRARY_CONTENT = """
             <div class="card h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start mb-2">
-                        <span class="badge bg-primary">Facebook</span>
-                        <small class="text-muted">1 week ago</small>
+                        <span class="badge bg-primary" data-translate="facebook">Facebook</span>
+                        <small class="text-muted" data-translate="1_week_ago">1 week ago</small>
                     </div>
                     <div class="d-flex align-items-center mb-2">
                         <i class="fas fa-briefcase text-primary me-2"></i>
-                        <h6 class="mb-0">Market Analysis Report</h6>
+                        <h6 class="mb-0" data-translate="market_analysis_report">Market Analysis Report</h6>
                     </div>
-                    <p class="text-muted small">Comprehensive analysis of current market trends and their implications for business strategy and investment decisions...</p>
+                    <p class="text-muted small" data-translate="market_analysis_description">Comprehensive analysis of current market trends and their implications for business strategy and investment decisions...</p>
                     <div class="d-flex justify-content-between align-items-center">
-                        <small class="text-muted">Business & Finance</small>
+                        <small class="text-muted" data-translate="business_finance">Business & Finance</small>
                         <div>
                             <button class="btn btn-sm btn-outline-primary me-1">
                                 <i class="fas fa-edit"></i>
@@ -1990,16 +1990,16 @@ LIBRARY_CONTENT = """
             <div class="card h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start mb-2">
-                        <span class="badge bg-success">Instagram</span>
-                        <small class="text-muted">3 days ago</small>
+                        <span class="badge bg-success" data-translate="instagram">Instagram</span>
+                        <small class="text-muted" data-translate="3_days_ago">3 days ago</small>
                     </div>
                     <div class="d-flex align-items-center mb-2">
                         <i class="fas fa-microchip text-success me-2"></i>
-                        <h6 class="mb-0">AI Innovation Trends</h6>
+                        <h6 class="mb-0" data-translate="ai_innovation_trends">AI Innovation Trends</h6>
                     </div>
-                    <p class="text-muted small">Exploring the latest developments in artificial intelligence and their transformative impact on various industries...</p>
+                    <p class="text-muted small" data-translate="ai_innovation_description">Exploring the latest developments in artificial intelligence and their transformative impact on various industries...</p>
                     <div class="d-flex justify-content-between align-items-center">
-                        <small class="text-muted">Technology</small>
+                        <small class="text-muted" data-translate="technology">Technology</small>
                         <div>
                             <button class="btn btn-sm btn-outline-primary me-1">
                                 <i class="fas fa-edit"></i>
@@ -2018,16 +2018,16 @@ LIBRARY_CONTENT = """
             <div class="card h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start mb-2">
-                        <span class="badge bg-info">Twitter</span>
-                        <small class="text-muted">5 days ago</small>
+                        <span class="badge bg-info" data-translate="twitter">Twitter</span>
+                        <small class="text-muted" data-translate="5_days_ago">5 days ago</small>
                     </div>
                     <div class="d-flex align-items-center mb-2">
                         <i class="fas fa-microchip text-success me-2"></i>
-                        <h6 class="mb-0">Tech Tips Thread</h6>
+                        <h6 class="mb-0" data-translate="tech_tips_thread">Tech Tips Thread</h6>
                     </div>
-                    <p class="text-muted small">Essential productivity tips and tools for developers and tech professionals to streamline their workflow...</p>
+                    <p class="text-muted small" data-translate="tech_tips_description">Essential productivity tips and tools for developers and tech professionals to streamline their workflow...</p>
                     <div class="d-flex justify-content-between align-items-center">
-                        <small class="text-muted">Technology</small>
+                        <small class="text-muted" data-translate="technology">Technology</small>
                         <div>
                             <button class="btn btn-sm btn-outline-primary me-1">
                                 <i class="fas fa-edit"></i>
@@ -2046,16 +2046,16 @@ LIBRARY_CONTENT = """
             <div class="card h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start mb-2">
-                        <span class="badge bg-warning">Blog</span>
-                        <small class="text-muted">2 weeks ago</small>
+                        <span class="badge bg-warning" data-translate="blog">Blog</span>
+                        <small class="text-muted" data-translate="2_weeks_ago">2 weeks ago</small>
                     </div>
                     <div class="d-flex align-items-center mb-2">
                         <i class="fas fa-heart text-danger me-2"></i>
-                        <h6 class="mb-0">Wellness Guide</h6>
+                        <h6 class="mb-0" data-translate="wellness_guide">Wellness Guide</h6>
                     </div>
-                    <p class="text-muted small">Comprehensive guide to maintaining mental and physical health in the modern digital age with practical tips...</p>
+                    <p class="text-muted small" data-translate="wellness_guide_description">Comprehensive guide to maintaining mental and physical health in the modern digital age with practical tips...</p>
                     <div class="d-flex justify-content-between align-items-center">
-                        <small class="text-muted">Health & Wellness</small>
+                        <small class="text-muted" data-translate="health_wellness">Health & Wellness</small>
                         <div>
                             <button class="btn btn-sm btn-outline-primary me-1">
                                 <i class="fas fa-edit"></i>
@@ -2074,16 +2074,16 @@ LIBRARY_CONTENT = """
             <div class="card h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start mb-2">
-                        <span class="badge bg-primary">LinkedIn</span>
-                        <small class="text-muted">1 month ago</small>
+                        <span class="badge bg-primary" data-translate="linkedin">LinkedIn</span>
+                        <small class="text-muted" data-translate="1_month_ago">1 month ago</small>
                     </div>
                     <div class="d-flex align-items-center mb-2">
                         <i class="fas fa-graduation-cap text-warning me-2"></i>
-                        <h6 class="mb-0">Learning Strategies</h6>
+                        <h6 class="mb-0" data-translate="learning_strategies">Learning Strategies</h6>
                     </div>
-                    <p class="text-muted small">Effective learning strategies and techniques for professionals looking to upskill and stay competitive...</p>
+                    <p class="text-muted small" data-translate="learning_strategies_description">Effective learning strategies and techniques for professionals looking to upskill and stay competitive...</p>
                     <div class="d-flex justify-content-between align-items-center">
-                        <small class="text-muted">Education</small>
+                        <small class="text-muted" data-translate="education">Education</small>
                         <div>
                             <button class="btn btn-sm btn-outline-primary me-1">
                                 <i class="fas fa-edit"></i>
