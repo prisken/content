@@ -1248,11 +1248,34 @@ def generate_performance_insights(linkedin_content):
     if not linkedin_content:
         return '<p class="text-muted small">No performance data available</p>'
     
-    # Calculate insights
+    # Calculate insights with safe division
     total_posts = len(linkedin_content)
-    avg_views = sum(c.get('performance', {}).get('views', 0) for c in linkedin_content) / total_posts
-    avg_likes = sum(c.get('performance', {}).get('likes', 0) for c in linkedin_content) / total_posts
-    best_performing = max(linkedin_content, key=lambda x: x.get('performance', {}).get('views', 0))
+    if total_posts == 0:
+        return '<p class="text-muted small">No performance data available</p>'
+    
+    total_views = sum(c.get('performance', {}).get('views', 0) for c in linkedin_content)
+    total_likes = sum(c.get('performance', {}).get('likes', 0) for c in linkedin_content)
+    
+    avg_views = total_views / total_posts if total_posts > 0 else 0
+    avg_likes = total_likes / total_posts if total_posts > 0 else 0
+    
+    # Find best performing post safely
+    best_performing = None
+    if linkedin_content:
+        try:
+            best_performing = max(linkedin_content, key=lambda x: x.get('performance', {}).get('views', 0))
+        except:
+            best_performing = None
+    
+    # Calculate engagement rate safely
+    engagement_rate = (avg_likes / avg_views * 100) if avg_views > 0 else 0
+    
+    # Prepare best performing display
+    best_topic = "No content"
+    best_views = 0
+    if best_performing and best_performing.get('topic'):
+        best_topic = best_performing.get('topic', 'No content')[:30]
+        best_views = best_performing.get('performance', {}).get('views', 0)
     
     return f"""
     <div class="small">
@@ -1263,12 +1286,12 @@ def generate_performance_insights(linkedin_content):
         </div>
         <div class="mb-2">
             <strong>Best Performing:</strong>
-            <div class="text-muted">{best_performing['topic'][:30]}...</div>
-            <div class="text-success">{best_performing.get('performance', {}).get('views', 0):,} views</div>
+            <div class="text-muted">{best_topic}...</div>
+            <div class="text-success">{best_views:,} views</div>
         </div>
         <div>
             <strong>Engagement Rate:</strong>
-            <div class="text-muted">{((avg_likes / avg_views) * 100):.1f}%</div>
+            <div class="text-muted">{engagement_rate:.1f}%</div>
         </div>
     </div>
     """
@@ -1499,7 +1522,7 @@ BASE_TEMPLATE = """
                         <a class="nav-link" href="/library"><i class="fas fa-book me-1"></i><span data-translate="library">Library</span></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/linkedin-manager"><i class="fab fa-linkedin me-1"></i><span data-translate="linkedin_manager">LinkedIn Manager</span></a>
+                        <a class="nav-link" href="/social-media-manager"><i class="fas fa-share-alt me-1"></i><span data-translate="post_management">Post Management</span></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/settings"><i class="fas fa-cog me-1"></i><span data-translate="settings">Settings</span></a>
