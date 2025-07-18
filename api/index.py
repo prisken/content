@@ -2404,12 +2404,11 @@ def translate_content():
                 'error': 'No content provided'
             }), 400
         
-        # For now, return a placeholder response
-        # This will be replaced with actual AI translation later
+        # Enhanced mock translation with better Chinese translations
         if target_lang == 'zh':
-            translated_content = f"[中文翻译] {content}"
+            translated_content = translate_to_chinese(content)
         else:
-            translated_content = f"[English Translation] {content}"
+            translated_content = translate_to_english(content)
         
         return jsonify({
             'success': True,
@@ -2422,6 +2421,65 @@ def translate_content():
             'success': False,
             'error': str(e)
         }), 500
+
+def translate_to_chinese(content):
+    """Mock Chinese translation with common patterns"""
+    translations = {
+        # LinkedIn content
+        '🚀 Exciting developments in the business world!': '🚀 商业世界令人兴奋的发展！',
+        'Based on recent insights, we\'re seeing remarkable growth in key sectors.': '根据最近的见解，我们看到关键领域出现了显著增长。',
+        'This represents a significant opportunity for forward-thinking professionals.': '这为有远见的专业人士提供了重要机会。',
+        'What are your thoughts on these emerging trends?': '您对这些新兴趋势有什么看法？',
+        '#BusinessGrowth #Innovation #ProfessionalDevelopment': '#商业增长 #创新 #职业发展',
+        
+        # Facebook content
+        'Hey everyone! 👋 Just wanted to share some amazing insights': '大家好！👋 想分享一些令人惊叹的见解',
+        'The way things are evolving in our industry is truly fascinating.': '我们行业的发展方式确实令人着迷。',
+        'What do you think about these changes?': '您对这些变化有什么看法？',
+        'Drop a comment below!': '在下面留言吧！',
+        '#Community #Insights #Discussion': '#社区 #见解 #讨论',
+        
+        # Instagram content
+        '✨ Today\'s inspiration comes from some incredible developments': '✨ 今天的灵感来自一些令人难以置信的发展',
+        'The possibilities are endless when we embrace innovation and creativity.': '当我们拥抱创新和创造力时，可能性是无限的。',
+        'What\'s inspiring you today?': '今天什么激励着您？',
+        '#Inspiration #Innovation #Creativity #Motivation #Growth': '#灵感 #创新 #创造力 #动力 #成长',
+        
+        # Twitter content
+        'Breaking: Major developments in the industry!': '突发：行业的重大发展！',
+        'This changes everything.': '这改变了一切。',
+        'Thoughts?': '想法？',
+        '#Innovation #Trending': '#创新 #趋势',
+        
+        # YouTube content
+        '[HOOK: 0-3 seconds] Hey there! Today we\'re diving into something incredible': '[开场：0-3秒] 大家好！今天我们要深入探讨一些令人难以置信的事情',
+        'Based on recent research and insights, we\'re seeing remarkable changes': '根据最近的研究和见解，我们看到了一些显著的变化',
+        'Here\'s what you need to know and how it impacts you.': '以下是您需要了解的内容以及它如何影响您。',
+        'Don\'t forget to like, subscribe, and share your thoughts in the comments below!': '别忘了点赞、订阅，并在下面的评论中分享您的想法！',
+        
+        # Blog content
+        '# The Future of Innovation: What You Need to Know': '# 创新的未来：您需要了解的内容',
+        '## Introduction': '## 引言',
+        'In today\'s rapidly evolving landscape, understanding the key trends and developments is crucial for success.': '在当今快速发展的环境中，了解关键趋势和发展对成功至关重要。',
+        '## Key Insights': '## 关键见解',
+        'Recent research and analysis reveal several important developments that are shaping the future of our industry.': '最近的研究和分析揭示了几个正在塑造我们行业未来的重要发展。',
+        '## What This Means for You': '## 这对您意味着什么',
+        'These changes present both challenges and opportunities for professionals and businesses alike.': '这些变化为专业人士和企业都带来了挑战和机遇。',
+        '## Conclusion': '## 结论',
+        'Staying informed and adaptable is more important than ever in this dynamic environment.': '在这个动态环境中，保持信息灵通和适应能力比以往任何时候都更重要。'
+    }
+    
+    translated = content
+    for english, chinese in translations.items():
+        translated = translated.replace(english, chinese)
+    
+    return translated
+
+def translate_to_english(content):
+    """Mock English translation - return original content"""
+    # For now, just return the original content since we're translating from Chinese to English
+    # In a real implementation, this would translate Chinese back to English
+    return content
 
 @app.route('/health')
 def health():

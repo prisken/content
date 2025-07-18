@@ -410,6 +410,7 @@ let selectedContentType = null;
 let selectedSourceType = null;
 let selectedTone = null;
 let generatedContent = null;
+let currentContentLanguage = 'en';
 
 // Initialize the page
 $(document).ready(function() {
@@ -604,6 +605,113 @@ function displayContent(content) {
     // Show content actions and translation controls
     $('#contentActions').show();
     showTranslationControls();
+}
+
+function showTranslationControls() {
+    $('#translationControls').show();
+    // Set initial state to English
+    currentContentLanguage = 'en';
+    updateTranslationButtons();
+}
+
+function translateContent(targetLang) {
+    const originalContent = $('#contentPreview').data('original-content');
+    const currentLang = currentContentLanguage || 'en';
+    
+    if (targetLang === currentLang) {
+        return; // Already in the target language
+    }
+    
+    // Show loading state
+    const button = targetLang === 'en' ? $('#translateEn') : $('#translateZh');
+    const originalText = button.html();
+    button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Translating...');
+    
+    // Call translation API
+    fetch('/api/translate', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            content: originalContent,
+            target_lang: targetLang,
+            source_lang: currentLang
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update content display
+            $('#contentPreview').html(`<pre class="mb-0">${data.translated_content}</pre>`);
+            currentContentLanguage = targetLang;
+            updateTranslationButtons();
+            
+            // Update generated content for copy/download
+            generatedContent = data.translated_content;
+        } else {
+            // Fallback to mock translation for demo
+            const mockTranslation = getMockTranslation(originalContent, targetLang);
+            $('#contentPreview').html(`<pre class="mb-0">${mockTranslation}</pre>`);
+            currentContentLanguage = targetLang;
+            updateTranslationButtons();
+            generatedContent = mockTranslation;
+        }
+    })
+    .catch(error => {
+        console.error('Translation error:', error);
+        // Fallback to mock translation
+        const mockTranslation = getMockTranslation(originalContent, targetLang);
+        $('#contentPreview').html(`<pre class="mb-0">${mockTranslation}</pre>`);
+        currentContentLanguage = targetLang;
+        updateTranslationButtons();
+        generatedContent = mockTranslation;
+    })
+    .finally(() => {
+        button.prop('disabled', false).html(originalText);
+    });
+}
+
+function getMockTranslation(content, targetLang) {
+    if (targetLang === 'zh') {
+        // Mock Chinese translation
+        return content
+            .replace(/🚀 Exciting developments in the business world!/, '🚀 商业世界令人兴奋的发展！')
+            .replace(/Based on recent insights, we're seeing remarkable growth in key sectors./, '根据最近的见解，我们看到关键领域出现了显著增长。')
+            .replace(/This represents a significant opportunity for forward-thinking professionals./, '这为有远见的专业人士提供了重要机会。')
+            .replace(/What are your thoughts on these emerging trends?/, '您对这些新兴趋势有什么看法？')
+            .replace(/#BusinessGrowth #Innovation #ProfessionalDevelopment/, '#商业增长 #创新 #职业发展')
+            .replace(/Hey everyone! 👋 Just wanted to share some amazing insights/, '大家好！👋 想分享一些令人惊叹的见解')
+            .replace(/The way things are evolving in our industry is truly fascinating./, '我们行业的发展方式确实令人着迷。')
+            .replace(/What do you think about these changes?/, '您对这些变化有什么看法？')
+            .replace(/Drop a comment below!/, '在下面留言吧！')
+            .replace(/#Community #Insights #Discussion/, '#社区 #见解 #讨论')
+            .replace(/✨ Today's inspiration comes from some incredible developments/, '✨ 今天的灵感来自一些令人难以置信的发展')
+            .replace(/The possibilities are endless when we embrace innovation and creativity./, '当我们拥抱创新和创造力时，可能性是无限的。')
+            .replace(/What's inspiring you today?/, '今天什么激励着您？')
+            .replace(/#Inspiration #Innovation #Creativity #Motivation #Growth/, '#灵感 #创新 #创造力 #动力 #成长')
+            .replace(/Breaking: Major developments in the industry!/, '突发：行业的重大发展！')
+            .replace(/This changes everything./, '这改变了一切。')
+            .replace(/Thoughts?/, '想法？')
+            .replace(/#Innovation #Trending/, '#创新 #趋势');
+    } else {
+        // Return to English (original content)
+        return $('#contentPreview').data('original-content');
+    }
+}
+
+function updateTranslationButtons() {
+    if (currentContentLanguage === 'en') {
+        $('#translateEn').addClass('active').removeClass('btn-outline-primary').addClass('btn-primary');
+        $('#translateZh').removeClass('active').removeClass('btn-primary').addClass('btn-outline-warning');
+        $('.content-language.en').show();
+        $('.content-language.zh').hide();
+    } else {
+        $('#translateZh').addClass('active').removeClass('btn-outline-warning').addClass('btn-warning');
+        $('#translateEn').removeClass('active').removeClass('btn-primary').addClass('btn-outline-primary');
+        $('.content-language.zh').show();
+        $('.content-language.en').hide();
+    }
 }
 
 function saveContent() {
