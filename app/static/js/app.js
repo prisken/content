@@ -522,6 +522,11 @@ function setupEventListeners() {
         console.log('Language option:', $(this).data('lang'), $(this).text());
     });
     
+    // Add click handlers for debug buttons
+    $('#debug-translation .btn').on('click', function() {
+        console.log('Debug button clicked:', $(this).text());
+    });
+    
     // Global error handling
     $(document).ajaxError(function(event, xhr, settings, error) {
         handleAjaxError(xhr, error);
@@ -928,6 +933,11 @@ function translatePage(lang) {
     console.log('Translating page to:', lang);
     const langDict = translations[lang] || translations['en'];
     console.log('Translation dictionary keys:', Object.keys(langDict).length);
+    console.log('Available translation keys:', Object.keys(langDict));
+    
+    // Count elements to translate
+    const elementsToTranslate = $('[data-translate]');
+    console.log('Elements with data-translate attribute found:', elementsToTranslate.length);
     
     // Translate all elements with data-translate attribute
     $('[data-translate]').each(function() {
