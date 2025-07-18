@@ -1567,8 +1567,8 @@ DASHBOARD_CONTENT = """
         <div class="col-12">
             <div class="card bg-primary text-white">
                 <div class="card-body">
-                    <h2 class="mb-2">Welcome back, <span class="user-name">User</span>!</h2>
-                    <p class="mb-0">Your focus: <strong>Business & Finance</strong></p>
+                    <h2 class="mb-2"><span data-translate="welcome_back">Welcome back</span>, <span class="user-name">User</span>!</h2>
+                    <p class="mb-0"><span data-translate="your_focus">Your focus</span>: <strong data-translate="business_finance">Business & Finance</strong></p>
                 </div>
             </div>
         </div>
@@ -1577,14 +1577,14 @@ DASHBOARD_CONTENT = """
     <!-- Quick Stats -->
     <div class="row mb-4">
         <div class="col-12">
-            <h4 class="mb-3"><i class="fas fa-chart-bar me-2"></i>Quick Stats</h4>
+            <h4 class="mb-3"><i class="fas fa-chart-bar me-2"></i><span data-translate="quick_stats">Quick Stats</span></h4>
         </div>
         <div class="col-md-3 mb-3">
             <div class="card text-center">
                 <div class="card-body">
                     <i class="fas fa-file-alt fa-2x text-primary mb-2"></i>
                     <h3 class="mb-1">45</h3>
-                    <p class="text-muted mb-0">Content Generated</p>
+                    <p class="text-muted mb-0" data-translate="content_generated">Content Generated</p>
                 </div>
             </div>
         </div>
@@ -1593,7 +1593,7 @@ DASHBOARD_CONTENT = """
                 <div class="card-body">
                     <i class="fas fa-calendar fa-2x text-success mb-2"></i>
                     <h3 class="mb-1">12</h3>
-                    <p class="text-muted mb-0">This Month</p>
+                    <p class="text-muted mb-0" data-translate="this_month">This Month</p>
                 </div>
             </div>
         </div>
@@ -1602,7 +1602,7 @@ DASHBOARD_CONTENT = """
                 <div class="card-body">
                     <i class="fas fa-folder fa-2x text-warning mb-2"></i>
                     <h3 class="mb-1">23</h3>
-                    <p class="text-muted mb-0">Library Items</p>
+                    <p class="text-muted mb-0" data-translate="library_items">Library Items</p>
                 </div>
             </div>
         </div>
@@ -1611,7 +1611,7 @@ DASHBOARD_CONTENT = """
                 <div class="card-body">
                     <i class="fas fa-share-alt fa-2x text-info mb-2"></i>
                     <h3 class="mb-1">18</h3>
-                    <p class="text-muted mb-0">Social Posts</p>
+                    <p class="text-muted mb-0" data-translate="social_posts">Social Posts</p>
                 </div>
             </div>
         </div>
@@ -1622,33 +1622,33 @@ DASHBOARD_CONTENT = """
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                    <h5 class="mb-0"><i class="fas fa-bolt me-2"></i><span data-translate="quick_actions">Quick Actions</span></h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-2 col-6 mb-2">
                             <a href="/generator" class="btn btn-primary w-100">
-                                <i class="fas fa-plus-circle me-1"></i>Generate New Content
+                                <i class="fas fa-plus-circle me-1"></i><span data-translate="generate_new_content">Generate New Content</span>
                             </a>
                         </div>
                         <div class="col-md-2 col-6 mb-2">
                             <a href="/library" class="btn btn-outline-primary w-100">
-                                <i class="fas fa-folder me-1"></i>View Library
+                                <i class="fas fa-folder me-1"></i><span data-translate="view_library">View Library</span>
                             </a>
                         </div>
                         <div class="col-md-2 col-6 mb-2">
                             <a href="#" class="btn btn-outline-success w-100">
-                                <i class="fas fa-share-alt me-1"></i>Social Media
+                                <i class="fas fa-share-alt me-1"></i><span data-translate="social_media">Social Media</span>
                             </a>
                         </div>
                         <div class="col-md-2 col-6 mb-2">
                             <a href="/settings" class="btn btn-outline-secondary w-100">
-                                <i class="fas fa-cog me-1"></i>Settings
+                                <i class="fas fa-cog me-1"></i><span data-translate="settings">Settings</span>
                             </a>
                         </div>
                         <div class="col-md-2 col-6 mb-2">
                             <a href="#" class="btn btn-outline-info w-100">
-                                <i class="fas fa-chart-line me-1"></i>Analytics
+                                <i class="fas fa-chart-line me-1"></i><span data-translate="analytics">Analytics</span>
                             </a>
                         </div>
                     </div>
@@ -1662,40 +1662,40 @@ DASHBOARD_CONTENT = """
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Recent Content by Direction</h5>
+                    <h5 class="mb-0"><i class="fas fa-clock me-2"></i><span data-translate="recent_content_by_direction">Recent Content by Direction</span></h5>
                 </div>
                 <div class="card-body">
                     <div class="d-flex align-items-center mb-3">
                         <i class="fas fa-briefcase text-primary me-3"></i>
                         <div class="flex-grow-1">
-                            <strong>Business: LinkedIn Post</strong>
-                            <br><small class="text-muted">2 hours ago</small>
+                            <strong><span data-translate="business">Business</span>: <span data-translate="linkedin_post">LinkedIn Post</span></strong>
+                            <br><small class="text-muted" data-translate="2_hours_ago">2 hours ago</small>
                         </div>
-                        <span class="badge bg-primary">LinkedIn</span>
+                        <span class="badge bg-primary" data-translate="linkedin">LinkedIn</span>
                     </div>
                     <div class="d-flex align-items-center mb-3">
                         <i class="fas fa-briefcase text-primary me-3"></i>
                         <div class="flex-grow-1">
-                            <strong>Business: Twitter Thread</strong>
-                            <br><small class="text-muted">1 day ago</small>
+                            <strong><span data-translate="business">Business</span>: <span data-translate="twitter_thread">Twitter Thread</span></strong>
+                            <br><small class="text-muted" data-translate="1_day_ago">1 day ago</small>
                         </div>
-                        <span class="badge bg-info">Twitter</span>
+                        <span class="badge bg-info" data-translate="twitter">Twitter</span>
                     </div>
                     <div class="d-flex align-items-center mb-3">
                         <i class="fas fa-microchip text-success me-3"></i>
                         <div class="flex-grow-1">
-                            <strong>Tech: Instagram Post</strong>
-                            <br><small class="text-muted">3 days ago</small>
+                            <strong><span data-translate="tech">Tech</span>: <span data-translate="instagram_post">Instagram Post</span></strong>
+                            <br><small class="text-muted" data-translate="3_days_ago">3 days ago</small>
                         </div>
-                        <span class="badge bg-success">Instagram</span>
+                        <span class="badge bg-success" data-translate="instagram">Instagram</span>
                     </div>
                     <div class="d-flex align-items-center">
                         <i class="fas fa-briefcase text-primary me-3"></i>
                         <div class="flex-grow-1">
-                            <strong>Business: Blog Article</strong>
-                            <br><small class="text-muted">1 week ago</small>
+                            <strong><span data-translate="business">Business</span>: <span data-translate="blog_article">Blog Article</span></strong>
+                            <br><small class="text-muted" data-translate="1_week_ago">1 week ago</small>
                         </div>
-                        <span class="badge bg-warning">Blog</span>
+                        <span class="badge bg-warning" data-translate="blog">Blog</span>
                     </div>
                 </div>
             </div>
@@ -1705,47 +1705,47 @@ DASHBOARD_CONTENT = """
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Social Media Performance</h5>
+                    <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i><span data-translate="social_media_performance">Social Media Performance</span></h5>
                 </div>
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div>
                             <i class="fab fa-linkedin text-primary me-2"></i>
-                            <strong>LinkedIn</strong>
+                            <strong data-translate="linkedin">LinkedIn</strong>
                         </div>
                         <div class="text-end">
-                            <div>156 views, 23 likes</div>
-                            <small class="text-muted">45 posts</small>
+                            <div><span data-translate="156_views_23_likes">156 views, 23 likes</span></div>
+                            <small class="text-muted"><span data-translate="45_posts">45 posts</span></small>
                         </div>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div>
                             <i class="fab fa-twitter text-info me-2"></i>
-                            <strong>Twitter</strong>
+                            <strong data-translate="twitter">Twitter</strong>
                         </div>
                         <div class="text-end">
-                            <div>89 retweets, 45 likes</div>
-                            <small class="text-muted">23 posts</small>
+                            <div><span data-translate="89_retweets_45_likes">89 retweets, 45 likes</span></div>
+                            <small class="text-muted"><span data-translate="23_posts">23 posts</span></small>
                         </div>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div>
                             <i class="fab fa-instagram text-danger me-2"></i>
-                            <strong>Instagram</strong>
+                            <strong data-translate="instagram">Instagram</strong>
                         </div>
                         <div class="text-end">
-                            <div>234 views, 67 likes</div>
-                            <small class="text-muted">34 posts</small>
+                            <div><span data-translate="234_views_67_likes">234 views, 67 likes</span></div>
+                            <small class="text-muted"><span data-translate="34_posts">34 posts</span></small>
                         </div>
                     </div>
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <i class="fab fa-facebook text-primary me-2"></i>
-                            <strong>Facebook</strong>
+                            <strong data-translate="facebook">Facebook</strong>
                         </div>
                         <div class="text-end">
-                            <div>567 views, 89 likes</div>
-                            <small class="text-muted">12 posts</small>
+                            <div><span data-translate="567_views_89_likes">567 views, 89 likes</span></div>
+                            <small class="text-muted"><span data-translate="12_posts">12 posts</span></small>
                         </div>
                     </div>
                 </div>
@@ -1758,7 +1758,7 @@ DASHBOARD_CONTENT = """
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Content Performance by Direction</h5>
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i><span data-translate="content_performance_by_direction">Content Performance by Direction</span></h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -1766,8 +1766,8 @@ DASHBOARD_CONTENT = """
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-briefcase text-primary me-2"></i>
                                 <div class="flex-grow-1">
-                                    <strong>Business</strong>
-                                    <br><small class="text-muted">23 posts, 1,234 total views</small>
+                                    <strong data-translate="business">Business</strong>
+                                    <br><small class="text-muted"><span data-translate="23_posts_1234_total_views">23 posts, 1,234 total views</span></small>
                                 </div>
                             </div>
                         </div>
@@ -1775,8 +1775,8 @@ DASHBOARD_CONTENT = """
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-microchip text-success me-2"></i>
                                 <div class="flex-grow-1">
-                                    <strong>Technology</strong>
-                                    <br><small class="text-muted">12 posts, 567 total views</small>
+                                    <strong data-translate="technology">Technology</strong>
+                                    <br><small class="text-muted"><span data-translate="12_posts_567_total_views">12 posts, 567 total views</span></small>
                                 </div>
                             </div>
                         </div>
@@ -1784,8 +1784,8 @@ DASHBOARD_CONTENT = """
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-heart text-danger me-2"></i>
                                 <div class="flex-grow-1">
-                                    <strong>Health</strong>
-                                    <br><small class="text-muted">8 posts, 345 total views</small>
+                                    <strong data-translate="health">Health</strong>
+                                    <br><small class="text-muted"><span data-translate="8_posts_345_total_views">8 posts, 345 total views</span></small>
                                 </div>
                             </div>
                         </div>
@@ -1793,8 +1793,8 @@ DASHBOARD_CONTENT = """
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-graduation-cap text-warning me-2"></i>
                                 <div class="flex-grow-1">
-                                    <strong>Education</strong>
-                                    <br><small class="text-muted">5 posts, 234 total views</small>
+                                    <strong data-translate="education">Education</strong>
+                                    <br><small class="text-muted"><span data-translate="5_posts_234_total_views">5 posts, 234 total views</span></small>
                                 </div>
                             </div>
                         </div>
