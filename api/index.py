@@ -1163,101 +1163,241 @@ function saveContent() {
 # Dashboard page content
 DASHBOARD_CONTENT = """
 <div class="container">
-    <div class="text-center mb-5">
-        <h1><i class="fas fa-chart-line me-2"></i>Dashboard</h1>
-        <p class="lead">Your content creation overview</p>
-    </div>
-    
-    <div class="row">
-        <div class="col-md-3 mb-4">
-            <div class="card text-center">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-primary text-white">
                 <div class="card-body">
-                    <i class="fas fa-file-alt fa-3x text-primary mb-3"></i>
-                    <h4>24</h4>
-                    <p class="text-muted">Total Content</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <i class="fas fa-calendar fa-3x text-success mb-3"></i>
-                    <h4>7</h4>
-                    <p class="text-muted">This Week</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <i class="fas fa-thumbs-up fa-3x text-warning mb-3"></i>
-                    <h4>156</h4>
-                    <p class="text-muted">Total Likes</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <i class="fas fa-share fa-3x text-info mb-3"></i>
-                    <h4>89</h4>
-                    <p class="text-muted">Total Shares</p>
+                    <h2 class="mb-2">Welcome back, <span class="user-name">User</span>!</h2>
+                    <p class="mb-0">Your focus: <strong>Business & Finance</strong></p>
                 </div>
             </div>
         </div>
     </div>
     
-    <div class="row">
-        <div class="col-md-6 mb-4">
+    <!-- Quick Stats -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h4 class="mb-3"><i class="fas fa-chart-bar me-2"></i>Quick Stats</h4>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-file-alt fa-2x text-primary mb-2"></i>
+                    <h3 class="mb-1">45</h3>
+                    <p class="text-muted mb-0">Content Generated</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-calendar fa-2x text-success mb-2"></i>
+                    <h3 class="mb-1">12</h3>
+                    <p class="text-muted mb-0">This Month</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-folder fa-2x text-warning mb-2"></i>
+                    <h3 class="mb-1">23</h3>
+                    <p class="text-muted mb-0">Library Items</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-share-alt fa-2x text-info mb-2"></i>
+                    <h3 class="mb-1">18</h3>
+                    <p class="text-muted mb-0">Social Posts</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h5><i class="fas fa-chart-pie me-2"></i>Content by Platform</h5>
+                    <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
                 </div>
                 <div class="card-body">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>LinkedIn</span>
-                        <span class="badge bg-primary">45%</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Instagram</span>
-                        <span class="badge bg-success">30%</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Twitter</span>
-                        <span class="badge bg-info">15%</span>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <span>Facebook</span>
-                        <span class="badge bg-warning">10%</span>
+                    <div class="row">
+                        <div class="col-md-2 col-6 mb-2">
+                            <a href="/generator" class="btn btn-primary w-100">
+                                <i class="fas fa-plus-circle me-1"></i>Generate New Content
+                            </a>
+                        </div>
+                        <div class="col-md-2 col-6 mb-2">
+                            <a href="/library" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-folder me-1"></i>View Library
+                            </a>
+                        </div>
+                        <div class="col-md-2 col-6 mb-2">
+                            <a href="#" class="btn btn-outline-success w-100">
+                                <i class="fas fa-share-alt me-1"></i>Social Media
+                            </a>
+                        </div>
+                        <div class="col-md-2 col-6 mb-2">
+                            <a href="/settings" class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-cog me-1"></i>Settings
+                            </a>
+                        </div>
+                        <div class="col-md-2 col-6 mb-2">
+                            <a href="#" class="btn btn-outline-info w-100">
+                                <i class="fas fa-chart-line me-1"></i>Analytics
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-6 mb-4">
+    </div>
+    
+    <!-- Recent Content by Direction -->
+    <div class="row mb-4">
+        <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h5><i class="fas fa-clock me-2"></i>Recent Activity</h5>
+                    <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Recent Content by Direction</h5>
                 </div>
                 <div class="card-body">
                     <div class="d-flex align-items-center mb-3">
-                        <i class="fas fa-file-alt text-primary me-3"></i>
-                        <div>
-                            <strong>Business Post</strong>
+                        <i class="fas fa-briefcase text-primary me-3"></i>
+                        <div class="flex-grow-1">
+                            <strong>Business: LinkedIn Post</strong>
                             <br><small class="text-muted">2 hours ago</small>
                         </div>
+                        <span class="badge bg-primary">LinkedIn</span>
                     </div>
                     <div class="d-flex align-items-center mb-3">
-                        <i class="fas fa-image text-success me-3"></i>
-                        <div>
-                            <strong>Instagram Caption</strong>
+                        <i class="fas fa-briefcase text-primary me-3"></i>
+                        <div class="flex-grow-1">
+                            <strong>Business: Twitter Thread</strong>
                             <br><small class="text-muted">1 day ago</small>
                         </div>
+                        <span class="badge bg-info">Twitter</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-microchip text-success me-3"></i>
+                        <div class="flex-grow-1">
+                            <strong>Tech: Instagram Post</strong>
+                            <br><small class="text-muted">3 days ago</small>
+                        </div>
+                        <span class="badge bg-success">Instagram</span>
                     </div>
                     <div class="d-flex align-items-center">
-                        <i class="fas fa-video text-warning me-3"></i>
+                        <i class="fas fa-briefcase text-primary me-3"></i>
+                        <div class="flex-grow-1">
+                            <strong>Business: Blog Article</strong>
+                            <br><small class="text-muted">1 week ago</small>
+                        </div>
+                        <span class="badge bg-warning">Blog</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Social Media Performance -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Social Media Performance</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
                         <div>
-                            <strong>YouTube Script</strong>
-                            <br><small class="text-muted">3 days ago</small>
+                            <i class="fab fa-linkedin text-primary me-2"></i>
+                            <strong>LinkedIn</strong>
+                        </div>
+                        <div class="text-end">
+                            <div>156 views, 23 likes</div>
+                            <small class="text-muted">45 posts</small>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <i class="fab fa-twitter text-info me-2"></i>
+                            <strong>Twitter</strong>
+                        </div>
+                        <div class="text-end">
+                            <div>89 retweets, 45 likes</div>
+                            <small class="text-muted">23 posts</small>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <i class="fab fa-instagram text-danger me-2"></i>
+                            <strong>Instagram</strong>
+                        </div>
+                        <div class="text-end">
+                            <div>234 views, 67 likes</div>
+                            <small class="text-muted">34 posts</small>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fab fa-facebook text-primary me-2"></i>
+                            <strong>Facebook</strong>
+                        </div>
+                        <div class="text-end">
+                            <div>567 views, 89 likes</div>
+                            <small class="text-muted">12 posts</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Content Performance by Direction -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Content Performance by Direction</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-briefcase text-primary me-2"></i>
+                                <div class="flex-grow-1">
+                                    <strong>Business</strong>
+                                    <br><small class="text-muted">23 posts, 1,234 total views</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-microchip text-success me-2"></i>
+                                <div class="flex-grow-1">
+                                    <strong>Technology</strong>
+                                    <br><small class="text-muted">12 posts, 567 total views</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-heart text-danger me-2"></i>
+                                <div class="flex-grow-1">
+                                    <strong>Health</strong>
+                                    <br><small class="text-muted">8 posts, 345 total views</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-graduation-cap text-warning me-2"></i>
+                                <div class="flex-grow-1">
+                                    <strong>Education</strong>
+                                    <br><small class="text-muted">5 posts, 234 total views</small>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1270,13 +1410,107 @@ DASHBOARD_CONTENT = """
 # Library page content
 LIBRARY_CONTENT = """
 <div class="container">
-    <div class="text-center mb-5">
-        <h1><i class="fas fa-book me-2"></i>Content Library</h1>
-        <p class="lead">Your saved content collection</p>
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h2 mb-4">
+                <i class="fas fa-folder me-2 text-primary"></i>Content Library
+            </h1>
+        </div>
     </div>
     
+    <!-- Direction Filters -->
     <div class="row mb-4">
-        <div class="col-md-6">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Direction Filters</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-2 col-4 mb-2">
+                            <button class="btn btn-outline-primary w-100 direction-filter active" data-direction="all">
+                                <i class="fas fa-th me-1"></i>All
+                            </button>
+                        </div>
+                        <div class="col-md-2 col-4 mb-2">
+                            <button class="btn btn-outline-primary w-100 direction-filter" data-direction="business">
+                                <i class="fas fa-briefcase me-1"></i>Business
+                            </button>
+                        </div>
+                        <div class="col-md-2 col-4 mb-2">
+                            <button class="btn btn-outline-success w-100 direction-filter" data-direction="technology">
+                                <i class="fas fa-microchip me-1"></i>Tech
+                            </button>
+                        </div>
+                        <div class="col-md-2 col-4 mb-2">
+                            <button class="btn btn-outline-danger w-100 direction-filter" data-direction="health">
+                                <i class="fas fa-heart me-1"></i>Health
+                            </button>
+                        </div>
+                        <div class="col-md-2 col-4 mb-2">
+                            <button class="btn btn-outline-warning w-100 direction-filter" data-direction="education">
+                                <i class="fas fa-graduation-cap me-1"></i>Education
+                            </button>
+                        </div>
+                        <div class="col-md-2 col-4 mb-2">
+                            <button class="btn btn-outline-info w-100 direction-filter" data-direction="entertainment">
+                                <i class="fas fa-film me-1"></i>Entertainment
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Platform Filters -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-share-alt me-2"></i>Platform Filters</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-2 col-4 mb-2">
+                            <button class="btn btn-outline-secondary w-100 platform-filter active" data-platform="all">
+                                <i class="fas fa-th me-1"></i>All
+                            </button>
+                        </div>
+                        <div class="col-md-2 col-4 mb-2">
+                            <button class="btn btn-outline-primary w-100 platform-filter" data-platform="linkedin">
+                                <i class="fab fa-linkedin me-1"></i>LinkedIn
+                            </button>
+                        </div>
+                        <div class="col-md-2 col-4 mb-2">
+                            <button class="btn btn-outline-primary w-100 platform-filter" data-platform="facebook">
+                                <i class="fab fa-facebook me-1"></i>Facebook
+                            </button>
+                        </div>
+                        <div class="col-md-2 col-4 mb-2">
+                            <button class="btn btn-outline-danger w-100 platform-filter" data-platform="instagram">
+                                <i class="fab fa-instagram me-1"></i>Instagram
+                            </button>
+                        </div>
+                        <div class="col-md-2 col-4 mb-2">
+                            <button class="btn btn-outline-info w-100 platform-filter" data-platform="twitter">
+                                <i class="fab fa-twitter me-1"></i>Twitter
+                            </button>
+                        </div>
+                        <div class="col-md-2 col-4 mb-2">
+                            <button class="btn btn-outline-warning w-100 platform-filter" data-platform="blog">
+                                <i class="fas fa-blog me-1"></i>Blog
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Search and Actions -->
+    <div class="row mb-4">
+        <div class="col-md-8">
             <div class="input-group">
                 <input type="text" class="form-control" placeholder="Search content..." id="searchInput">
                 <button class="btn btn-outline-secondary" type="button">
@@ -1284,23 +1518,31 @@ LIBRARY_CONTENT = """
                 </button>
             </div>
         </div>
-        <div class="col-md-6 text-end">
-            <button class="btn btn-primary">
-                <i class="fas fa-plus me-2"></i>Create New
+        <div class="col-md-4 text-end">
+            <button class="btn btn-outline-secondary me-2">
+                <i class="fas fa-filter me-1"></i>Advanced Search
             </button>
+            <a href="/generator" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i>Create New
+            </a>
         </div>
     </div>
     
+    <!-- Content Grid -->
     <div class="row" id="contentGrid">
-        <div class="col-md-4 mb-4">
+        <!-- Business LinkedIn Post -->
+        <div class="col-md-4 mb-4 content-item" data-direction="business" data-platform="linkedin">
             <div class="card h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start mb-2">
                         <span class="badge bg-primary">LinkedIn</span>
-                        <small class="text-muted">2 hours ago</small>
+                        <small class="text-muted">2 days ago</small>
                     </div>
-                    <h6>Business Strategy Insights</h6>
-                    <p class="text-muted small">Key insights for modern business leaders looking to scale their operations...</p>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-briefcase text-primary me-2"></i>
+                        <h6 class="mb-0">Business Strategy Insights</h6>
+                    </div>
+                    <p class="text-muted small">Key insights for modern business leaders looking to scale their operations and drive sustainable growth in today's competitive market...</p>
                     <div class="d-flex justify-content-between align-items-center">
                         <small class="text-muted">Business & Finance</small>
                         <div>
@@ -1316,15 +1558,47 @@ LIBRARY_CONTENT = """
             </div>
         </div>
         
-        <div class="col-md-4 mb-4">
+        <!-- Business Facebook Post -->
+        <div class="col-md-4 mb-4 content-item" data-direction="business" data-platform="facebook">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="badge bg-primary">Facebook</span>
+                        <small class="text-muted">1 week ago</small>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-briefcase text-primary me-2"></i>
+                        <h6 class="mb-0">Market Analysis Report</h6>
+                    </div>
+                    <p class="text-muted small">Comprehensive analysis of current market trends and their implications for business strategy and investment decisions...</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">Business & Finance</small>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary me-1">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-success">
+                                <i class="fas fa-share"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tech Instagram Post -->
+        <div class="col-md-4 mb-4 content-item" data-direction="technology" data-platform="instagram">
             <div class="card h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start mb-2">
                         <span class="badge bg-success">Instagram</span>
-                        <small class="text-muted">1 day ago</small>
+                        <small class="text-muted">3 days ago</small>
                     </div>
-                    <h6>Tech Innovation Trends</h6>
-                    <p class="text-muted small">Exploring the latest developments in AI and machine learning...</p>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-microchip text-success me-2"></i>
+                        <h6 class="mb-0">AI Innovation Trends</h6>
+                    </div>
+                    <p class="text-muted small">Exploring the latest developments in artificial intelligence and their transformative impact on various industries...</p>
                     <div class="d-flex justify-content-between align-items-center">
                         <small class="text-muted">Technology</small>
                         <div>
@@ -1340,17 +1614,77 @@ LIBRARY_CONTENT = """
             </div>
         </div>
         
-        <div class="col-md-4 mb-4">
+        <!-- Tech Twitter Post -->
+        <div class="col-md-4 mb-4 content-item" data-direction="technology" data-platform="twitter">
             <div class="card h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start mb-2">
                         <span class="badge bg-info">Twitter</span>
-                        <small class="text-muted">3 days ago</small>
+                        <small class="text-muted">5 days ago</small>
                     </div>
-                    <h6>Health & Wellness Tips</h6>
-                    <p class="text-muted small">Simple daily habits that can transform your health and wellbeing...</p>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-microchip text-success me-2"></i>
+                        <h6 class="mb-0">Tech Tips Thread</h6>
+                    </div>
+                    <p class="text-muted small">Essential productivity tips and tools for developers and tech professionals to streamline their workflow...</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">Technology</small>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary me-1">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-success">
+                                <i class="fas fa-share"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Health Blog Article -->
+        <div class="col-md-4 mb-4 content-item" data-direction="health" data-platform="blog">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="badge bg-warning">Blog</span>
+                        <small class="text-muted">2 weeks ago</small>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-heart text-danger me-2"></i>
+                        <h6 class="mb-0">Wellness Guide</h6>
+                    </div>
+                    <p class="text-muted small">Comprehensive guide to maintaining mental and physical health in the modern digital age with practical tips...</p>
                     <div class="d-flex justify-content-between align-items-center">
                         <small class="text-muted">Health & Wellness</small>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary me-1">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-success">
+                                <i class="fas fa-share"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Education LinkedIn Post -->
+        <div class="col-md-4 mb-4 content-item" data-direction="education" data-platform="linkedin">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="badge bg-primary">LinkedIn</span>
+                        <small class="text-muted">1 month ago</small>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-graduation-cap text-warning me-2"></i>
+                        <h6 class="mb-0">Learning Strategies</h6>
+                    </div>
+                    <p class="text-muted small">Effective learning strategies and techniques for professionals looking to upskill and stay competitive...</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">Education</small>
                         <div>
                             <button class="btn btn-sm btn-outline-primary me-1">
                                 <i class="fas fa-edit"></i>
@@ -1370,18 +1704,23 @@ LIBRARY_CONTENT = """
 # Settings page content
 SETTINGS_CONTENT = """
 <div class="container">
-    <div class="row justify-content-center">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h2 mb-4">
+                <i class="fas fa-cog me-2 text-primary"></i>Settings
+            </h1>
+        </div>
+    </div>
+    
+    <div class="row">
         <div class="col-lg-8">
-            <div class="text-center mb-5">
-                <h1><i class="fas fa-cog me-2"></i>Settings</h1>
-                <p class="lead">Customize your content creation experience</p>
-            </div>
-            
-            <div class="card">
-                <div class="card-body p-4">
-                    <form id="settingsForm">
-                        <h5 class="mb-4"><i class="fas fa-user me-2"></i>Profile Settings</h5>
-                        
+            <!-- Profile Settings -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-user me-2"></i>Profile</h5>
+                </div>
+                <div class="card-body">
+                    <form id="profileForm">
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Name</label>
@@ -1392,33 +1731,80 @@ SETTINGS_CONTENT = """
                                 <input type="email" class="form-control" value="demo@contentcreator.com" readonly>
                             </div>
                         </div>
-                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Company</label>
+                                <input type="text" class="form-control" value="Content Creator Pro" id="userCompany">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Industry</label>
+                                <select class="form-select" id="userIndustry">
+                                    <option value="technology">Technology</option>
+                                    <option value="finance">Finance</option>
+                                    <option value="healthcare">Healthcare</option>
+                                    <option value="education">Education</option>
+                                    <option value="marketing">Marketing</option>
+                                    <option value="consulting">Consulting</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Region</label>
-                                <select class="form-select" id="region">
+                                <select class="form-select" id="userRegion">
                                     <option value="global">Global</option>
                                     <option value="us">United States</option>
                                     <option value="eu">Europe</option>
                                     <option value="asia">Asia</option>
+                                    <option value="latin_america">Latin America</option>
+                                    <option value="africa">Africa</option>
+                                    <option value="oceania">Oceania</option>
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Language</label>
-                                <select class="form-select" id="language">
+                                <select class="form-select" id="userLanguage">
                                     <option value="en">English</option>
+                                    <option value="zh">中文</option>
                                     <option value="es">Spanish</option>
                                     <option value="fr">French</option>
                                     <option value="de">German</option>
+                                    <option value="ja">Japanese</option>
+                                    <option value="ko">Korean</option>
                                 </select>
                             </div>
                         </div>
-                        
-                        <hr class="my-4">
-                        
-                        <h5 class="mb-4"><i class="fas fa-magic me-2"></i>Content Preferences</h5>
-                        
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Save Profile
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Content Preferences -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-magic me-2"></i>Content Preferences</h5>
+                </div>
+                <div class="card-body">
+                    <form id="contentForm">
                         <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Primary Direction</label>
+                                <select class="form-select" id="primaryDirection">
+                                    <option value="business_finance">Business & Finance</option>
+                                    <option value="technology">Technology</option>
+                                    <option value="health_wellness">Health & Wellness</option>
+                                    <option value="education">Education</option>
+                                    <option value="entertainment">Entertainment</option>
+                                    <option value="travel_tourism">Travel & Tourism</option>
+                                    <option value="food_cooking">Food & Cooking</option>
+                                    <option value="fashion_beauty">Fashion & Beauty</option>
+                                </select>
+                            </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Default Tone</label>
                                 <select class="form-select" id="defaultTone">
@@ -1426,44 +1812,283 @@ SETTINGS_CONTENT = """
                                     <option value="casual">Casual</option>
                                     <option value="inspirational">Inspirational</option>
                                     <option value="educational">Educational</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Default Length</label>
-                                <select class="form-select" id="defaultLength">
-                                    <option value="medium">Medium</option>
-                                    <option value="short">Short</option>
-                                    <option value="long">Long</option>
+                                    <option value="humorous">Humorous</option>
+                                    <option value="serious">Serious</option>
                                 </select>
                             </div>
                         </div>
                         
                         <div class="mb-3">
-                            <label class="form-label">Preferred Content Directions</label>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="business_finance" id="pref1" checked>
-                                <label class="form-check-label" for="pref1">Business & Finance</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="technology" id="pref2" checked>
-                                <label class="form-check-label" for="pref2">Technology</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="health_wellness" id="pref3">
-                                <label class="form-check-label" for="pref3">Health & Wellness</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="education" id="pref4">
-                                <label class="form-check-label" for="pref4">Education</label>
+                            <label class="form-label">Secondary Directions</label>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="technology" id="secTech" checked>
+                                        <label class="form-check-label" for="secTech">Technology</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="health_wellness" id="secHealth">
+                                        <label class="form-check-label" for="secHealth">Health & Wellness</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="education" id="secEducation">
+                                        <label class="form-check-label" for="secEducation">Education</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="entertainment" id="secEntertainment">
+                                        <label class="form-check-label" for="secEntertainment">Entertainment</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="travel_tourism" id="secTravel">
+                                        <label class="form-check-label" for="secTravel">Travel & Tourism</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="food_cooking" id="secFood">
+                                        <label class="form-check-label" for="secFood">Food & Cooking</label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-save me-2"></i>Save Settings
+                        <div class="mb-3">
+                            <label class="form-label">Preferred Content Types</label>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="linkedin" id="prefLinkedIn" checked>
+                                        <label class="form-check-label" for="prefLinkedIn">LinkedIn</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="twitter" id="prefTwitter" checked>
+                                        <label class="form-check-label" for="prefTwitter">Twitter</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="facebook" id="prefFacebook">
+                                        <label class="form-check-label" for="prefFacebook">Facebook</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="instagram" id="prefInstagram">
+                                        <label class="form-check-label" for="prefInstagram">Instagram</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="youtube" id="prefYouTube">
+                                        <label class="form-check-label" for="prefYouTube">YouTube</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="blog" id="prefBlog">
+                                        <label class="form-check-label" for="prefBlog">Blog</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Favorite Sources</label>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="news" id="sourceNews" checked>
+                                        <label class="form-check-label" for="sourceNews">News</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="books" id="sourceBooks" checked>
+                                        <label class="form-check-label" for="sourceBooks">Books</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="research" id="sourceResearch">
+                                        <label class="form-check-label" for="sourceResearch">Research</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="podcasts" id="sourcePodcasts">
+                                        <label class="form-check-label" for="sourcePodcasts">Podcasts</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="videos" id="sourceVideos">
+                                        <label class="form-check-label" for="sourceVideos">Videos</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="threads" id="sourceThreads">
+                                        <label class="form-check-label" for="sourceThreads">Threads</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Save Preferences
                             </button>
                         </div>
                     </form>
+                </div>
+            </div>
+            
+            <!-- Social Media Integration -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-share-alt me-2"></i>Social Media Integration</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fab fa-linkedin text-primary me-2"></i>
+                                <span class="me-2">LinkedIn</span>
+                                <span class="badge bg-success">Connected</span>
+                            </div>
+                            <small class="text-muted">John Doe (Personal)</small>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <button class="btn btn-sm btn-outline-primary">Manage</button>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fab fa-facebook text-primary me-2"></i>
+                                <span class="me-2">Facebook</span>
+                                <span class="badge bg-success">Connected</span>
+                            </div>
+                            <small class="text-muted">John Doe</small>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <button class="btn btn-sm btn-outline-primary">Manage</button>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fab fa-instagram text-danger me-2"></i>
+                                <span class="me-2">Instagram</span>
+                                <span class="badge bg-success">Connected</span>
+                            </div>
+                            <small class="text-muted">@johndoe</small>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <button class="btn btn-sm btn-outline-primary">Manage</button>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fab fa-twitter text-info me-2"></i>
+                                <span class="me-2">Twitter</span>
+                                <span class="badge bg-secondary">Not connected</span>
+                            </div>
+                            <small class="text-muted">Connect your Twitter account</small>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <button class="btn btn-sm btn-primary">Connect</button>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fab fa-youtube text-danger me-2"></i>
+                                <span class="me-2">YouTube</span>
+                                <span class="badge bg-secondary">Not connected</span>
+                            </div>
+                            <small class="text-muted">Connect your YouTube channel</small>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <button class="btn btn-sm btn-primary">Connect</button>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Auto-post to</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="linkedin" id="autoLinkedIn" checked>
+                                <label class="form-check-label" for="autoLinkedIn">LinkedIn</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="facebook" id="autoFacebook">
+                                <label class="form-check-label" for="autoFacebook">Facebook</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="instagram" id="autoInstagram">
+                                <label class="form-check-label" for="autoInstagram">Instagram</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Default posting time</label>
+                            <input type="time" class="form-control" value="09:00" id="defaultPostTime">
+                            <small class="text-muted">Local timezone</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Subscription Sidebar -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-crown me-2"></i>Subscription</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-crown fa-3x text-warning mb-2"></i>
+                        <h5>Pro Plan</h5>
+                        <h3 class="text-primary">$19/month</h3>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Content Generated</span>
+                            <span>67/100</span>
+                        </div>
+                        <div class="progress mb-3">
+                            <div class="progress-bar" style="width: 67%"></div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Social Media Posts</span>
+                            <span>23/50</span>
+                        </div>
+                        <div class="progress mb-3">
+                            <div class="progress-bar" style="width: 46%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-warning">
+                            <i class="fas fa-arrow-up me-2"></i>Upgrade Plan
+                        </button>
+                        <button class="btn btn-outline-danger">
+                            <i class="fas fa-times me-2"></i>Cancel Subscription
+                        </button>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h6>Pro Features</h6>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success me-2"></i>Unlimited content generation</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Advanced AI models</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Social media scheduling</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Analytics dashboard</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Priority support</li>
+                    </ul>
                 </div>
             </div>
         </div>

@@ -12,18 +12,346 @@
         </div>
     </div>
     
-    <div class="row">
+    <!-- Direction Filters -->
+    <div class="row mb-4">
         <div class="col-12">
             <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Direction Filters</h5>
+                </div>
                 <div class="card-body">
-                    <h5 class="card-title">Your Generated Content</h5>
-                    <p class="text-muted">Your content library will appear here once you start generating content.</p>
-                    <a href="{{ url_for('main.generator') }}" class="btn btn-primary">
-                        <i class="fas fa-plus me-2"></i>Create Your First Content
-                    </a>
+                    <div class="row">
+                        <div class="col-md-2 col-4 mb-2">
+                            <button class="btn btn-outline-primary w-100 direction-filter active" data-direction="all">
+                                <i class="fas fa-th me-1"></i>All
+                            </button>
+                        </div>
+                        <div class="col-md-2 col-4 mb-2">
+                            <button class="btn btn-outline-primary w-100 direction-filter" data-direction="business">
+                                <i class="fas fa-briefcase me-1"></i>Business
+                            </button>
+                        </div>
+                        <div class="col-md-2 col-4 mb-2">
+                            <button class="btn btn-outline-success w-100 direction-filter" data-direction="technology">
+                                <i class="fas fa-microchip me-1"></i>Tech
+                            </button>
+                        </div>
+                        <div class="col-md-2 col-4 mb-2">
+                            <button class="btn btn-outline-danger w-100 direction-filter" data-direction="health">
+                                <i class="fas fa-heart me-1"></i>Health
+                            </button>
+                        </div>
+                        <div class="col-md-2 col-4 mb-2">
+                            <button class="btn btn-outline-warning w-100 direction-filter" data-direction="education">
+                                <i class="fas fa-graduation-cap me-1"></i>Education
+                            </button>
+                        </div>
+                        <div class="col-md-2 col-4 mb-2">
+                            <button class="btn btn-outline-info w-100 direction-filter" data-direction="entertainment">
+                                <i class="fas fa-film me-1"></i>Entertainment
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Platform Filters -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-share-alt me-2"></i>Platform Filters</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-2 col-4 mb-2">
+                            <button class="btn btn-outline-secondary w-100 platform-filter active" data-platform="all">
+                                <i class="fas fa-th me-1"></i>All
+                            </button>
+                        </div>
+                        <div class="col-md-2 col-4 mb-2">
+                            <button class="btn btn-outline-primary w-100 platform-filter" data-platform="linkedin">
+                                <i class="fab fa-linkedin me-1"></i>LinkedIn
+                            </button>
+                        </div>
+                        <div class="col-md-2 col-4 mb-2">
+                            <button class="btn btn-outline-primary w-100 platform-filter" data-platform="facebook">
+                                <i class="fab fa-facebook me-1"></i>Facebook
+                            </button>
+                        </div>
+                        <div class="col-md-2 col-4 mb-2">
+                            <button class="btn btn-outline-danger w-100 platform-filter" data-platform="instagram">
+                                <i class="fab fa-instagram me-1"></i>Instagram
+                            </button>
+                        </div>
+                        <div class="col-md-2 col-4 mb-2">
+                            <button class="btn btn-outline-info w-100 platform-filter" data-platform="twitter">
+                                <i class="fab fa-twitter me-1"></i>Twitter
+                            </button>
+                        </div>
+                        <div class="col-md-2 col-4 mb-2">
+                            <button class="btn btn-outline-warning w-100 platform-filter" data-platform="blog">
+                                <i class="fas fa-blog me-1"></i>Blog
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Search and Actions -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search content..." id="searchInput">
+                <button class="btn btn-outline-secondary" type="button">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+        <div class="col-md-4 text-end">
+            <button class="btn btn-outline-secondary me-2">
+                <i class="fas fa-filter me-1"></i>Advanced Search
+            </button>
+            <a href="{{ url_for('main.generator') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i>Create New
+            </a>
+        </div>
+    </div>
+    
+    <!-- Content Grid -->
+    <div class="row" id="contentGrid">
+        <!-- Business LinkedIn Post -->
+        <div class="col-md-4 mb-4 content-item" data-direction="business" data-platform="linkedin">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="badge bg-primary">LinkedIn</span>
+                        <small class="text-muted">2 days ago</small>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-briefcase text-primary me-2"></i>
+                        <h6 class="mb-0">Business Strategy Insights</h6>
+                    </div>
+                    <p class="text-muted small">Key insights for modern business leaders looking to scale their operations and drive sustainable growth in today's competitive market...</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">Business & Finance</small>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary me-1">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-success">
+                                <i class="fas fa-share"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Business Facebook Post -->
+        <div class="col-md-4 mb-4 content-item" data-direction="business" data-platform="facebook">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="badge bg-primary">Facebook</span>
+                        <small class="text-muted">1 week ago</small>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-briefcase text-primary me-2"></i>
+                        <h6 class="mb-0">Market Analysis Report</h6>
+                    </div>
+                    <p class="text-muted small">Comprehensive analysis of current market trends and their implications for business strategy and investment decisions...</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">Business & Finance</small>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary me-1">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-success">
+                                <i class="fas fa-share"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tech Instagram Post -->
+        <div class="col-md-4 mb-4 content-item" data-direction="technology" data-platform="instagram">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="badge bg-success">Instagram</span>
+                        <small class="text-muted">3 days ago</small>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-microchip text-success me-2"></i>
+                        <h6 class="mb-0">AI Innovation Trends</h6>
+                    </div>
+                    <p class="text-muted small">Exploring the latest developments in artificial intelligence and their transformative impact on various industries...</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">Technology</small>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary me-1">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-success">
+                                <i class="fas fa-share"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tech Twitter Post -->
+        <div class="col-md-4 mb-4 content-item" data-direction="technology" data-platform="twitter">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="badge bg-info">Twitter</span>
+                        <small class="text-muted">5 days ago</small>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-microchip text-success me-2"></i>
+                        <h6 class="mb-0">Tech Tips Thread</h6>
+                    </div>
+                    <p class="text-muted small">Essential productivity tips and tools for developers and tech professionals to streamline their workflow...</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">Technology</small>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary me-1">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-success">
+                                <i class="fas fa-share"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Health Blog Article -->
+        <div class="col-md-4 mb-4 content-item" data-direction="health" data-platform="blog">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="badge bg-warning">Blog</span>
+                        <small class="text-muted">2 weeks ago</small>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-heart text-danger me-2"></i>
+                        <h6 class="mb-0">Wellness Guide</h6>
+                    </div>
+                    <p class="text-muted small">Comprehensive guide to maintaining mental and physical health in the modern digital age with practical tips...</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">Health & Wellness</small>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary me-1">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-success">
+                                <i class="fas fa-share"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Education LinkedIn Post -->
+        <div class="col-md-4 mb-4 content-item" data-direction="education" data-platform="linkedin">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="badge bg-primary">LinkedIn</span>
+                        <small class="text-muted">1 month ago</small>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-graduation-cap text-warning me-2"></i>
+                        <h6 class="mb-0">Learning Strategies</h6>
+                    </div>
+                    <p class="text-muted small">Effective learning strategies and techniques for professionals looking to upskill and stay competitive...</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">Education</small>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary me-1">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-success">
+                                <i class="fas fa-share"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+{% block extra_js %}
+<script>
+// Filter functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const directionFilters = document.querySelectorAll('.direction-filter');
+    const platformFilters = document.querySelectorAll('.platform-filter');
+    const searchInput = document.getElementById('searchInput');
+    const contentItems = document.querySelectorAll('.content-item');
+    
+    let selectedDirection = 'all';
+    let selectedPlatform = 'all';
+    
+    // Direction filter handlers
+    directionFilters.forEach(filter => {
+        filter.addEventListener('click', function() {
+            directionFilters.forEach(f => f.classList.remove('active'));
+            this.classList.add('active');
+            selectedDirection = this.dataset.direction;
+            applyFilters();
+        });
+    });
+    
+    // Platform filter handlers
+    platformFilters.forEach(filter => {
+        filter.addEventListener('click', function() {
+            platformFilters.forEach(f => f.classList.remove('active'));
+            this.classList.add('active');
+            selectedPlatform = this.dataset.platform;
+            applyFilters();
+        });
+    });
+    
+    // Search functionality
+    searchInput.addEventListener('input', function() {
+        applyFilters();
+    });
+    
+    function applyFilters() {
+        const searchTerm = searchInput.value.toLowerCase();
+        
+        contentItems.forEach(item => {
+            const direction = item.dataset.direction;
+            const platform = item.dataset.platform;
+            const title = item.querySelector('h6').textContent.toLowerCase();
+            const content = item.querySelector('p').textContent.toLowerCase();
+            
+            const directionMatch = selectedDirection === 'all' || direction === selectedDirection;
+            const platformMatch = selectedPlatform === 'all' || platform === selectedPlatform;
+            const searchMatch = searchTerm === '' || title.includes(searchTerm) || content.includes(searchTerm);
+            
+            if (directionMatch && platformMatch && searchMatch) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
 {% endblock %} 
