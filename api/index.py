@@ -1812,7 +1812,7 @@ LIBRARY_CONTENT = """
     <div class="row">
         <div class="col-12">
             <h1 class="h2 mb-4">
-                <i class="fas fa-folder me-2 text-primary"></i>Content Library
+                <i class="fas fa-folder me-2 text-primary"></i><span data-translate="content_library">Content Library</span>
             </h1>
         </div>
     </div>
@@ -1822,38 +1822,38 @@ LIBRARY_CONTENT = """
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Direction Filters</h5>
+                    <h5 class="mb-0"><i class="fas fa-filter me-2"></i><span data-translate="direction_filters">Direction Filters</span></h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-2 col-4 mb-2">
                             <button class="btn btn-outline-primary w-100 direction-filter active" data-direction="all">
-                                <i class="fas fa-th me-1"></i>All
+                                <i class="fas fa-th me-1"></i><span data-translate="all">All</span>
                             </button>
                         </div>
                         <div class="col-md-2 col-4 mb-2">
                             <button class="btn btn-outline-primary w-100 direction-filter" data-direction="business">
-                                <i class="fas fa-briefcase me-1"></i>Business
+                                <i class="fas fa-briefcase me-1"></i><span data-translate="business">Business</span>
                             </button>
                         </div>
                         <div class="col-md-2 col-4 mb-2">
                             <button class="btn btn-outline-success w-100 direction-filter" data-direction="technology">
-                                <i class="fas fa-microchip me-1"></i>Tech
+                                <i class="fas fa-microchip me-1"></i><span data-translate="tech">Tech</span>
                             </button>
                         </div>
                         <div class="col-md-2 col-4 mb-2">
                             <button class="btn btn-outline-danger w-100 direction-filter" data-direction="health">
-                                <i class="fas fa-heart me-1"></i>Health
+                                <i class="fas fa-heart me-1"></i><span data-translate="health">Health</span>
                             </button>
                         </div>
                         <div class="col-md-2 col-4 mb-2">
                             <button class="btn btn-outline-warning w-100 direction-filter" data-direction="education">
-                                <i class="fas fa-graduation-cap me-1"></i>Education
+                                <i class="fas fa-graduation-cap me-1"></i><span data-translate="education">Education</span>
                             </button>
                         </div>
                         <div class="col-md-2 col-4 mb-2">
                             <button class="btn btn-outline-info w-100 direction-filter" data-direction="entertainment">
-                                <i class="fas fa-film me-1"></i>Entertainment
+                                <i class="fas fa-film me-1"></i><span data-translate="entertainment">Entertainment</span>
                             </button>
                         </div>
                     </div>
@@ -1867,38 +1867,38 @@ LIBRARY_CONTENT = """
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-share-alt me-2"></i>Platform Filters</h5>
+                    <h5 class="mb-0"><i class="fas fa-share-alt me-2"></i><span data-translate="platform_filters">Platform Filters</span></h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-2 col-4 mb-2">
                             <button class="btn btn-outline-secondary w-100 platform-filter active" data-platform="all">
-                                <i class="fas fa-th me-1"></i>All
+                                <i class="fas fa-th me-1"></i><span data-translate="all">All</span>
                             </button>
                         </div>
                         <div class="col-md-2 col-4 mb-2">
                             <button class="btn btn-outline-primary w-100 platform-filter" data-platform="linkedin">
-                                <i class="fab fa-linkedin me-1"></i>LinkedIn
+                                <i class="fab fa-linkedin me-1"></i><span data-translate="linkedin">LinkedIn</span>
                             </button>
                         </div>
                         <div class="col-md-2 col-4 mb-2">
                             <button class="btn btn-outline-primary w-100 platform-filter" data-platform="facebook">
-                                <i class="fab fa-facebook me-1"></i>Facebook
+                                <i class="fab fa-facebook me-1"></i><span data-translate="facebook">Facebook</span>
                             </button>
                         </div>
                         <div class="col-md-2 col-4 mb-2">
                             <button class="btn btn-outline-danger w-100 platform-filter" data-platform="instagram">
-                                <i class="fab fa-instagram me-1"></i>Instagram
+                                <i class="fab fa-instagram me-1"></i><span data-translate="instagram">Instagram</span>
                             </button>
                         </div>
                         <div class="col-md-2 col-4 mb-2">
                             <button class="btn btn-outline-info w-100 platform-filter" data-platform="twitter">
-                                <i class="fab fa-twitter me-1"></i>Twitter
+                                <i class="fab fa-twitter me-1"></i><span data-translate="twitter">Twitter</span>
                             </button>
                         </div>
                         <div class="col-md-2 col-4 mb-2">
                             <button class="btn btn-outline-warning w-100 platform-filter" data-platform="blog">
-                                <i class="fas fa-blog me-1"></i>Blog
+                                <i class="fas fa-blog me-1"></i><span data-translate="blog">Blog</span>
                             </button>
                         </div>
                     </div>
@@ -1911,7 +1911,7 @@ LIBRARY_CONTENT = """
     <div class="row mb-4">
         <div class="col-md-8">
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search content..." id="searchInput">
+                <input type="text" class="form-control" data-translate-placeholder="search_content" placeholder="Search content..." id="searchInput">
                 <button class="btn btn-outline-secondary" type="button">
                     <i class="fas fa-search"></i>
                 </button>
@@ -1919,10 +1919,10 @@ LIBRARY_CONTENT = """
         </div>
         <div class="col-md-4 text-end">
             <button class="btn btn-outline-secondary me-2">
-                <i class="fas fa-filter me-1"></i>Advanced Search
+                <i class="fas fa-filter me-1"></i><span data-translate="advanced_search">Advanced Search</span>
             </button>
             <a href="/generator" class="btn btn-primary">
-                <i class="fas fa-plus me-1"></i>Create New
+                <i class="fas fa-plus me-1"></i><span data-translate="create_new">Create New</span>
             </a>
         </div>
     </div>
@@ -1934,16 +1934,16 @@ LIBRARY_CONTENT = """
             <div class="card h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start mb-2">
-                        <span class="badge bg-primary">LinkedIn</span>
-                        <small class="text-muted">2 days ago</small>
+                        <span class="badge bg-primary" data-translate="linkedin">LinkedIn</span>
+                        <small class="text-muted" data-translate="2_days_ago">2 days ago</small>
                     </div>
                     <div class="d-flex align-items-center mb-2">
                         <i class="fas fa-briefcase text-primary me-2"></i>
-                        <h6 class="mb-0">Business Strategy Insights</h6>
+                        <h6 class="mb-0" data-translate="business_strategy_insights">Business Strategy Insights</h6>
                     </div>
-                    <p class="text-muted small">Key insights for modern business leaders looking to scale their operations and drive sustainable growth in today's competitive market...</p>
+                    <p class="text-muted small" data-translate="business_strategy_description">Key insights for modern business leaders looking to scale their operations and drive sustainable growth in today's competitive market...</p>
                     <div class="d-flex justify-content-between align-items-center">
-                        <small class="text-muted">Business & Finance</small>
+                        <small class="text-muted" data-translate="business_finance">Business & Finance</small>
                         <div>
                             <button class="btn btn-sm btn-outline-primary me-1">
                                 <i class="fas fa-edit"></i>
