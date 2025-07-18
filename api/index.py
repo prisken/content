@@ -648,7 +648,7 @@ def generate_social_media_manager_content(user_email, social_content, selected_p
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h2 class="mb-2"><i class="fas fa-share-alt me-2"></i>Social Media Manager</h2>
+                                <h2 class="mb-2"><i class="fas fa-share-alt me-2"></i>Post Management</h2>
                                 <p class="mb-0">Manage and deploy your content across all social media platforms</p>
                             </div>
                             <div class="text-end">
@@ -1735,6 +1735,7 @@ BASE_TEMPLATE = """
             'no_posts_yet': 'No posts yet',
             'linkedin_manager': 'LinkedIn Manager',
         'social_media_manager': 'Social Media Manager',
+        'post_management': 'Post Management',
         'account_management': 'Account Management',
         'connect_account': 'Connect Account',
         'disconnect_account': 'Disconnect Account',
@@ -1957,6 +1958,7 @@ BASE_TEMPLATE = """
             'no_posts_yet': '尚无帖子',
             'linkedin_manager': 'LinkedIn管理器',
         'social_media_manager': '社交媒体管理器',
+        'post_management': '帖子管理',
         'account_management': '账户管理',
         'connect_account': '连接账户',
         'disconnect_account': '断开连接',
@@ -4419,25 +4421,32 @@ def linkedin_manager():
 @app.route('/social-media-manager')
 @login_required
 def social_media_manager():
-    """Social Media Manager page for all platforms"""
-    user_email = session.get('user', '')
-    platform = request.args.get('platform', 'all')
-    
-    # Get all social media content for the user
-    user_content = content_manager.get_user_content(user_email, limit=50)
-    social_content = [c for c in user_content if c.get('platform') in ['linkedin', 'twitter', 'facebook', 'instagram', 'youtube']]
-    
-    # Filter by platform if specified
-    if platform != 'all':
-        social_content = [c for c in social_content if c.get('platform') == platform]
-    
-    # Generate social media manager content
-    content = generate_social_media_manager_content(user_email, social_content, platform)
-    
-    return render_template_string(BASE_TEMPLATE,
-                                title="Social Media Manager",
-                                content=content,
-                                scripts=SOCIAL_MEDIA_MANAGER_SCRIPTS)
+    """Post Management page for all platforms"""
+    try:
+        user_email = session.get('user', 'demo@contentcreator.com')
+        platform = request.args.get('platform', 'all')
+        
+        # Get all social media content for the user
+        user_content = content_manager.get_user_content(user_email, limit=50)
+        social_content = [c for c in user_content if c.get('platform') in ['linkedin', 'twitter', 'facebook', 'instagram', 'youtube']]
+        
+        # Filter by platform if specified
+        if platform != 'all':
+            social_content = [c for c in social_content if c.get('platform') == platform]
+        
+        # Generate social media manager content
+        content = generate_social_media_manager_content(user_email, social_content, platform)
+        
+        return render_template_string(BASE_TEMPLATE,
+                                    title="Post Management",
+                                    content=content,
+                                    scripts=SOCIAL_MEDIA_MANAGER_SCRIPTS)
+    except Exception as e:
+        print(f"Error in social_media_manager: {str(e)}")
+        return render_template_string(BASE_TEMPLATE,
+                                    title="Post Management",
+                                    content=f"<div class='container'><div class='alert alert-danger'>Error loading Post Management: {str(e)}</div></div>",
+                                    scripts="")
 
 @app.route('/settings')
 def settings():
