@@ -59,8 +59,12 @@ def generate_image():
         platform = data.get('platform', 'linkedin')
         direction = data.get('direction', 'business_finance')
         
-        # Generate image prompt
-        image_prompt = generate_image_prompt(content_text, image_style, platform, direction)
+        # Generate image prompt using AI service or fallback
+        try:
+            from services.ai_service import ai_service
+            image_prompt = ai_service.generate_image_prompt(content_text, direction, platform)
+        except ImportError:
+            image_prompt = generate_image_prompt(content_text, image_style, platform, direction)
         
         # Create mock image (replace with actual AI generation)
         image_url = create_mock_image(image_prompt, image_style, user_email)

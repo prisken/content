@@ -3,6 +3,14 @@ from models import db, User, Content
 import uuid
 import random
 
+# Import AI service
+try:
+    from services.ai_service import ai_service
+    AI_SERVICE_AVAILABLE = True
+except ImportError:
+    AI_SERVICE_AVAILABLE = False
+    print("Warning: AI service not available. Using fallback content generation.")
+
 api_routes = Blueprint('api', __name__)
 
 # Content directions mapping
@@ -241,8 +249,11 @@ def generate_content():
         tone = data.get('tone', 'professional')
         language = data.get('language', 'en')
         
-        # Generate content based on parameters
-        content = generate_content_text(direction, platform, source, topic, tone, language)
+        # Generate content using AI service or fallback
+        if AI_SERVICE_AVAILABLE:
+            content = ai_service.generate_content(direction, platform, source, topic, tone, language)
+        else:
+            content = generate_content_text(direction, platform, source, topic, tone, language)
         
         return jsonify({
             'success': True,
