@@ -31,9 +31,38 @@ BASE_TEMPLATE = """
         .feature-card { background: #fff; border-radius: 15px; padding: 30px; margin: 20px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.1); color: #222; }
         .feature-card h3, .feature-card p { color: #222 !important; text-shadow: none; }
         h1, h2, h3, p, .lead { color: #fff !important; text-shadow: 0 2px 8px rgba(0,0,0,0.25); }
-        .card h3, .card p { color: #222 !important; text-shadow: none; }
-        .form-control { border-radius: 10px; border: 2px solid #e0e0e0; }
-        .form-control:focus { border-color: #667eea; box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25); }
+        
+        /* Card text visibility fixes */
+        .card h3, .card h4, .card h5, .card h6 { color: #333 !important; text-shadow: none; }
+        .card p, .card span, .card div { color: #333 !important; text-shadow: none; }
+        .card label { color: #333 !important; font-weight: 600; text-shadow: none; }
+        .card .text-muted { color: #666 !important; text-shadow: none; }
+        .card .badge { color: #fff !important; text-shadow: none; }
+        .card strong { color: #333 !important; text-shadow: none; }
+        .card small { color: #666 !important; text-shadow: none; }
+        
+        /* Form elements visibility */
+        .form-control, .form-select { 
+            border-radius: 10px; 
+            border: 2px solid #e0e0e0; 
+            color: #333 !important;
+            background: #fff !important;
+        }
+        .form-control:focus, .form-select:focus { 
+            border-color: #667eea; 
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25); 
+            color: #333 !important;
+        }
+        .form-label { color: #333 !important; font-weight: 600; text-shadow: none; }
+        
+        /* Button text visibility */
+        .btn { color: #fff !important; text-shadow: none; }
+        .btn-outline-secondary { color: #6c757d !important; border-color: #6c757d; }
+        .btn-outline-primary { color: #667eea !important; border-color: #667eea; }
+        .btn-outline-success { color: #28a745 !important; border-color: #28a745; }
+        .btn-outline-info { color: #17a2b8 !important; border-color: #17a2b8; }
+        .btn-outline-warning { color: #ffc107 !important; border-color: #ffc107; }
+        .btn-outline-danger { color: #dc3545 !important; border-color: #dc3545; }
         
         /* Direction Cards */
         .direction-card {
@@ -45,7 +74,7 @@ BASE_TEMPLATE = """
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
-            color: #333;
+            color: #333 !important;
         }
         .direction-card:hover {
             border-color: #667eea;
@@ -55,11 +84,15 @@ BASE_TEMPLATE = """
         .direction-card.selected {
             border-color: #667eea;
             background: linear-gradient(45deg, #667eea, #764ba2);
-            color: #fff;
+            color: #fff !important;
         }
         .direction-card i {
             font-size: 24px;
             margin-bottom: 8px;
+        }
+        .direction-card div {
+            color: inherit !important;
+            text-shadow: none;
         }
         
         /* Step Progress */
@@ -93,6 +126,51 @@ BASE_TEMPLATE = """
             font-size: 14px;
             margin-right: 15px;
         }
+        
+        /* Alert and notification visibility */
+        .alert { color: #333 !important; text-shadow: none; }
+        .alert h5 { color: #333 !important; text-shadow: none; }
+        .alert p { color: #333 !important; text-shadow: none; }
+        
+        /* Input group visibility */
+        .input-group-text { 
+            background: #f8f9fa !important; 
+            color: #495057 !important; 
+            border-color: #e0e0e0;
+        }
+        
+        /* Table visibility */
+        .table { color: #333 !important; }
+        .table th { color: #333 !important; }
+        .table td { color: #333 !important; }
+        
+        /* List visibility */
+        .list-group-item { color: #333 !important; }
+        
+        /* Modal visibility */
+        .modal-content { color: #333 !important; }
+        .modal-header { color: #333 !important; }
+        .modal-body { color: #333 !important; }
+        .modal-footer { color: #333 !important; }
+        
+        /* Dropdown visibility */
+        .dropdown-menu { color: #333 !important; }
+        .dropdown-item { color: #333 !important; }
+        
+        /* Progress bar visibility */
+        .progress { background: rgba(255,255,255,0.3) !important; }
+        .progress-bar { color: #fff !important; }
+        
+        /* Spinner visibility */
+        .fa-spinner { color: #667eea !important; }
+        
+        /* Ensure all text in cards is visible */
+        .card * { color: inherit !important; }
+        .card .text-primary { color: #667eea !important; }
+        .card .text-success { color: #28a745 !important; }
+        .card .text-warning { color: #ffc107 !important; }
+        .card .text-info { color: #17a2b8 !important; }
+        .card .text-danger { color: #dc3545 !important; }
     </style>
 </head>
 <body>
@@ -146,6 +224,21 @@ BASE_TEMPLATE = """
 
     <!-- Main Content -->
     <div class="main-content">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="container mb-4">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                            <i class="fas fa-{{ 'exclamation-triangle' if category == 'error' or category == 'danger' else 'check-circle' if category == 'success' else 'info-circle' }} me-2"></i>
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
         {{ content | safe }}
     </div>
 
@@ -1154,13 +1247,35 @@ def register():
         flash('Registration successful. Please log in.', 'success')
         return redirect(url_for('login'))
     return render_template_string(BASE_TEMPLATE, title="Register", content='''
-    <div class="container"><div class="row justify-content-center"><div class="col-md-6">
-    <h2>Register</h2>
-    <form method="post">
-      <div class="mb-3"><label>Email</label><input type="email" name="email" class="form-control" required></div>
-      <div class="mb-3"><label>Password</label><input type="password" name="password" class="form-control" required></div>
-      <button type="submit" class="btn btn-primary">Register</button>
-    </form></div></div></div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body p-4">
+                        <h2 class="text-center mb-4"><i class="fas fa-user-plus me-2"></i>Register</h2>
+                        <form method="post">
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" name="email" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <input type="password" name="password" class="form-control" required>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-user-plus me-2"></i>Register
+                                </button>
+                            </div>
+                        </form>
+                        <div class="text-center mt-3">
+                            <p>Already have an account? <a href="/login" class="text-decoration-none">Login here</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     ''')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -1176,13 +1291,40 @@ def login():
         flash('Invalid credentials.', 'danger')
         return redirect(url_for('login'))
     return render_template_string(BASE_TEMPLATE, title="Login", content='''
-    <div class="container"><div class="row justify-content-center"><div class="col-md-6">
-    <h2>Login</h2>
-    <form method="post">
-      <div class="mb-3"><label>Email</label><input type="email" name="email" class="form-control" required></div>
-      <div class="mb-3"><label>Password</label><input type="password" name="password" class="form-control" required></div>
-      <button type="submit" class="btn btn-primary">Login</button>
-    </form></div></div></div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body p-4">
+                        <h2 class="text-center mb-4"><i class="fas fa-sign-in-alt me-2"></i>Login</h2>
+                        <form method="post">
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" name="email" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <input type="password" name="password" class="form-control" required>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                                </button>
+                            </div>
+                        </form>
+                        <div class="text-center mt-3">
+                            <p>Don't have an account? <a href="/register" class="text-decoration-none">Register here</a></p>
+                        </div>
+                        <div class="mt-4 p-3 bg-light rounded">
+                            <h6 class="text-center mb-2">Demo Credentials:</h6>
+                            <p class="small text-center mb-1">Email: demo@contentcreator.com</p>
+                            <p class="small text-center mb-0">Password: demo123</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     ''')
 
 @app.route('/logout')
