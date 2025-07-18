@@ -642,7 +642,10 @@ function showDemo() {
 """
 
 # In-memory user store for demo (replace with DB in production)
-USERS = {}
+USERS = {
+    'demo@contentcreator.com': generate_password_hash('demo123'),
+    'test@example.com': generate_password_hash('test123')
+}
 
 # Expanded content directions (18+)
 ALL_DIRECTIONS = [
