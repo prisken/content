@@ -189,48 +189,48 @@ BASE_TEMPLATE = """
                     <li class="nav-item dropdown me-3">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                             <i class="fas fa-globe me-1"></i>
-                            <span id="current-language">English</span>
+                            <span id="current-language" data-translate="english">English</span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item language-option" href="/language/en">
-                                <i class="fas fa-flag me-2"></i>English
+                            <li><a class="dropdown-item language-option" href="#" data-lang="en">
+                                <i class="fas fa-flag me-2"></i><span data-translate="english">English</span>
                             </a></li>
-                            <li><a class="dropdown-item language-option" href="/language/zh">
-                                <i class="fas fa-flag me-2"></i>中文
+                            <li><a class="dropdown-item language-option" href="#" data-lang="zh">
+                                <i class="fas fa-flag me-2"></i><span data-translate="chinese">中文</span>
                             </a></li>
                         </ul>
                     </li>
                     
                     <li class="nav-item">
-                        <a class="nav-link" href="/"><i class="fas fa-home me-1"></i>Home</a>
+                        <a class="nav-link" href="/"><i class="fas fa-home me-1"></i><span data-translate="home">Home</span></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/generator"><i class="fas fa-magic me-1"></i>Generator</a>
+                        <a class="nav-link" href="/generator"><i class="fas fa-magic me-1"></i><span data-translate="generator">Generator</span></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/dashboard"><i class="fas fa-chart-line me-1"></i>Dashboard</a>
+                        <a class="nav-link" href="/dashboard"><i class="fas fa-chart-line me-1"></i><span data-translate="dashboard">Dashboard</span></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/library"><i class="fas fa-book me-1"></i>Library</a>
+                        <a class="nav-link" href="/library"><i class="fas fa-book me-1"></i><span data-translate="library">Library</span></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/settings"><i class="fas fa-cog me-1"></i>Settings</a>
+                        <a class="nav-link" href="/settings"><i class="fas fa-cog me-1"></i><span data-translate="settings">Settings</span></a>
                     </li>
                     {% if 'user' in session %}
                     <li class="nav-item">
                         <span class="user-welcome">
-                            <i class="fas fa-user me-1"></i>Welcome, {{ session['user'] }}
+                            <i class="fas fa-user me-1"></i><span data-translate="welcome">Welcome</span>, {{ session['user'] }}
                         </span>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt me-1"></i>Logout</a>
+                        <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt me-1"></i><span data-translate="logout">Logout</span></a>
                     </li>
                     {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="/login"><i class="fas fa-sign-in-alt me-1"></i>Login</a>
+                        <a class="nav-link" href="/login"><i class="fas fa-sign-in-alt me-1"></i><span data-translate="login">Login</span></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/register"><i class="fas fa-user-plus me-1"></i>Register</a>
+                        <a class="nav-link" href="/register"><i class="fas fa-user-plus me-1"></i><span data-translate="register">Register</span></a>
                     </li>
                     {% endif %}
                 </ul>
@@ -240,6 +240,16 @@ BASE_TEMPLATE = """
 
     <!-- Main Content -->
     <div class="main-content">
+        <!-- Debug Translation Test -->
+        <div class="container mb-3" id="debug-translation">
+            <div class="alert alert-info">
+                <h6>Translation Debug</h6>
+                <button class="btn btn-sm btn-primary me-2" onclick="switchLanguage('en')">Switch to English</button>
+                <button class="btn btn-sm btn-warning me-2" onclick="switchLanguage('zh')">Switch to Chinese</button>
+                <button class="btn btn-sm btn-info" onclick="console.log('Current language:', currentLanguage); console.log('Translation keys:', Object.keys(translations.en).length);">Debug Info</button>
+            </div>
+        </div>
+        
         <!-- Flash Messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -259,30 +269,215 @@ BASE_TEMPLATE = """
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Translation System -->
     <script>
-    // Language switching functionality
-    document.addEventListener('DOMContentLoaded', function() {
-        // Update language display based on session
-        const currentLang = '{{ session.get("language", "en") }}';
+    // Global variables
+    let currentLanguage = '{{ session.get("language", "en") }}';
+    
+    // Translation dictionary
+    const translations = {
+        en: {
+            // Navigation
+            'dashboard': 'Dashboard',
+            'generator': 'Generator',
+            'library': 'Library',
+            'settings': 'Settings',
+            'account': 'Account',
+            'logout': 'Logout',
+            'login': 'Login',
+            'register': 'Register',
+            'english': 'English',
+            'chinese': '中文',
+            'home': 'Home',
+            'welcome': 'Welcome',
+            
+            // Common
+            'loading': 'Loading...',
+            'error': 'Error',
+            'success': 'Success',
+            'cancel': 'Cancel',
+            'save': 'Save',
+            'edit': 'Edit',
+            'delete': 'Delete',
+            'close': 'Close',
+            'submit': 'Submit',
+            'back': 'Back',
+            'next': 'Next',
+            'previous': 'Previous',
+            'continue': 'Continue',
+            'finish': 'Finish',
+            
+            // Generator page
+            'content_generator': 'Content Generator',
+            'step_1': 'Step 1',
+            'step_2': 'Step 2',
+            'step_3': 'Step 3',
+            'step_4': 'Step 4',
+            'step_5': 'Step 5',
+            'choose_direction': 'Choose Your Content Direction',
+            'choose_platform': 'Choose Your Platform',
+            'what_inspires': 'What Inspires You?',
+            'generate_content': 'Generate Content',
+            'linkedin': 'LinkedIn',
+            'facebook': 'Facebook',
+            'instagram': 'Instagram',
+            'twitter': 'Twitter',
+            'youtube_shorts': 'YouTube Shorts',
+            'blog_article': 'Blog Article',
+            'professional': 'Professional',
+            'casual': 'Casual',
+            'inspirational': 'Inspirational',
+            'educational': 'Educational',
+            'entertaining': 'Entertaining'
+        },
+        zh: {
+            // Navigation
+            'dashboard': '仪表板',
+            'generator': '生成器',
+            'library': '库',
+            'settings': '设置',
+            'account': '账户',
+            'logout': '登出',
+            'login': '登录',
+            'register': '注册',
+            'english': 'English',
+            'chinese': '中文',
+            'home': '首页',
+            'welcome': '欢迎',
+            
+            // Common
+            'loading': '加载中...',
+            'error': '错误',
+            'success': '成功',
+            'cancel': '取消',
+            'save': '保存',
+            'edit': '编辑',
+            'delete': '删除',
+            'close': '关闭',
+            'submit': '提交',
+            'back': '返回',
+            'next': '下一步',
+            'previous': '上一步',
+            'continue': '继续',
+            'finish': '完成',
+            
+            // Generator page
+            'content_generator': '内容生成器',
+            'step_1': '第1步',
+            'step_2': '第2步',
+            'step_3': '第3步',
+            'step_4': '第4步',
+            'step_5': '第5步',
+            'choose_direction': '选择您的内容方向',
+            'choose_platform': '选择您的平台',
+            'what_inspires': '什么激励着您？',
+            'generate_content': '生成内容',
+            'linkedin': '领英',
+            'facebook': '脸书',
+            'instagram': 'Instagram',
+            'twitter': '推特',
+            'youtube_shorts': 'YouTube短视频',
+            'blog_article': '博客文章',
+            'professional': '专业',
+            'casual': '随意',
+            'inspirational': '励志',
+            'educational': '教育',
+            'entertaining': '娱乐'
+        }
+    };
+    
+    // Translation functions
+    function switchLanguage(lang) {
+        console.log('Switching language to:', lang);
+        currentLanguage = lang;
+        
+        // Update UI to show current language
+        updateLanguageDisplay(lang);
+        
+        // Translate the entire page
+        translatePage(lang);
+        
+        // Send AJAX request to update server-side language preference
+        $.ajax({
+            url: '/language/' + lang,
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            success: function(response) {
+                console.log('Language switch response:', response);
+            },
+            error: function(xhr, status, error) {
+                console.log('Language switch error:', xhr, status, error);
+            }
+        });
+    }
+    
+    function updateLanguageDisplay(lang) {
+        console.log('Updating language display for:', lang);
         const languageNames = {
             'en': 'English',
             'zh': '中文'
         };
         
-        const currentLanguageSpan = document.getElementById('current-language');
-        if (currentLanguageSpan) {
-            currentLanguageSpan.textContent = languageNames[currentLang] || 'English';
-        }
+        $('#current-language').text(languageNames[lang] || 'English');
+    }
+    
+    function translatePage(lang) {
+        console.log('Translating page to:', lang);
+        const langDict = translations[lang] || translations['en'];
+        console.log('Translation dictionary keys:', Object.keys(langDict).length);
+        console.log('Available translation keys:', Object.keys(langDict));
         
-        // Highlight current language in dropdown
-        const languageOptions = document.querySelectorAll('.language-option');
-        languageOptions.forEach(option => {
-            if (option.getAttribute('href').includes(currentLang)) {
-                option.classList.add('active');
+        // Count elements to translate
+        const elementsToTranslate = $('[data-translate]');
+        console.log('Elements with data-translate attribute found:', elementsToTranslate.length);
+        
+        // Translate all elements with data-translate attribute
+        $('[data-translate]').each(function() {
+            const key = $(this).data('translate');
+            const translation = langDict[key];
+            if (translation) {
+                $(this).text(translation);
+                console.log('Translated ' + key + ' to:', translation);
+            } else {
+                console.log('No translation found for key: ' + key);
             }
         });
+        
+        // Update HTML lang attribute
+        $('html').attr('lang', lang);
+        console.log('Page translation completed');
+    }
+    
+    // Initialize on page load
+    $(document).ready(function() {
+        console.log('Document ready, initializing translation system...');
+        
+        // Set up event listeners for language selector
+        $('.language-option').on('click', function(e) {
+            console.log('Language option clicked:', $(this).data('lang'));
+            e.preventDefault();
+            const lang = $(this).data('lang');
+            switchLanguage(lang);
+        });
+        
+        // Test if language options exist
+        console.log('Language options found:', $('.language-option').length);
+        $('.language-option').each(function() {
+            console.log('Language option:', $(this).data('lang'), $(this).text());
+        });
+        
+        // Initialize language system
+        console.log('Initializing language system...');
+        updateLanguageDisplay(currentLanguage);
+        translatePage(currentLanguage);
+        console.log('Translation system initialized');
     });
     </script>
+    
     {{ scripts | safe if scripts else '' }}
 </body>
 </html>
