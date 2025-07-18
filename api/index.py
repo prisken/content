@@ -185,6 +185,22 @@ BASE_TEMPLATE = """
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
+                    <!-- Language Selector -->
+                    <li class="nav-item dropdown me-3">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-globe me-1"></i>
+                            <span id="current-language">English</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item language-option" href="/language/en">
+                                <i class="fas fa-flag me-2"></i>English
+                            </a></li>
+                            <li><a class="dropdown-item language-option" href="/language/zh">
+                                <i class="fas fa-flag me-2"></i>中文
+                            </a></li>
+                        </ul>
+                    </li>
+                    
                     <li class="nav-item">
                         <a class="nav-link" href="/"><i class="fas fa-home me-1"></i>Home</a>
                     </li>
@@ -243,6 +259,30 @@ BASE_TEMPLATE = """
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    // Language switching functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Update language display based on session
+        const currentLang = '{{ session.get("language", "en") }}';
+        const languageNames = {
+            'en': 'English',
+            'zh': '中文'
+        };
+        
+        const currentLanguageSpan = document.getElementById('current-language');
+        if (currentLanguageSpan) {
+            currentLanguageSpan.textContent = languageNames[currentLang] || 'English';
+        }
+        
+        // Highlight current language in dropdown
+        const languageOptions = document.querySelectorAll('.language-option');
+        languageOptions.forEach(option => {
+            if (option.getAttribute('href').includes(currentLang)) {
+                option.classList.add('active');
+            }
+        });
+    });
+    </script>
     {{ scripts | safe if scripts else '' }}
 </body>
 </html>
@@ -1717,6 +1757,46 @@ def logout():
     session.pop('user', None)
     flash('Logged out.', 'info')
     return redirect(url_for('index'))
+
+@app.route('/language/<lang>')
+def switch_language(lang):
+    """Switch application language"""
+    if lang in ['en', 'zh']:
+        session['language'] = lang
+    return redirect(request.referrer or url_for('index'))
+
+@app.route('/api/translate', methods=['POST'])
+def translate_content():
+    """Translate content between English and Chinese"""
+    try:
+        data = request.get_json()
+        content = data.get('content', '')
+        target_lang = data.get('target_lang', 'en')
+        
+        if not content:
+            return jsonify({
+                'success': False,
+                'error': 'No content provided'
+            }), 400
+        
+        # For now, return a placeholder response
+        # This will be replaced with actual AI translation later
+        if target_lang == 'zh':
+            translated_content = f"[中文翻译] {content}"
+        else:
+            translated_content = f"[English Translation] {content}"
+        
+        return jsonify({
+            'success': True,
+            'translated_content': translated_content,
+            'target_language': target_lang
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
 
 @app.route('/health')
 def health():

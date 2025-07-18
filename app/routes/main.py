@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, jsonify, current_app
+from flask import Blueprint, render_template, request, jsonify, current_app, session, redirect, url_for
 from app.models.user import User
 from app.models.content import Content
 from app.models.content_direction import ContentDirection
@@ -30,6 +30,46 @@ def library():
 def settings():
     """User settings page"""
     return render_template('settings.html')
+
+@main_bp.route('/language/<lang>')
+def switch_language(lang):
+    """Switch application language"""
+    if lang in ['en', 'zh']:
+        session['language'] = lang
+    return redirect(request.referrer or url_for('main.index'))
+
+@main_bp.route('/api/translate', methods=['POST'])
+def translate_content():
+    """Translate content between English and Chinese"""
+    try:
+        data = request.get_json()
+        content = data.get('content', '')
+        target_lang = data.get('target_lang', 'en')
+        
+        if not content:
+            return jsonify({
+                'success': False,
+                'error': 'No content provided'
+            }), 400
+        
+        # For now, return a placeholder response
+        # This will be replaced with actual AI translation later
+        if target_lang == 'zh':
+            translated_content = f"[中文翻译] {content}"
+        else:
+            translated_content = f"[English Translation] {content}"
+        
+        return jsonify({
+            'success': True,
+            'translated_content': translated_content,
+            'target_language': target_lang
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
 
 @main_bp.route('/api/directions')
 def get_directions():

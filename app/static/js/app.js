@@ -34,6 +34,13 @@ function setupEventListeners() {
         logout();
     });
     
+    // Language selector
+    $('.language-option').on('click', function(e) {
+        e.preventDefault();
+        const lang = $(this).data('lang');
+        switchLanguage(lang);
+    });
+    
     // Global error handling
     $(document).ajaxError(function(event, xhr, settings, error) {
         handleAjaxError(xhr, error);
@@ -375,6 +382,111 @@ function removeLocalStorage(key) {
         console.error('Error removing from localStorage:', e);
     }
 }
+
+// Language and Translation Functions
+function switchLanguage(lang) {
+    // Store language preference
+    setLocalStorage('preferred_language', lang);
+    
+    // Update UI to show current language
+    updateLanguageDisplay(lang);
+    
+    // Redirect to language switch endpoint
+    window.location.href = `/language/${lang}`;
+}
+
+function updateLanguageDisplay(lang) {
+    const languageNames = {
+        'en': 'English',
+        'zh': '中文'
+    };
+    
+    $('#current-language').text(languageNames[lang] || 'English');
+    
+    // Update active state in dropdown
+    $('.language-option').removeClass('active');
+    $(`.language-option[data-lang="${lang}"]`).addClass('active');
+}
+
+function translateContent(targetLang) {
+    const contentPreview = $('#contentPreview');
+    const originalContent = contentPreview.data('original-content');
+    
+    if (!originalContent) {
+        showErrorMessage('No content to translate');
+        return;
+    }
+    
+    // Show loading state
+    showLoading(contentPreview, 'Translating...');
+    
+    // Call translation API
+    $.ajax({
+        url: '/api/translate',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            content: originalContent,
+            target_lang: targetLang
+        }),
+        success: function(response) {
+            hideLoading(contentPreview);
+            
+            if (response.success) {
+                // Update content preview
+                contentPreview.html(`<pre>${response.translated_content}</pre>`);
+                
+                // Update language indicators
+                updateContentLanguageIndicator(targetLang);
+                
+                // Update translation button states
+                updateTranslationButtonStates(targetLang);
+                
+                showSuccessMessage('Content translated successfully');
+            } else {
+                showErrorMessage(response.error || 'Translation failed');
+            }
+        },
+        error: function(xhr) {
+            hideLoading(contentPreview);
+            const error = xhr.responseJSON?.error || 'Translation failed';
+            showErrorMessage(error);
+        }
+    });
+}
+
+function updateContentLanguageIndicator(lang) {
+    $('.content-language').hide();
+    $(`.content-language.${lang}`).show();
+}
+
+function updateTranslationButtonStates(activeLang) {
+    // Reset all buttons
+    $('#translateEn, #translateZh').removeClass('btn-primary btn-warning').addClass('btn-outline-primary btn-outline-warning');
+    
+    // Highlight active button
+    if (activeLang === 'en') {
+        $('#translateEn').removeClass('btn-outline-primary').addClass('btn-primary');
+    } else if (activeLang === 'zh') {
+        $('#translateZh').removeClass('btn-outline-warning').addClass('btn-warning');
+    }
+}
+
+function showTranslationControls() {
+    $('#translationControls').show();
+    updateContentLanguageIndicator('en'); // Default to English
+    updateTranslationButtonStates('en');
+}
+
+function hideTranslationControls() {
+    $('#translationControls').hide();
+}
+
+// Initialize language on page load
+$(document).ready(function() {
+    const savedLang = getLocalStorage('preferred_language', 'en');
+    updateLanguageDisplay(savedLang);
+});
 
 // Export functions for use in other modules
 window.ContentCreatorApp = {

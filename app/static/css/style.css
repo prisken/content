@@ -344,4 +344,71 @@ body {
     0%, 100% { transform: translateX(0); }
     25% { transform: translateX(-5px); }
     75% { transform: translateX(5px); }
+}
+
+/* Language Selector */
+.language-selector {
+    position: relative;
+}
+
+.language-option {
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.language-option:hover {
+    background-color: var(--light-color);
+}
+
+.language-option.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Translation Controls */
+.translation-controls {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.translation-controls .btn {
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.translation-controls .btn.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Content Language Display */
+.content-language {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.content-language.en {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.content-language.zh {
+    background-color: #fff3e0;
+    color: #f57c00;
+}
+
+/* Language-specific text adjustments */
+[data-lang="zh"] {
+    font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+}
+
+[data-lang="zh"] .content-preview {
+    font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', monospace;
 } 

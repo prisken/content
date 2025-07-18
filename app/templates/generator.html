@@ -361,6 +361,26 @@
                         </div>
                     </div>
                     
+                    <!-- Translation Controls -->
+                    <div id="translationControls" style="display: none;">
+                        <hr>
+                        <div class="translation-controls">
+                            <h6 class="mb-2">Translate Content</h6>
+                            <div class="mb-2">
+                                <span class="content-language en">English</span>
+                                <span class="content-language zh" style="display: none;">中文</span>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-primary" onclick="translateContent('en')" id="translateEn">
+                                    <i class="fas fa-language me-1"></i> Show English
+                                </button>
+                                <button class="btn btn-outline-warning" onclick="translateContent('zh')" id="translateZh">
+                                    <i class="fas fa-language me-1"></i> 显示中文
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div id="contentActions" style="display: none;">
                         <hr>
                         <div class="d-grid gap-2">
@@ -577,7 +597,13 @@ function generateMockContent() {
 function displayContent(content) {
     generatedContent = content;
     $('#contentPreview').html(`<pre class="mb-0">${content}</pre>`);
+    
+    // Store original content for translation
+    $('#contentPreview').data('original-content', content);
+    
+    // Show content actions and translation controls
     $('#contentActions').show();
+    showTranslationControls();
 }
 
 function saveContent() {
