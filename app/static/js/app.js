@@ -470,9 +470,15 @@ const translations = {
 
 // Initialize application
 $(document).ready(function() {
+    console.log('Document ready - initializing app...');
     initializeApp();
     setupEventListeners();
     initializeLanguage();
+    
+    // Show debug panel in development
+    if (window.location.hostname === 'localhost' || window.location.hostname.includes('vercel.app')) {
+        $('#debug-translation').show();
+    }
 });
 
 function initializeApp() {
@@ -493,6 +499,8 @@ function initializeApp() {
 }
 
 function setupEventListeners() {
+    console.log('Setting up event listeners...');
+    
     // Logout button
     $('#logout-btn').on('click', function(e) {
         e.preventDefault();
@@ -500,10 +508,18 @@ function setupEventListeners() {
     });
     
     // Language selector
+    console.log('Setting up language selector event listeners...');
     $('.language-option').on('click', function(e) {
+        console.log('Language option clicked:', $(this).data('lang'));
         e.preventDefault();
         const lang = $(this).data('lang');
         switchLanguage(lang);
+    });
+    
+    // Test if language options exist
+    console.log('Language options found:', $('.language-option').length);
+    $('.language-option').each(function() {
+        console.log('Language option:', $(this).data('lang'), $(this).text());
     });
     
     // Global error handling
@@ -522,6 +538,8 @@ function setupEventListeners() {
             form.addClass('was-validated');
         }
     });
+    
+    console.log('Event listeners setup completed');
 }
 
 // Authentication functions
@@ -850,13 +868,17 @@ function removeLocalStorage(key) {
 
 // Language and Translation Functions
 function initializeLanguage() {
+    console.log('Initializing language system...');
     const savedLang = getLocalStorage('preferred_language', 'en');
+    console.log('Saved language:', savedLang);
     currentLanguage = savedLang;
     updateLanguageDisplay(savedLang);
     translatePage(savedLang);
+    console.log('Language system initialized');
 }
 
 function switchLanguage(lang) {
+    console.log('Switching language to:', lang);
     // Store language preference
     setLocalStorage('preferred_language', lang);
     currentLanguage = lang;
@@ -875,11 +897,13 @@ function switchLanguage(lang) {
             'X-Requested-With': 'XMLHttpRequest'
         },
         success: function(response) {
+            console.log('Language switch response:', response);
             if (response.success) {
                 showSuccessMessage(lang === 'en' ? 'Language switched to English' : '语言已切换为中文');
             }
         },
-        error: function() {
+        error: function(xhr, status, error) {
+            console.log('Language switch error:', xhr, status, error);
             // Still show success message even if server request fails
             showSuccessMessage(lang === 'en' ? 'Language switched to English' : '语言已切换为中文');
         }
@@ -887,6 +911,7 @@ function switchLanguage(lang) {
 }
 
 function updateLanguageDisplay(lang) {
+    console.log('Updating language display for:', lang);
     const languageNames = {
         'en': 'English',
         'zh': '中文'
@@ -900,7 +925,9 @@ function updateLanguageDisplay(lang) {
 }
 
 function translatePage(lang) {
+    console.log('Translating page to:', lang);
     const langDict = translations[lang] || translations['en'];
+    console.log('Translation dictionary keys:', Object.keys(langDict).length);
     
     // Translate all elements with data-translate attribute
     $('[data-translate]').each(function() {
@@ -908,6 +935,9 @@ function translatePage(lang) {
         const translation = langDict[key];
         if (translation) {
             $(this).text(translation);
+            console.log(`Translated ${key} to:`, translation);
+        } else {
+            console.log(`No translation found for key: ${key}`);
         }
     });
     
@@ -937,6 +967,7 @@ function translatePage(lang) {
     
     // Update HTML lang attribute
     $('html').attr('lang', lang);
+    console.log('Page translation completed');
 }
 
 function translateContent(targetLang) {
