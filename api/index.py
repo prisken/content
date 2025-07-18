@@ -2106,7 +2106,7 @@ SETTINGS_CONTENT = """
     <div class="row">
         <div class="col-12">
             <h1 class="h2 mb-4">
-                <i class="fas fa-cog me-2 text-primary"></i>Settings
+                <i class="fas fa-cog me-2 text-primary"></i><span data-translate="settings">Settings</span>
             </h1>
         </div>
     </div>
@@ -2116,67 +2116,67 @@ SETTINGS_CONTENT = """
             <!-- Profile Settings -->
             <div class="card mb-4">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-user me-2"></i>Profile</h5>
+                    <h5 class="mb-0"><i class="fas fa-user me-2"></i><span data-translate="profile">Profile</span></h5>
                 </div>
                 <div class="card-body">
                     <form id="profileForm">
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Name</label>
+                                <label class="form-label" data-translate="name">Name</label>
                                 <input type="text" class="form-control" value="Demo User" id="userName">
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Email</label>
+                                <label class="form-label" data-translate="email">Email</label>
                                 <input type="email" class="form-control" value="demo@contentcreator.com" readonly>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Company</label>
+                                <label class="form-label" data-translate="company">Company</label>
                                 <input type="text" class="form-control" value="Content Creator Pro" id="userCompany">
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Industry</label>
+                                <label class="form-label" data-translate="industry">Industry</label>
                                 <select class="form-select" id="userIndustry">
-                                    <option value="technology">Technology</option>
-                                    <option value="finance">Finance</option>
-                                    <option value="healthcare">Healthcare</option>
-                                    <option value="education">Education</option>
-                                    <option value="marketing">Marketing</option>
-                                    <option value="consulting">Consulting</option>
-                                    <option value="other">Other</option>
+                                    <option value="technology" data-translate="technology">Technology</option>
+                                    <option value="finance" data-translate="finance">Finance</option>
+                                    <option value="healthcare" data-translate="healthcare">Healthcare</option>
+                                    <option value="education" data-translate="education">Education</option>
+                                    <option value="marketing" data-translate="marketing">Marketing</option>
+                                    <option value="consulting" data-translate="consulting">Consulting</option>
+                                    <option value="other" data-translate="other">Other</option>
                                 </select>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Region</label>
+                                <label class="form-label" data-translate="region">Region</label>
                                 <select class="form-select" id="userRegion">
-                                    <option value="global">Global</option>
-                                    <option value="us">United States</option>
-                                    <option value="eu">Europe</option>
-                                    <option value="asia">Asia</option>
-                                    <option value="latin_america">Latin America</option>
-                                    <option value="africa">Africa</option>
-                                    <option value="oceania">Oceania</option>
+                                    <option value="global" data-translate="global">Global</option>
+                                    <option value="us" data-translate="united_states">United States</option>
+                                    <option value="eu" data-translate="europe">Europe</option>
+                                    <option value="asia" data-translate="asia">Asia</option>
+                                    <option value="latin_america" data-translate="latin_america">Latin America</option>
+                                    <option value="africa" data-translate="africa">Africa</option>
+                                    <option value="oceania" data-translate="oceania">Oceania</option>
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Language</label>
+                                <label class="form-label" data-translate="language">Language</label>
                                 <select class="form-select" id="userLanguage">
-                                    <option value="en">English</option>
-                                    <option value="zh">中文</option>
-                                    <option value="es">Spanish</option>
-                                    <option value="fr">French</option>
-                                    <option value="de">German</option>
-                                    <option value="ja">Japanese</option>
-                                    <option value="ko">Korean</option>
+                                    <option value="en" data-translate="english">English</option>
+                                    <option value="zh" data-translate="chinese">中文</option>
+                                    <option value="es" data-translate="spanish">Spanish</option>
+                                    <option value="fr" data-translate="french">French</option>
+                                    <option value="de" data-translate="german">German</option>
+                                    <option value="ja" data-translate="japanese">Japanese</option>
+                                    <option value="ko" data-translate="korean">Korean</option>
                                 </select>
                             </div>
                         </div>
                         <div class="text-end">
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-2"></i>Save Profile
+                                <i class="fas fa-save me-2"></i><span data-translate="save_profile">Save Profile</span>
                             </button>
                         </div>
                     </form>
@@ -2186,7 +2186,7 @@ SETTINGS_CONTENT = """
             <!-- Content Preferences -->
             <div class="card mb-4">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-magic me-2"></i>Content Preferences</h5>
+                    <h5 class="mb-0"><i class="fas fa-magic me-2"></i><span data-translate="content_preferences">Content Preferences</span></h5>
                 </div>
                 <div class="card-body">
                     <form id="contentForm">
