@@ -21,11 +21,18 @@ BASE_TEMPLATE = """
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
-        .navbar { background: rgba(255,255,255,0.1) !important; backdrop-filter: blur(10px); }
+        .navbar { 
+            background: rgba(255,255,255,0.1) !important; 
+            backdrop-filter: blur(10px); 
+            position: fixed !important;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
         .navbar-brand { color: #fff !important; font-weight: bold; }
         .nav-link { color: #fff !important; }
         .nav-link:hover { color: #f0f0f0 !important; }
-        .main-content { padding: 50px 0; color: #fff; }
+        .main-content { padding: 100px 0 50px 0; color: #fff; }
         .card { background: rgba(255,255,255,0.95); border: none; border-radius: 15px; }
         .btn-primary { background: linear-gradient(45deg, #667eea, #764ba2); border: none; }
         .feature-card { background: #fff; border-radius: 15px; padding: 30px; margin: 20px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.1); color: #222; }
@@ -206,7 +213,7 @@ BASE_TEMPLATE = """
                     </li>
                     
                     <li class="nav-item">
-                        <a class="nav-link" href="/"><i class="fas fa-home me-1"></i><span data-translate="home">Home</span></a>
+                        <a class="nav-link" href="/home"><i class="fas fa-home me-1"></i><span data-translate="home">Home</span></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/generator"><i class="fas fa-magic me-1"></i><span data-translate="generator">Generator</span></a>
@@ -223,7 +230,7 @@ BASE_TEMPLATE = """
                     {% if 'user' in session %}
                     <li class="nav-item">
                         <span class="user-welcome">
-                            <i class="fas fa-user me-1"></i><span data-translate="welcome">Welcome</span>, {{ session['user'] }}
+                            <i class="fas fa-user me-1"></i><span data-translate="welcome">Welcome</span>, {{ session['user'].split('@')[0] if '@' in session['user'] else session['user'] }}
                         </span>
                     </li>
                     <li class="nav-item">
@@ -444,8 +451,24 @@ BASE_TEMPLATE = """
             'twitter': 'Twitter',
             'instagram': 'Instagram',
             'blog': 'Blog',
+            'email': 'Email',
+            'password': 'Password',
+            'already_have_account': 'Already have an account?',
+            'login_here': 'Login here',
+            'dont_have_account': 'Don\'t have an account?',
+            'register_here': 'Register here',
+            'demo_credentials': 'Demo Credentials:',
             'translate_to_chinese': 'Translate to Chinese',
             'translate_to_english': 'Translate to English',
+            'step_5': 'Step 5',
+            'review_and_generate': 'Review & Generate',
+            'your_selections': 'Your Selections',
+            'direction': 'Direction',
+            'platform': 'Platform',
+            'source': 'Source',
+            'topic': 'Topic',
+            'tone': 'Tone',
+            'review_message': 'Review your selections above. Click Generate to create your content.',
             
             // Tone options
             'professional': 'Professional',
@@ -634,8 +657,24 @@ BASE_TEMPLATE = """
             'twitter': '推特',
             'instagram': 'Instagram',
             'blog': '博客',
+            'email': '邮箱',
+            'password': '密码',
+            'already_have_account': '已有账户？',
+            'login_here': '在此登录',
+            'dont_have_account': '没有账户？',
+            'register_here': '在此注册',
+            'demo_credentials': '演示凭据：',
             'translate_to_chinese': '翻译成中文',
             'translate_to_english': '翻译成英文',
+            'step_5': '第5步',
+            'review_and_generate': '审查和生成',
+            'your_selections': '您的选择',
+            'direction': '方向',
+            'platform': '平台',
+            'source': '来源',
+            'topic': '主题',
+            'tone': '语调',
+            'review_message': '查看上面的选择。点击生成来创建您的内容。',
             
             // Tone options
             'professional': '专业',
@@ -697,6 +736,8 @@ BASE_TEMPLATE = """
             const optionLang = $(this).data('lang');
             if (optionLang === lang) {
                 $(this).addClass('active');
+                // Update the dropdown toggle text
+                $('#current-language').text(languageNames[optionLang]);
             } else {
                 $(this).removeClass('active');
             }
@@ -1207,6 +1248,39 @@ GENERATOR_CONTENT = """
                             </div>
                         </div>
                         
+                        <!-- Step 5: Review and Generate -->
+                        <div id="step5" class="step-content" style="display: none;">
+                            <h3 class="text-center mb-4"><span data-translate="step_5">Step 5</span>: <span data-translate="review_and_generate">Review & Generate</span></h3>
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="mb-3"><span data-translate="your_selections">Your Selections</span>:</h5>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p><strong><span data-translate="direction">Direction</span>:</strong> <span id="reviewDirection"></span></p>
+                                            <p><strong><span data-translate="platform">Platform</span>:</strong> <span id="reviewPlatform"></span></p>
+                                            <p><strong><span data-translate="source">Source</span>:</strong> <span id="reviewSource"></span></p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><strong><span data-translate="topic">Topic</span>:</strong> <span id="reviewTopic"></span></p>
+                                            <p><strong><span data-translate="tone">Tone</span>:</strong> <span id="reviewTone"></span></p>
+                                        </div>
+                                    </div>
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        <span data-translate="review_message">Review your selections above. Click Generate to create your content.</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-4">
+                                <button type="button" class="btn btn-secondary btn-lg me-3" onclick="prevStep()">
+                                    <i class="fas fa-arrow-left me-2"></i><span data-translate="previous">Previous</span>
+                                </button>
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-magic me-2"></i><span data-translate="generate_content">Generate Content</span>
+                                </button>
+                            </div>
+                        </div>
+                        
                         <!-- Hidden form fields -->
                         <input type="hidden" id="selectedDirection" name="direction">
                         <input type="hidden" id="selectedPlatform" name="platform">
@@ -1301,9 +1375,9 @@ document.querySelectorAll('[data-tone]').forEach(card => {
         selectedTone = this.dataset.tone;
         document.getElementById('selectedTone').value = selectedTone;
         
-        // Enable generate button for step 4
-        const generateBtn = document.querySelector('#step4 button[type="submit"]');
-        if (generateBtn) generateBtn.disabled = false;
+        // Enable next button for step 4
+        const step4Next = document.querySelector('#step4 button[onclick="nextStep()"]');
+        if (step4Next) step4Next.disabled = false;
     });
 });
 
@@ -1323,6 +1397,16 @@ function nextStep() {
         return;
     }
     
+    if (currentStep === 4 && selectedTone) {
+        // Move to review step
+        document.getElementById('step4').style.display = 'none';
+        document.getElementById('step5').style.display = 'block';
+        currentStep = 5;
+        updateStepProgress();
+        updateReviewSelections();
+        return;
+    }
+    
     if (currentStep < 4) {
         document.getElementById('step' + currentStep).style.display = 'none';
         currentStep++;
@@ -1332,6 +1416,15 @@ function nextStep() {
 }
 
 function prevStep() {
+    if (currentStep === 5) {
+        // Go back from review to tone selection
+        document.getElementById('step5').style.display = 'none';
+        document.getElementById('step4').style.display = 'block';
+        currentStep = 4;
+        updateStepProgress();
+        return;
+    }
+    
     if (currentStep === 4) {
         // Go back from tone to topic selection
         document.getElementById('step4').style.display = 'none';
@@ -1630,6 +1723,10 @@ function updateStepProgress() {
             step.classList.add('active');
         } else if (currentStep === 4 && index === 3) {
             step.classList.add('active');
+        } else if (currentStep === 5 && index === 4) {
+            step.classList.add('active');
+        } else if (currentStep === 5 && index < 4) {
+            step.classList.add('completed');
         } else if (currentStep === 4 && index < 3) {
             step.classList.add('completed');
         } else if (currentStep === 3.5 && index < 3) {
@@ -1640,6 +1737,69 @@ function updateStepProgress() {
             step.classList.add('active');
         }
     });
+}
+
+function updateReviewSelections() {
+    // Update review display with selected values
+    const directionNames = {
+        'business_finance': 'Business & Finance',
+        'technology': 'Technology',
+        'health_wellness': 'Health & Wellness',
+        'education': 'Education',
+        'entertainment': 'Entertainment',
+        'travel_tourism': 'Travel & Tourism',
+        'food_cooking': 'Food & Cooking',
+        'fashion_beauty': 'Fashion & Beauty',
+        'sports_fitness': 'Sports & Fitness',
+        'science_research': 'Science & Research',
+        'politics_news': 'Politics & News',
+        'environment': 'Environment',
+        'personal_dev': 'Personal Development',
+        'parenting_family': 'Parenting & Family',
+        'art_creativity': 'Art & Creativity',
+        'real_estate': 'Real Estate',
+        'automotive': 'Automotive',
+        'pet_care': 'Pet Care'
+    };
+    
+    const platformNames = {
+        'linkedin': 'LinkedIn Post',
+        'facebook': 'Facebook Post',
+        'instagram': 'Instagram Post',
+        'twitter': 'Twitter Post',
+        'youtube': 'YouTube Short',
+        'blog': 'Blog Article'
+    };
+    
+    const sourceNames = {
+        'news': 'Latest News',
+        'books': 'Popular Books',
+        'threads': 'Trending Threads',
+        'podcasts': 'Podcasts',
+        'videos': 'YouTube Videos',
+        'research': 'Research Papers',
+        'case_studies': 'Case Studies',
+        'trends': 'Trending Topics'
+    };
+    
+    const toneNames = {
+        'professional': 'Professional',
+        'casual': 'Casual',
+        'inspirational': 'Inspirational',
+        'educational': 'Educational',
+        'humorous': 'Humorous',
+        'serious': 'Serious'
+    };
+    
+    document.getElementById('reviewDirection').textContent = directionNames[selectedDirection] || selectedDirection;
+    document.getElementById('reviewPlatform').textContent = platformNames[selectedPlatform] || selectedPlatform;
+    document.getElementById('reviewSource').textContent = sourceNames[selectedSource] || selectedSource;
+    document.getElementById('reviewTone').textContent = toneNames[selectedTone] || selectedTone;
+    
+    // Get topic text
+    const topics = generateTopics(selectedDirection, selectedSource);
+    const topicText = topics[selectedTopic] || selectedTopic;
+    document.getElementById('reviewTopic').textContent = topicText;
 }
 
 // Form submission
@@ -2827,7 +2987,17 @@ def login_required(f):
 
 @app.route('/')
 def index():
-    """Main landing page"""
+    """Main landing page - redirect to dashboard if logged in"""
+    if 'user' in session:
+        return redirect(url_for('dashboard'))
+    return render_template_string(BASE_TEMPLATE, 
+                                title="Home",
+                                content=LANDING_CONTENT,
+                                scripts=DEMO_SCRIPTS)
+
+@app.route('/home')
+def home():
+    """Landing page"""
     return render_template_string(BASE_TEMPLATE, 
                                 title="Home",
                                 content=LANDING_CONTENT,
