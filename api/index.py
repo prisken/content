@@ -2807,9 +2807,90 @@ GENERATOR_CONTENT = """
                             </div>
                         </div>
                         
-                        <!-- Step 5: Review and Generate -->
+                        <!-- Step 5: Image Style Selection -->
                         <div id="step5" class="step-content" style="display: none;">
-                            <h3 class="text-center mb-4"><span data-translate="step_5">Step 5</span>: <span data-translate="review_and_generate">Review & Generate</span></h3>
+                            <h3 class="text-center mb-4"><span data-translate="step_5">Step 5</span>: <span data-translate="choose_image_style">Choose Image Style</span></h3>
+                            <p class="text-center text-muted mb-4"><span data-translate="image_style_description">Select a style for your generated image that matches your content</span></p>
+                            
+                            <div class="row">
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-image-style="modern">
+                                        <i class="fas fa-palette"></i>
+                                        <div data-translate="modern_style">Modern & Clean</div>
+                                        <small class="text-muted" data-translate="modern_desc">Minimalist design with clean lines</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-image-style="vintage">
+                                        <i class="fas fa-camera-retro"></i>
+                                        <div data-translate="vintage_style">Vintage & Retro</div>
+                                        <small class="text-muted" data-translate="vintage_desc">Classic, nostalgic aesthetic</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-image-style="abstract">
+                                        <i class="fas fa-shapes"></i>
+                                        <div data-translate="abstract_style">Abstract & Artistic</div>
+                                        <small class="text-muted" data-translate="abstract_desc">Creative, non-representational</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-image-style="photorealistic">
+                                        <i class="fas fa-camera"></i>
+                                        <div data-translate="photorealistic_style">Photorealistic</div>
+                                        <small class="text-muted" data-translate="photorealistic_desc">Lifelike, detailed imagery</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-image-style="cartoon">
+                                        <i class="fas fa-paint-brush"></i>
+                                        <div data-translate="cartoon_style">Cartoon & Illustrative</div>
+                                        <small class="text-muted" data-translate="cartoon_desc">Fun, animated style</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-image-style="corporate">
+                                        <i class="fas fa-building"></i>
+                                        <div data-translate="corporate_style">Corporate & Business</div>
+                                        <small class="text-muted" data-translate="corporate_desc">Professional, business-focused</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-image-style="nature">
+                                        <i class="fas fa-leaf"></i>
+                                        <div data-translate="nature_style">Nature & Organic</div>
+                                        <small class="text-muted" data-translate="nature_desc">Natural, earthy elements</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-image-style="tech">
+                                        <i class="fas fa-microchip"></i>
+                                        <div data-translate="tech_style">Tech & Digital</div>
+                                        <small class="text-muted" data-translate="tech_desc">Futuristic, digital aesthetic</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6 mb-3">
+                                    <div class="direction-card" data-image-style="elegant">
+                                        <i class="fas fa-gem"></i>
+                                        <div data-translate="elegant_style">Elegant & Luxury</div>
+                                        <small class="text-muted" data-translate="elegant_desc">Sophisticated, premium feel</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="text-center mt-4">
+                                <button type="button" class="btn btn-secondary btn-lg me-3" onclick="prevStep()">
+                                    <i class="fas fa-arrow-left me-2"></i><span data-translate="previous">Previous</span>
+                                </button>
+                                <button type="button" class="btn btn-primary btn-lg" onclick="nextStep()">
+                                    <span data-translate="next_step">Next Step</span> <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 6: Review and Generate -->
+                        <div id="step6" class="step-content" style="display: none;">
+                            <h3 class="text-center mb-4"><span data-translate="step_6">Step 6</span>: <span data-translate="review_and_generate">Review & Generate</span></h3>
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="mb-3"><span data-translate="your_selections">Your Selections</span>:</h5>
@@ -2822,11 +2903,12 @@ GENERATOR_CONTENT = """
                                         <div class="col-md-6">
                                             <p><strong><span data-translate="topic">Topic</span>:</strong> <span id="reviewTopic"></span></p>
                                             <p><strong><span data-translate="tone">Tone</span>:</strong> <span id="reviewTone"></span></p>
+                                            <p><strong><span data-translate="image_style">Image Style</span>:</strong> <span id="reviewImageStyle"></span></p>
                                         </div>
                                     </div>
                                     <div class="alert alert-info">
                                         <i class="fas fa-info-circle me-2"></i>
-                                        <span data-translate="review_message">Review your selections above. Click Generate to create your content.</span>
+                                        <span data-translate="review_message">Review your selections above. Click Generate to create your content and image.</span>
                                     </div>
                                 </div>
                             </div>
@@ -2835,7 +2917,7 @@ GENERATOR_CONTENT = """
                                     <i class="fas fa-arrow-left me-2"></i><span data-translate="previous">Previous</span>
                                 </button>
                                 <button type="submit" class="btn btn-primary btn-lg">
-                                    <i class="fas fa-magic me-2"></i><span data-translate="generate_content">Generate Content</span>
+                                    <i class="fas fa-magic me-2"></i><span data-translate="generate_content">Generate Content & Image</span>
                                 </button>
                             </div>
                         </div>
@@ -2846,6 +2928,7 @@ GENERATOR_CONTENT = """
                         <input type="hidden" id="selectedSource" name="source">
                         <input type="hidden" id="selectedTopic" name="topic">
                         <input type="hidden" id="selectedTone" name="tone">
+                        <input type="hidden" id="selectedImageStyle" name="imageStyle">
                         <input type="hidden" id="sourceDetails" name="sourceDetails">
                     </form>
                 </div>
@@ -2882,6 +2965,7 @@ let selectedPlatform = '';
 let selectedSource = '';
 let selectedTopic = '';
 let selectedTone = '';
+let selectedImageStyle = '';
 let sourceDetails = {};
 
 // Direction card selection
@@ -2940,6 +3024,20 @@ document.querySelectorAll('[data-tone]').forEach(card => {
     });
 });
 
+// Image style card selection
+document.querySelectorAll('[data-image-style]').forEach(card => {
+    card.addEventListener('click', function() {
+        document.querySelectorAll('[data-image-style]').forEach(c => c.classList.remove('selected'));
+        this.classList.add('selected');
+        selectedImageStyle = this.dataset.imageStyle;
+        document.getElementById('selectedImageStyle').value = selectedImageStyle;
+        
+        // Enable next button for step 5
+        const step5Next = document.querySelector('#step5 button[onclick="nextStep()"]');
+        if (step5Next) step5Next.disabled = false;
+    });
+});
+
 function nextStep() {
     if (currentStep === 3 && selectedSource) {
         // Show topic selection step
@@ -2957,10 +3055,19 @@ function nextStep() {
     }
     
     if (currentStep === 4 && selectedTone) {
-        // Move to review step
+        // Move to image style selection
         document.getElementById('step4').style.display = 'none';
         document.getElementById('step5').style.display = 'block';
         currentStep = 5;
+        updateStepProgress();
+        return;
+    }
+    
+    if (currentStep === 5 && selectedImageStyle) {
+        // Move to review step
+        document.getElementById('step5').style.display = 'none';
+        document.getElementById('step6').style.display = 'block';
+        currentStep = 6;
         updateStepProgress();
         updateReviewSelections();
         return;
@@ -2975,8 +3082,17 @@ function nextStep() {
 }
 
 function prevStep() {
+    if (currentStep === 6) {
+        // Go back from review to image style selection
+        document.getElementById('step6').style.display = 'none';
+        document.getElementById('step5').style.display = 'block';
+        currentStep = 5;
+        updateStepProgress();
+        return;
+    }
+    
     if (currentStep === 5) {
-        // Go back from review to tone selection
+        // Go back from image style to tone selection
         document.getElementById('step5').style.display = 'none';
         document.getElementById('step4').style.display = 'block';
         currentStep = 4;
@@ -3350,10 +3466,23 @@ function updateReviewSelections() {
         'serious': 'Serious'
     };
     
+    const imageStyleNames = {
+        'modern': 'Modern & Clean',
+        'vintage': 'Vintage & Retro',
+        'abstract': 'Abstract & Artistic',
+        'photorealistic': 'Photorealistic',
+        'cartoon': 'Cartoon & Illustrative',
+        'corporate': 'Corporate & Business',
+        'nature': 'Nature & Organic',
+        'tech': 'Tech & Digital',
+        'elegant': 'Elegant & Luxury'
+    };
+    
     document.getElementById('reviewDirection').textContent = directionNames[selectedDirection] || selectedDirection;
     document.getElementById('reviewPlatform').textContent = platformNames[selectedPlatform] || selectedPlatform;
     document.getElementById('reviewSource').textContent = sourceNames[selectedSource] || selectedSource;
     document.getElementById('reviewTone').textContent = toneNames[selectedTone] || selectedTone;
+    document.getElementById('reviewImageStyle').textContent = imageStyleNames[selectedImageStyle] || selectedImageStyle;
     
     // Get topic text
     const topics = generateTopics(selectedDirection, selectedSource);
@@ -3365,7 +3494,7 @@ function updateReviewSelections() {
 document.getElementById('generatorForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
-    if (!selectedDirection || !selectedPlatform || !selectedSource || !selectedTopic || !selectedTone) {
+    if (!selectedDirection || !selectedPlatform || !selectedSource || !selectedTopic || !selectedTone || !selectedImageStyle) {
         alert('Please complete all steps before generating content.');
         return;
     }
@@ -3374,29 +3503,39 @@ document.getElementById('generatorForm').addEventListener('submit', function(e) 
     document.getElementById('result').style.display = 'block';
     document.getElementById('generatedContent').innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin fa-2x"></i><p>Generating content...</p></div>';
     
-    // Simulate content generation (replace with actual API call)
-    setTimeout(() => {
+            // Generate content and image
         const topics = generateTopics(selectedDirection, selectedSource);
         const selectedTopicText = topics[selectedTopic];
         
         // Generate sample content based on selections
         const sampleContent = generateSampleContent(selectedDirection, selectedPlatform, selectedTopicText, selectedTone);
         
+        // First, save content to server
+        saveGeneratedContent(selectedDirection, selectedPlatform, selectedSource, selectedTopicText, selectedTone, sampleContent, selectedImageStyle);
+        
+        // Then generate image
+        generateImageForContent(sampleContent, selectedImageStyle, selectedPlatform, selectedDirection);
+        
+        // Show content immediately
         document.getElementById('generatedContent').innerHTML = `
             <div class="alert alert-success">
                 <h5>Generated Content for ${selectedDirection} - ${selectedPlatform}</h5>
                 <p><strong>Topic:</strong> ${selectedTopicText}</p>
                 <p><strong>Source:</strong> ${selectedSource}</p>
                 <p><strong>Tone:</strong> ${selectedTone}</p>
+                <p><strong>Image Style:</strong> ${selectedImageStyle}</p>
                 <div class="mt-3 p-3 bg-light rounded">
                     <h6>Generated Content:</h6>
                     <p>${sampleContent}</p>
                 </div>
+                <div id="generatedImageContainer" class="mt-3">
+                    <div class="text-center">
+                        <i class="fas fa-spinner fa-spin fa-2x"></i>
+                        <p>Generating image...</p>
+                    </div>
+                </div>
             </div>
         `;
-        
-        // Save content to server
-        saveGeneratedContent(selectedDirection, selectedPlatform, selectedSource, selectedTopicText, selectedTone, sampleContent);
         
         // Show translation buttons based on current language
         if (currentLanguage === 'zh') {
@@ -3404,7 +3543,6 @@ document.getElementById('generatorForm').addEventListener('submit', function(e) 
         } else {
             document.getElementById('translateToChinese').style.display = 'inline-block';
         }
-    }, 2000);
 });
 
 function copyContent() {
@@ -3452,7 +3590,7 @@ function generateSampleContent(direction, platform, topic, tone) {
     return content;
 }
 
-function saveGeneratedContent(direction, platform, source, topic, tone, content) {
+function saveGeneratedContent(direction, platform, source, topic, tone, content, imageStyle) {
     // Send content to server to save
     fetch('/api/save-content', {
         method: 'POST',
@@ -3465,13 +3603,14 @@ function saveGeneratedContent(direction, platform, source, topic, tone, content)
             source: source,
             topic: topic,
             tone: tone,
-            content: content
+            content: content,
+            imageStyle: imageStyle
         })
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            
+            console.log('Content saved successfully:', data.content_id);
         } else {
             console.error('Failed to save content:', data.error);
         }
@@ -3479,6 +3618,97 @@ function saveGeneratedContent(direction, platform, source, topic, tone, content)
     .catch(error => {
         console.error('Error saving content:', error);
     });
+}
+
+function generateImageForContent(content, imageStyle, platform, direction) {
+    // Generate image based on content and style
+    fetch('/api/generate-image', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            content: content,
+            image_style: imageStyle,
+            platform: platform,
+            direction: direction
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Display generated image
+            const imageContainer = document.getElementById('generatedImageContainer');
+            imageContainer.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <h6><i class="fas fa-image me-2"></i>Generated Image</h6>
+                    </div>
+                    <div class="card-body text-center">
+                        <img src="${data.image_url}" alt="Generated image" class="img-fluid rounded" style="max-width: 100%; max-height: 400px;">
+                        <div class="mt-2">
+                            <small class="text-muted">Style: ${data.style}</small>
+                        </div>
+                        <div class="mt-2">
+                            <button class="btn btn-sm btn-outline-primary me-2" onclick="downloadImage('${data.image_url}', '${data.image_id}')">
+                                <i class="fas fa-download me-1"></i>Download
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="regenerateImage()">
+                                <i class="fas fa-redo me-1"></i>Regenerate
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            // Show error
+            const imageContainer = document.getElementById('generatedImageContainer');
+            imageContainer.innerHTML = `
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Failed to generate image: ${data.error}
+                </div>
+            `;
+        }
+    })
+    .catch(error => {
+        console.error('Error generating image:', error);
+        const imageContainer = document.getElementById('generatedImageContainer');
+        imageContainer.innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fas fa-times-circle me-2"></i>
+                Error generating image. Please try again.
+            </div>
+        `;
+    });
+}
+
+function downloadImage(imageUrl, imageId) {
+    // Download image functionality
+    const link = document.createElement('a');
+    link.href = imageUrl;
+    link.download = `generated_image_${imageId}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function regenerateImage() {
+    // Regenerate image with same parameters
+    const contentElement = document.getElementById('generatedContent');
+    const contentText = contentElement.querySelector('p').textContent;
+    
+    // Show loading
+    const imageContainer = document.getElementById('generatedImageContainer');
+    imageContainer.innerHTML = `
+        <div class="text-center">
+            <i class="fas fa-spinner fa-spin fa-2x"></i>
+            <p>Regenerating image...</p>
+        </div>
+    `;
+    
+    // Call image generation again
+    generateImageForContent(contentText, selectedImageStyle, selectedPlatform, selectedDirection);
 }
 
 // Content translation functions
@@ -6409,6 +6639,211 @@ def get_user_images():
             'success': False,
             'error': str(e)
         }), 500
+
+@app.route('/api/generate-image', methods=['POST'])
+def generate_image():
+    """Generate AI image based on content and style"""
+    try:
+        if 'user' not in session:
+            return jsonify({
+                'success': False,
+                'error': 'User not logged in'
+            }), 401
+        
+        data = request.get_json()
+        user_email = session['user']
+        user = get_user(user_email)
+        
+        if not user:
+            return jsonify({
+                'success': False,
+                'error': 'User not found'
+            }), 404
+        
+        # Check user image limits
+        current_image_count = Image.query.filter_by(user_email=user_email).count()
+        if current_image_count >= user.image_limit:
+            return jsonify({
+                'success': False,
+                'error': f'Image limit reached ({user.image_limit}). Upgrade your subscription for more images.'
+            }), 403
+        
+        # Extract parameters
+        content_text = data.get('content', '')
+        image_style = data.get('image_style', 'modern')
+        platform = data.get('platform', 'linkedin')
+        direction = data.get('direction', 'business_finance')
+        
+        # Generate image prompt based on content and style
+        image_prompt = generate_image_prompt(content_text, image_style, platform, direction)
+        
+        # For now, return a mock generated image
+        # In production, this would call an AI image generation service like DALL-E, Midjourney, or Stable Diffusion
+        mock_image_data = generate_mock_image(image_prompt, image_style)
+        
+        # Create image record in database
+        image_record = create_mock_image_record(user_email, mock_image_data, image_prompt)
+        
+        return jsonify({
+            'success': True,
+            'image_id': image_record.id,
+            'image_url': f'/api/images/{image_record.id}',
+            'prompt': image_prompt,
+            'style': image_style,
+            'message': 'Image generated successfully'
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+def generate_image_prompt(content_text, image_style, platform, direction):
+    """Generate image prompt based on content and style"""
+    # Extract key themes from content
+    themes = extract_content_themes(content_text, direction)
+    
+    # Style-specific prompts
+    style_prompts = {
+        'modern': 'modern, clean, minimalist design with',
+        'vintage': 'vintage, retro, classic aesthetic with',
+        'abstract': 'abstract, artistic, creative composition with',
+        'photorealistic': 'photorealistic, detailed, high-quality image of',
+        'cartoon': 'cartoon, illustrated, animated style with',
+        'corporate': 'professional, corporate, business setting with',
+        'nature': 'natural, organic, earthy elements with',
+        'tech': 'futuristic, digital, technological aesthetic with',
+        'elegant': 'elegant, sophisticated, luxury feel with'
+    }
+    
+    style_prompt = style_prompts.get(image_style, 'modern, clean design with')
+    
+    # Platform-specific adjustments
+    platform_adjustments = {
+        'linkedin': 'professional business context',
+        'facebook': 'social, friendly context',
+        'instagram': 'visual, aesthetic context',
+        'twitter': 'concise, impactful context',
+        'youtube': 'dynamic, engaging context',
+        'blog': 'detailed, informative context'
+    }
+    
+    platform_context = platform_adjustments.get(platform, 'general context')
+    
+    # Combine into final prompt
+    prompt = f"{style_prompt} {themes} in {platform_context}, high quality, trending on artstation"
+    
+    return prompt
+
+def extract_content_themes(content_text, direction):
+    """Extract key themes from content for image generation"""
+    # Simple theme extraction based on direction
+    direction_themes = {
+        'business_finance': 'business charts, financial graphs, professional office setting',
+        'technology': 'digital technology, computer screens, innovation concepts',
+        'health_wellness': 'health and wellness, fitness, medical concepts',
+        'education': 'learning, books, academic setting',
+        'entertainment': 'entertainment, media, creative arts',
+        'travel_tourism': 'travel destinations, tourism, adventure',
+        'food_cooking': 'food, cooking, culinary arts',
+        'fashion_beauty': 'fashion, beauty, style',
+        'sports_fitness': 'sports, fitness, athletic activities',
+        'science_research': 'scientific research, laboratory, innovation',
+        'politics_news': 'news, politics, current events',
+        'environment': 'environmental protection, nature, sustainability',
+        'personal_dev': 'personal development, growth, self-improvement',
+        'parenting_family': 'family, parenting, children',
+        'art_creativity': 'art, creativity, artistic expression',
+        'real_estate': 'real estate, property, architecture',
+        'automotive': 'automotive, cars, transportation',
+        'pet_care': 'pets, animals, pet care'
+    }
+    
+    return direction_themes.get(direction, 'general business concept')
+
+def generate_mock_image(prompt, style):
+    """Generate mock image data for demonstration"""
+    # This would be replaced with actual AI image generation
+    # For now, return mock data
+    return {
+        'prompt': prompt,
+        'style': style,
+        'generated_at': datetime.utcnow().isoformat()
+    }
+
+def create_mock_image_record(user_email, mock_data, prompt):
+    """Create a mock image record in database"""
+    image_id = generate_image_id()
+    
+    # Create a placeholder image file
+    placeholder_path = os.path.join(UPLOAD_FOLDER, f"{image_id}.png")
+    
+    # Create a simple placeholder image using PIL
+    try:
+        from PIL import Image as PILImage, ImageDraw, ImageFont
+        
+        # Create a 1200x630 image (social media optimized)
+        img = PILImage.new('RGB', (1200, 630), color='#667EEA')
+        draw = ImageDraw.Draw(img)
+        
+        # Add text
+        try:
+            font = ImageFont.truetype("arial.ttf", 40)
+        except:
+            font = ImageFont.load_default()
+        
+        # Draw title
+        draw.text((600, 200), "AI Generated Image", fill='white', anchor='mm', font=font)
+        draw.text((600, 280), f"Style: {mock_data['style'].title()}", fill='white', anchor='mm', font=font)
+        draw.text((600, 360), "Content Creator Pro", fill='white', anchor='mm', font=font)
+        
+        # Save image
+        img.save(placeholder_path)
+        
+        # Create database record
+        image_record = Image(
+            id=image_id,
+            user_email=user_email,
+            filename=f"{image_id}.png",
+            original_filename=f"generated_{mock_data['style']}.png",
+            file_path=placeholder_path,
+            file_size=os.path.getsize(placeholder_path),
+            mime_type='image/png',
+            width=1200,
+            height=630,
+            alt_text=f"AI generated image in {mock_data['style']} style",
+            caption=prompt[:100] + "..." if len(prompt) > 100 else prompt
+        )
+        
+        db.session.add(image_record)
+        db.session.commit()
+        
+        return image_record
+        
+    except Exception as e:
+        # Fallback: create a simple text file
+        with open(placeholder_path, 'w') as f:
+            f.write(f"Mock image for prompt: {prompt}")
+        
+        image_record = Image(
+            id=image_id,
+            user_email=user_email,
+            filename=f"{image_id}.txt",
+            original_filename=f"generated_{mock_data['style']}.txt",
+            file_path=placeholder_path,
+            file_size=os.path.getsize(placeholder_path),
+            mime_type='text/plain',
+            width=None,
+            height=None,
+            alt_text=f"AI generated image in {mock_data['style']} style",
+            caption=prompt[:100] + "..." if len(prompt) > 100 else prompt
+        )
+        
+        db.session.add(image_record)
+        db.session.commit()
+        
+        return image_record
 
 # Initialize database on startup
 with app.app_context():
