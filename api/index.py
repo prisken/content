@@ -2192,62 +2192,62 @@ SETTINGS_CONTENT = """
                     <form id="contentForm">
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Primary Direction</label>
+                                <label class="form-label" data-translate="primary_direction">Primary Direction</label>
                                 <select class="form-select" id="primaryDirection">
-                                    <option value="business_finance">Business & Finance</option>
-                                    <option value="technology">Technology</option>
-                                    <option value="health_wellness">Health & Wellness</option>
-                                    <option value="education">Education</option>
-                                    <option value="entertainment">Entertainment</option>
-                                    <option value="travel_tourism">Travel & Tourism</option>
-                                    <option value="food_cooking">Food & Cooking</option>
-                                    <option value="fashion_beauty">Fashion & Beauty</option>
+                                    <option value="business_finance" data-translate="business_finance">Business & Finance</option>
+                                    <option value="technology" data-translate="technology">Technology</option>
+                                    <option value="health_wellness" data-translate="health_wellness">Health & Wellness</option>
+                                    <option value="education" data-translate="education">Education</option>
+                                    <option value="entertainment" data-translate="entertainment">Entertainment</option>
+                                    <option value="travel_tourism" data-translate="travel_tourism">Travel & Tourism</option>
+                                    <option value="food_cooking" data-translate="food_cooking">Food & Cooking</option>
+                                    <option value="fashion_beauty" data-translate="fashion_beauty">Fashion & Beauty</option>
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Default Tone</label>
+                                <label class="form-label" data-translate="default_tone">Default Tone</label>
                                 <select class="form-select" id="defaultTone">
-                                    <option value="professional">Professional</option>
-                                    <option value="casual">Casual</option>
-                                    <option value="inspirational">Inspirational</option>
-                                    <option value="educational">Educational</option>
-                                    <option value="humorous">Humorous</option>
-                                    <option value="serious">Serious</option>
+                                    <option value="professional" data-translate="professional">Professional</option>
+                                    <option value="casual" data-translate="casual">Casual</option>
+                                    <option value="inspirational" data-translate="inspirational">Inspirational</option>
+                                    <option value="educational" data-translate="educational">Educational</option>
+                                    <option value="humorous" data-translate="humorous">Humorous</option>
+                                    <option value="serious" data-translate="serious">Serious</option>
                                 </select>
                             </div>
                         </div>
                         
                         <div class="mb-3">
-                            <label class="form-label">Secondary Directions</label>
+                            <label class="form-label" data-translate="secondary_directions">Secondary Directions</label>
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="technology" id="secTech" checked>
-                                        <label class="form-check-label" for="secTech">Technology</label>
+                                        <label class="form-check-label" for="secTech" data-translate="technology">Technology</label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="health_wellness" id="secHealth">
-                                        <label class="form-check-label" for="secHealth">Health & Wellness</label>
+                                        <label class="form-check-label" for="secHealth" data-translate="health_wellness">Health & Wellness</label>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="education" id="secEducation">
-                                        <label class="form-check-label" for="secEducation">Education</label>
+                                        <label class="form-check-label" for="secEducation" data-translate="education">Education</label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="entertainment" id="secEntertainment">
-                                        <label class="form-check-label" for="secEntertainment">Entertainment</label>
+                                        <label class="form-check-label" for="secEntertainment" data-translate="entertainment">Entertainment</label>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="travel_tourism" id="secTravel">
-                                        <label class="form-check-label" for="secTravel">Travel & Tourism</label>
+                                        <label class="form-check-label" for="secTravel" data-translate="travel_tourism">Travel & Tourism</label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="food_cooking" id="secFood">
-                                        <label class="form-check-label" for="secFood">Food & Cooking</label>
+                                        <label class="form-check-label" for="secFood" data-translate="food_cooking">Food & Cooking</label>
                                     </div>
                                 </div>
                             </div>
@@ -2701,24 +2701,24 @@ def register():
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-body p-4">
-                        <h2 class="text-center mb-4"><i class="fas fa-user-plus me-2"></i>Register</h2>
+                        <h2 class="text-center mb-4"><i class="fas fa-user-plus me-2"></i><span data-translate="register">Register</span></h2>
                         <form method="post">
                             <div class="mb-3">
-                                <label class="form-label">Email</label>
+                                <label class="form-label" data-translate="email">Email</label>
                                 <input type="email" name="email" class="form-control" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Password</label>
+                                <label class="form-label" data-translate="password">Password</label>
                                 <input type="password" name="password" class="form-control" required>
                             </div>
                             <div class="d-grid">
                                 <button type="submit" class="btn btn-primary btn-lg">
-                                    <i class="fas fa-user-plus me-2"></i>Register
+                                    <i class="fas fa-user-plus me-2"></i><span data-translate="register">Register</span>
                                 </button>
                             </div>
                         </form>
                         <div class="text-center mt-3">
-                            <p>Already have an account? <a href="/login" class="text-decoration-none">Login here</a></p>
+                            <p><span data-translate="already_have_account">Already have an account?</span> <a href="/login" class="text-decoration-none" data-translate="login_here">Login here</a></p>
                         </div>
                     </div>
                 </div>
@@ -2745,27 +2745,27 @@ def login():
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-body p-4">
-                        <h2 class="text-center mb-4"><i class="fas fa-sign-in-alt me-2"></i>Login</h2>
+                        <h2 class="text-center mb-4"><i class="fas fa-sign-in-alt me-2"></i><span data-translate="login">Login</span></h2>
                         <form method="post">
                             <div class="mb-3">
-                                <label class="form-label">Email</label>
+                                <label class="form-label" data-translate="email">Email</label>
                                 <input type="email" name="email" class="form-control" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Password</label>
+                                <label class="form-label" data-translate="password">Password</label>
                                 <input type="password" name="password" class="form-control" required>
                             </div>
                             <div class="d-grid">
                                 <button type="submit" class="btn btn-primary btn-lg">
-                                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                                    <i class="fas fa-sign-in-alt me-2"></i><span data-translate="login">Login</span>
                                 </button>
                             </div>
                         </form>
                         <div class="text-center mt-3">
-                            <p>Don't have an account? <a href="/register" class="text-decoration-none">Register here</a></p>
+                            <p><span data-translate="dont_have_account">Don't have an account?</span> <a href="/register" class="text-decoration-none" data-translate="register_here">Register here</a></p>
                         </div>
                         <div class="mt-4 p-3 bg-light rounded">
-                            <h6 class="text-center mb-2">Demo Credentials:</h6>
+                            <h6 class="text-center mb-2" data-translate="demo_credentials">Demo Credentials:</h6>
                             <p class="small text-center mb-1">Email: demo@contentcreator.com</p>
                             <p class="small text-center mb-0">Password: demo123</p>
                         </div>
