@@ -330,7 +330,47 @@ BASE_TEMPLATE = """
             'casual': 'Casual',
             'inspirational': 'Inspirational',
             'educational': 'Educational',
-            'entertaining': 'Entertaining'
+            'entertaining': 'Entertaining',
+            
+            // Landing page
+            'content_creator_pro': 'Content Creator Pro',
+            'ai_powered_platform': 'AI-Powered Content Generation Platform',
+            'multi_platform_content': 'Multi-Platform Content',
+            'generate_content_for': 'Generate content for',
+            'platforms_list': 'LinkedIn, Facebook, Instagram, Twitter, YouTube, and blogs',
+            'smart_direction': 'Smart Direction',
+            'content_directions_desc': '18 content directions with',
+            'regional_context': 'regional and cultural context',
+            'ai_powered': 'AI-Powered',
+            'advanced_ai_generation': 'Advanced AI content generation with',
+            'tone_customization': 'tone and style customization',
+            'start_creating': 'Start Creating',
+            'try_demo': 'Try Demo',
+            
+            // Content directions
+            'business_finance': 'Business & Finance',
+            'technology': 'Technology',
+            'health_wellness': 'Health & Wellness',
+            'education': 'Education',
+            'entertainment': 'Entertainment',
+            'travel_tourism': 'Travel & Tourism',
+            'food_cooking': 'Food & Cooking',
+            'fashion_beauty': 'Fashion & Beauty',
+            'sports_fitness': 'Sports & Fitness',
+            'science_research': 'Science & Research',
+            'politics_news': 'Politics & News',
+            'environment': 'Environment',
+            'personal_dev': 'Personal Dev',
+            'parenting_family': 'Parenting & Family',
+            'art_creativity': 'Art & Creativity',
+            'real_estate': 'Real Estate',
+            'automotive': 'Automotive',
+            'pet_care': 'Pet Care',
+            
+            // Generator page
+            'create_engaging_content': 'Create engaging content with AI assistance',
+            'choose_your_focus': 'Choose Your Focus',
+            'next_step': 'Next Step'
         },
         zh: {
             // Navigation
@@ -384,7 +424,47 @@ BASE_TEMPLATE = """
             'casual': '随意',
             'inspirational': '励志',
             'educational': '教育',
-            'entertaining': '娱乐'
+            'entertaining': '娱乐',
+            
+            // Landing page
+            'content_creator_pro': '内容创作者专业版',
+            'ai_powered_platform': 'AI驱动的内容生成平台',
+            'multi_platform_content': '多平台内容',
+            'generate_content_for': '为以下平台生成内容',
+            'platforms_list': '领英、脸书、Instagram、推特、YouTube和博客',
+            'smart_direction': '智能方向',
+            'content_directions_desc': '18个内容方向，具有',
+            'regional_context': '区域和文化背景',
+            'ai_powered': 'AI驱动',
+            'advanced_ai_generation': '先进的AI内容生成，具有',
+            'tone_customization': '语气和风格定制',
+            'start_creating': '开始创作',
+            'try_demo': '试用演示',
+            
+            // Content directions
+            'business_finance': '商业与金融',
+            'technology': '技术',
+            'health_wellness': '健康与保健',
+            'education': '教育',
+            'entertainment': '娱乐',
+            'travel_tourism': '旅游',
+            'food_cooking': '美食烹饪',
+            'fashion_beauty': '时尚美容',
+            'sports_fitness': '运动健身',
+            'science_research': '科学研究',
+            'politics_news': '政治新闻',
+            'environment': '环境',
+            'personal_dev': '个人发展',
+            'parenting_family': '育儿家庭',
+            'art_creativity': '艺术创意',
+            'real_estate': '房地产',
+            'automotive': '汽车',
+            'pet_care': '宠物护理',
+            
+            // Generator page
+            'create_engaging_content': '使用AI辅助创建引人入胜的内容',
+            'choose_your_focus': '选择您的重点',
+            'next_step': '下一步'
         }
     };
     
@@ -487,34 +567,34 @@ BASE_TEMPLATE = """
 LANDING_CONTENT = """
 <div class="container">
     <div class="text-center">
-        <h1 class="display-4 mb-4">🚀 Content Creator Pro</h1>
-        <p class="lead mb-5">AI-Powered Content Generation Platform</p>
+        <h1 class="display-4 mb-4">🚀 <span data-translate="content_creator_pro">Content Creator Pro</span></h1>
+        <p class="lead mb-5"><span data-translate="ai_powered_platform">AI-Powered Content Generation Platform</span></p>
         <div class="row">
             <div class="col-md-4">
                 <div class="feature-card">
-                    <h3><i class="fas fa-share-alt me-2"></i>Multi-Platform Content</h3>
-                    <p>Generate content for <b>LinkedIn, Facebook, Instagram, Twitter, YouTube, and blogs</b>.</p>
+                    <h3><i class="fas fa-share-alt me-2"></i><span data-translate="multi_platform_content">Multi-Platform Content</span></h3>
+                    <p><span data-translate="generate_content_for">Generate content for</span> <b><span data-translate="platforms_list">LinkedIn, Facebook, Instagram, Twitter, YouTube, and blogs</span></b>.</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="feature-card">
-                    <h3><i class="fas fa-bullseye me-2"></i>Smart Direction</h3>
-                    <p>18 content directions with <b>regional and cultural context</b>.</p>
+                    <h3><i class="fas fa-bullseye me-2"></i><span data-translate="smart_direction">Smart Direction</span></h3>
+                    <p><span data-translate="content_directions_desc">18 content directions with</span> <b><span data-translate="regional_context">regional and cultural context</span></b>.</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="feature-card">
-                    <h3><i class="fas fa-brain me-2"></i>AI-Powered</h3>
-                    <p>Advanced AI content generation with <b>tone and style customization</b>.</p>
+                    <h3><i class="fas fa-brain me-2"></i><span data-translate="ai_powered">AI-Powered</span></h3>
+                    <p><span data-translate="advanced_ai_generation">Advanced AI content generation with</span> <b><span data-translate="tone_customization">tone and style customization</span></b>.</p>
                 </div>
             </div>
         </div>
         <div class="mt-5">
             <a href="/generator" class="btn btn-primary btn-lg me-3">
-                <i class="fas fa-magic me-2"></i>Start Creating
+                <i class="fas fa-magic me-2"></i><span data-translate="start_creating">Start Creating</span>
             </a>
             <button class="btn btn-outline-light btn-lg" onclick="showDemo()">
-                <i class="fas fa-play me-2"></i>Try Demo
+                <i class="fas fa-play me-2"></i><span data-translate="try_demo">Try Demo</span>
             </button>
         </div>
     </div>
@@ -527,8 +607,8 @@ GENERATOR_CONTENT = """
     <div class="row justify-content-center">
         <div class="col-lg-10">
             <div class="text-center mb-5">
-                <h1><i class="fas fa-magic me-2"></i>Content Generator</h1>
-                <p class="lead">Create engaging content with AI assistance</p>
+                <h1><i class="fas fa-magic me-2"></i><span data-translate="content_generator">Content Generator</span></h1>
+                <p class="lead"><span data-translate="create_engaging_content">Create engaging content with AI assistance</span></p>
             </div>
             
             <!-- Step Progress -->
@@ -545,120 +625,120 @@ GENERATOR_CONTENT = """
                     <form id="generatorForm">
                         <!-- Step 1: Content Direction -->
                         <div id="step1" class="step-content">
-                            <h3 class="text-center mb-4">Step 1: Choose Your Focus</h3>
+                            <h3 class="text-center mb-4"><span data-translate="step_1">Step 1</span>: <span data-translate="choose_your_focus">Choose Your Focus</span></h3>
                             <div class="row">
                                 <div class="col-md-3 col-sm-6">
                                     <div class="direction-card" data-direction="business_finance">
                                         <i class="fas fa-briefcase"></i>
-                                        <div>Business & Finance</div>
+                                        <div data-translate="business_finance">Business & Finance</div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-6">
                                     <div class="direction-card" data-direction="technology">
                                         <i class="fas fa-laptop-code"></i>
-                                        <div>Technology</div>
+                                        <div data-translate="technology">Technology</div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-6">
                                     <div class="direction-card" data-direction="health_wellness">
                                         <i class="fas fa-heartbeat"></i>
-                                        <div>Health & Wellness</div>
+                                        <div data-translate="health_wellness">Health & Wellness</div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-6">
                                     <div class="direction-card" data-direction="education">
                                         <i class="fas fa-graduation-cap"></i>
-                                        <div>Education</div>
+                                        <div data-translate="education">Education</div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-6">
                                     <div class="direction-card" data-direction="entertainment">
                                         <i class="fas fa-film"></i>
-                                        <div>Entertainment</div>
+                                        <div data-translate="entertainment">Entertainment</div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-6">
                                     <div class="direction-card" data-direction="travel_tourism">
                                         <i class="fas fa-plane"></i>
-                                        <div>Travel & Tourism</div>
+                                        <div data-translate="travel_tourism">Travel & Tourism</div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-6">
                                     <div class="direction-card" data-direction="food_cooking">
                                         <i class="fas fa-utensils"></i>
-                                        <div>Food & Cooking</div>
+                                        <div data-translate="food_cooking">Food & Cooking</div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-6">
                                     <div class="direction-card" data-direction="fashion_beauty">
                                         <i class="fas fa-tshirt"></i>
-                                        <div>Fashion & Beauty</div>
+                                        <div data-translate="fashion_beauty">Fashion & Beauty</div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-6">
                                     <div class="direction-card" data-direction="sports_fitness">
                                         <i class="fas fa-dumbbell"></i>
-                                        <div>Sports & Fitness</div>
+                                        <div data-translate="sports_fitness">Sports & Fitness</div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-6">
                                     <div class="direction-card" data-direction="science_research">
                                         <i class="fas fa-microscope"></i>
-                                        <div>Science & Research</div>
+                                        <div data-translate="science_research">Science & Research</div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-6">
                                     <div class="direction-card" data-direction="politics_current_events">
                                         <i class="fas fa-newspaper"></i>
-                                        <div>Politics & News</div>
+                                        <div data-translate="politics_news">Politics & News</div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-6">
                                     <div class="direction-card" data-direction="environment_sustainability">
                                         <i class="fas fa-leaf"></i>
-                                        <div>Environment</div>
+                                        <div data-translate="environment">Environment</div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-6">
                                     <div class="direction-card" data-direction="personal_development">
                                         <i class="fas fa-chart-line"></i>
-                                        <div>Personal Dev</div>
+                                        <div data-translate="personal_dev">Personal Dev</div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-6">
                                     <div class="direction-card" data-direction="parenting_family">
                                         <i class="fas fa-users"></i>
-                                        <div>Parenting & Family</div>
+                                        <div data-translate="parenting_family">Parenting & Family</div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-6">
                                     <div class="direction-card" data-direction="art_creativity">
                                         <i class="fas fa-palette"></i>
-                                        <div>Art & Creativity</div>
+                                        <div data-translate="art_creativity">Art & Creativity</div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-6">
                                     <div class="direction-card" data-direction="real_estate">
                                         <i class="fas fa-home"></i>
-                                        <div>Real Estate</div>
+                                        <div data-translate="real_estate">Real Estate</div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-6">
                                     <div class="direction-card" data-direction="automotive">
                                         <i class="fas fa-car"></i>
-                                        <div>Automotive</div>
+                                        <div data-translate="automotive">Automotive</div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-sm-6">
                                     <div class="direction-card" data-direction="pet_care">
                                         <i class="fas fa-paw"></i>
-                                        <div>Pet Care</div>
+                                        <div data-translate="pet_care">Pet Care</div>
                                     </div>
                                 </div>
                             </div>
                             <div class="text-center mt-4">
                                 <button type="button" class="btn btn-primary btn-lg" onclick="nextStep()">
-                                    Next Step <i class="fas fa-arrow-right ms-2"></i>
+                                    <span data-translate="next_step">Next Step</span> <i class="fas fa-arrow-right ms-2"></i>
                                 </button>
                             </div>
                         </div>
