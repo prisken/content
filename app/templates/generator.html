@@ -853,21 +853,192 @@ function generateMockContent() {
         sourceInfo = `\n\nSource: ${selectedNewsSource}`;
     }
     
+    // Get direction-specific content based on content categories document
+    const directionContent = getDirectionSpecificContent();
+    
+    // Generate platform-specific content following exact specifications
     const templates = {
-        'linkedin': `🚀 Exciting developments in the business world! Based on recent insights from ${selectedNewsSource || 'reliable sources'}, we're seeing remarkable growth in key sectors. This represents a significant opportunity for forward-thinking professionals. What are your thoughts on these emerging trends? #BusinessGrowth #Innovation #ProfessionalDevelopment${sourceInfo}`,
-        'facebook': `Hey everyone! 👋 Just wanted to share some amazing insights I came across today from ${selectedNewsSource || 'reliable sources'}. The way things are evolving in our industry is truly fascinating. What do you think about these changes? Drop a comment below! #Community #Insights #Discussion${sourceInfo}`,
-        'instagram': `✨ Today's inspiration comes from some incredible developments in our field, as reported by ${selectedNewsSource || 'reliable sources'}. The possibilities are endless when we embrace innovation and creativity. What's inspiring you today? 💫 #Inspiration #Innovation #Creativity #Motivation #Growth${sourceInfo}`,
-        'twitter': `Breaking: Major developments in the industry, according to ${selectedNewsSource || 'reliable sources'}! This changes everything. Thoughts? #Innovation #Trending${sourceInfo}`,
-        'youtube_shorts': `[HOOK: 0-3 seconds] Hey there! Today we're diving into something incredible that's happening right now, as reported by ${selectedNewsSource || 'reliable sources'}.\n\n[CONTENT: 3-40 seconds] Based on recent research and insights, we're seeing remarkable changes that affect everyone. Here's what you need to know and how it impacts you.\n\n[CALL TO ACTION: 40-45 seconds] Don't forget to like, subscribe, and share your thoughts in the comments below!${sourceInfo}`,
-        'blog': `# The Future of Innovation: What You Need to Know\n\n## Introduction\nIn today's rapidly evolving landscape, understanding the key trends and developments is crucial for success. Recent reports from ${selectedNewsSource || 'reliable sources'} highlight important developments.\n\n## Key Insights\nRecent research and analysis reveal several important developments that are shaping the future of our industry.\n\n## What This Means for You\nThese changes present both challenges and opportunities for professionals and businesses alike.\n\n## Conclusion\nStaying informed and adaptable is more important than ever in this dynamic environment.${sourceInfo}`
+        'linkedin': generateLinkedInPost(directionContent, sourceInfo),
+        'facebook': generateFacebookPost(directionContent, sourceInfo),
+        'instagram': generateInstagramPost(directionContent, sourceInfo),
+        'twitter': generateTwitterPost(directionContent, sourceInfo),
+        'youtube_shorts': generateYouTubeShortsScript(directionContent, sourceInfo),
+        'blog': generateBlogArticle(directionContent, sourceInfo)
     };
     
     return templates[selectedContentType] || 'Generated content will appear here.';
 }
 
+function getDirectionSpecificContent() {
+    const directionContent = {
+        'business_finance': {
+            keywords: ['market analysis', 'investment insights', 'corporate trends', 'financial growth', 'business strategy'],
+            hashtags: {
+                linkedin: ['#BusinessGrowth', '#InvestmentInsights'],
+                facebook: ['#BusinessTips', '#Finance', '#Investment', '#Growth', '#Success'],
+                instagram: ['#BusinessGrowth', '#Investment', '#Finance', '#Success', '#Entrepreneur', '#Wealth', '#Money', '#Strategy', '#Innovation', '#Leadership'],
+                twitter: ['#Business', '#Finance']
+            },
+            tone: 'professional, authoritative, insightful',
+            focus: 'market analysis, investment insights, corporate trends'
+        },
+        'technology': {
+            keywords: ['tech innovation', 'digital transformation', 'industry disruption', 'AI advancement', 'software development'],
+            hashtags: {
+                linkedin: ['#TechInnovation', '#DigitalTransformation'],
+                facebook: ['#TechNews', '#Innovation', '#Digital', '#Technology', '#Future'],
+                instagram: ['#TechInnovation', '#DigitalTransformation', '#AI', '#Innovation', '#Technology', '#Future', '#Digital', '#Software', '#Development', '#Disruption'],
+                twitter: ['#Tech', '#Innovation']
+            },
+            tone: 'forward-thinking, innovative, technical',
+            focus: 'tech innovation, digital transformation, industry disruption'
+        },
+        'health_wellness': {
+            keywords: ['wellness insights', 'health trends', 'fitness motivation', 'mental health', 'nutrition tips'],
+            hashtags: {
+                linkedin: ['#HealthInsights', '#WellnessTrends'],
+                facebook: ['#HealthTips', '#Wellness', '#Fitness', '#Health', '#Motivation'],
+                instagram: ['#HealthTips', '#Wellness', '#Fitness', '#Health', '#Motivation', '#Lifestyle', '#Nutrition', '#MentalHealth', '#SelfCare', '#Wellbeing'],
+                twitter: ['#Health', '#Wellness']
+            },
+            tone: 'supportive, informative, encouraging',
+            focus: 'professional health insights, industry trends, research'
+        },
+        'education': {
+            keywords: ['learning methodologies', 'skill development', 'academic insights', 'educational innovation', 'knowledge sharing'],
+            hashtags: {
+                linkedin: ['#LearningInnovation', '#SkillDevelopment'],
+                facebook: ['#Education', '#Learning', '#Skills', '#Knowledge', '#Growth'],
+                instagram: ['#Education', '#Learning', '#Skills', '#Knowledge', '#Growth', '#Innovation', '#Development', '#Academic', '#Study', '#Success'],
+                twitter: ['#Education', '#Learning']
+            },
+            tone: 'educational, inspiring, informative',
+            focus: 'learning methodologies, skill development, academic insights'
+        },
+        'entertainment': {
+            keywords: ['industry analysis', 'behind-the-scenes insights', 'trending content', 'media innovation', 'creative expression'],
+            hashtags: {
+                linkedin: ['#EntertainmentIndustry', '#MediaInsights'],
+                facebook: ['#Entertainment', '#Movies', '#Music', '#Trending', '#Fun'],
+                instagram: ['#Entertainment', '#Movies', '#Music', '#Trending', '#Fun', '#Creative', '#Media', '#Culture', '#Art', '#Expression'],
+                twitter: ['#Entertainment', '#Trending']
+            },
+            tone: 'engaging, creative, trend-aware',
+            focus: 'industry analysis, behind-the-scenes insights, trends'
+        },
+        'travel_tourism': {
+            keywords: ['destination insights', 'travel trends', 'tourism innovation', 'cultural experiences', 'hospitality insights'],
+            hashtags: {
+                linkedin: ['#TravelIndustry', '#TourismInsights'],
+                facebook: ['#Travel', '#Adventure', '#Destinations', '#Explore', '#Journey'],
+                instagram: ['#Travel', '#Adventure', '#Destinations', '#Explore', '#Journey', '#Wanderlust', '#Vacation', '#Culture', '#Experience', '#Discovery'],
+                twitter: ['#Travel', '#Tourism']
+            },
+            tone: 'inspiring, adventurous, informative',
+            focus: 'business travel, industry insights, market trends'
+        }
+    };
+    
+    return directionContent[selectedDirection] || directionContent['business_finance'];
+}
+
+function generateLinkedInPost(directionContent, sourceInfo) {
+    // LinkedIn: 1,300 chars max, Professional tone, Hook + Value + CTA, 1-2 hashtags
+    const source = selectedNewsSource || 'reliable sources';
+    const keywords = directionContent.keywords;
+    const hashtags = directionContent.hashtags.linkedin.join(' ');
+    
+    return `🚀 **BREAKING: ${keywords[0].toUpperCase()}**\n\nAccording to recent reports from ${source}, we're witnessing unprecedented ${keywords[1]} in our industry. This isn't just another trend—it's a fundamental shift that will reshape how we approach ${keywords[2]}.\n\n**Key Insights:**\n• ${keywords[3]} is accelerating faster than predicted\n• Companies embracing ${keywords[4]} are seeing 3x better results\n• Early adopters are gaining significant competitive advantages\n\n**What This Means for You:**\nWhether you're a seasoned professional or just starting out, understanding these developments is crucial for career growth and business success.\n\n**The Question:**\nHow are you preparing for these changes in your field? Share your thoughts below—I'd love to hear your perspective on this evolving landscape.\n\n${hashtags}${sourceInfo}`;
+}
+
+function generateFacebookPost(directionContent, sourceInfo) {
+    // Facebook: 40-80 words optimal, Conversational tone, Story + Connection + Engagement, 3-5 hashtags
+    const source = selectedNewsSource || 'reliable sources';
+    const keywords = directionContent.keywords;
+    const hashtags = directionContent.hashtags.facebook.join(' ');
+    
+    return `Hey friends! 👋\n\nI just came across some really interesting news from ${source} that I had to share with you all.\n\nApparently, there's been a huge breakthrough in ${keywords[0]} that's going to change everything we know about ${keywords[1]}. I was reading about it this morning and honestly, it blew my mind! 🤯\n\nWhat do you think about these new developments? Are you excited about the possibilities, or do you have concerns?\n\nDrop a comment below and let's chat about it! I'd love to hear your thoughts.\n\n${hashtags}${sourceInfo}`;
+}
+
+function generateInstagramPost(directionContent, sourceInfo) {
+    // Instagram: 2,200 chars max, Visual/Inspirational tone, Hook + Story + Hashtags, 5-10 hashtags
+    const source = selectedNewsSource || 'reliable sources';
+    const keywords = directionContent.keywords;
+    const hashtags = directionContent.hashtags.instagram.join(' ');
+    
+    return `✨ **INSPIRATION ALERT** ✨\n\nToday's dose of motivation comes from some incredible developments in ${keywords[0]} that I discovered through ${source}.\n\n🌟 **The Story:**\nWhen I first read about these breakthroughs in ${keywords[1]}, I couldn't help but feel inspired by the endless possibilities that lie ahead. It's amazing how ${keywords[2]} continues to evolve and push boundaries.\n\n💭 **The Takeaway:**\nThis reminds us that innovation is everywhere—we just need to keep our eyes open and our minds ready to embrace new ideas.\n\n🔥 **The Question:**\nWhat's inspiring you today? What recent developments have caught your attention and sparked your creativity?\n\nShare your thoughts below! Let's inspire each other. 💫\n\n${hashtags}${sourceInfo}`;
+}
+
+function generateTwitterPost(directionContent, sourceInfo) {
+    // Twitter: 280 chars max, Concise/trending tone, Hook + Value + Hashtag, 1-2 hashtags
+    const source = selectedNewsSource || 'reliable sources';
+    const keywords = directionContent.keywords;
+    const hashtags = directionContent.hashtags.twitter.join(' ');
+    
+    return `🚨 BREAKING: Major ${keywords[0]} developments reported by ${source}!\n\nThis changes everything in ${keywords[1]}. Game-changer for the industry.\n\nThoughts? ${hashtags}${sourceInfo}`;
+}
+
+function generateYouTubeShortsScript(directionContent, sourceInfo) {
+    // YouTube Shorts: 30-45 seconds, Engaging/educational tone, Hook + Content + CTA
+    const source = selectedNewsSource || 'reliable sources';
+    const keywords = directionContent.keywords;
+    
+    return `[HOOK: 0-3 seconds]\n"Hey there! You won't BELIEVE what just happened in ${keywords[0]}!"\n\n[CONTENT: 3-40 seconds]\nAccording to ${source}, we're seeing revolutionary changes in ${keywords[1]} that will impact everyone. Here's what you need to know:\n\n• ${keywords[2]} is evolving faster than ever\n• Companies are adapting to new ${keywords[3]} strategies\n• The future of ${keywords[4]} looks incredibly promising\n\n[CALL TO ACTION: 40-45 seconds]\nDon't forget to like, subscribe, and share your thoughts in the comments below! What do you think about these developments?${sourceInfo}`;
+}
+
+function generateBlogArticle(directionContent, sourceInfo) {
+    // Blog: 1,500-2,500 words, Informative/authoritative tone, SEO-optimized structure
+    const source = selectedNewsSource || 'reliable sources';
+    const keywords = directionContent.keywords;
+    
+    return `# The Future of ${directionContent.focus.split(',')[0].toUpperCase()}: A Comprehensive Analysis\n\n## Introduction\nIn today's rapidly evolving landscape, understanding the key trends and developments in ${keywords[0]} is crucial for success. Recent reports from ${source} highlight significant developments that are reshaping our industry.\n\n## Current State of ${keywords[1].split(' ')[0]}\nThe landscape of ${keywords[1]} has undergone remarkable transformations in recent years. According to industry experts and recent data from ${source}, we're witnessing unprecedented changes that demand our attention.\n\n## Key Developments and Trends\n\n### 1. ${keywords[2].split(' ')[0]} Evolution\nRecent breakthroughs in ${keywords[2]} have opened new possibilities for professionals and businesses alike. These developments represent a fundamental shift in how we approach industry challenges.\n\n### 2. Impact on ${keywords[3].split(' ')[0]}\nThe implications of these changes extend far beyond immediate applications. Companies that embrace ${keywords[3]} are positioning themselves for long-term success in an increasingly competitive market.\n\n### 3. Future Outlook for ${keywords[4].split(' ')[0]}\nLooking ahead, the trajectory of ${keywords[4]} suggests continued innovation and growth. Early adopters stand to gain significant advantages in this evolving landscape.\n\n## What This Means for Professionals\n\n### For Industry Leaders\nUnderstanding these developments is essential for strategic decision-making and maintaining competitive advantages.\n\n### For Emerging Professionals\nThese changes present unique opportunities for career growth and skill development in high-demand areas.\n\n### For Businesses\nAdapting to these trends requires proactive planning and investment in relevant technologies and methodologies.\n\n## Actionable Insights\n\n1. **Stay Informed**: Regularly monitor developments in ${keywords[0]} through reliable sources like ${source}\n2. **Embrace Change**: Be open to new approaches and methodologies in your field\n3. **Invest in Learning**: Continuously develop skills related to emerging trends\n4. **Network Actively**: Connect with professionals who are leading innovation in these areas\n\n## Conclusion\nAs we navigate this dynamic landscape, staying informed and adaptable is more important than ever. The developments in ${keywords[0]} represent both challenges and opportunities for those willing to embrace change and innovation.\n\nBy understanding these trends and taking proactive steps to adapt, professionals and businesses can position themselves for success in an increasingly competitive and innovative environment.${sourceInfo}`;
+}
+
 function displayContent(content) {
     generatedContent = content;
-    $('#contentPreview').html(`<pre class="mb-0">${content}</pre>`);
+    
+    // Add character count and validation based on content categories
+    const charCount = content.length;
+    const platformLimits = {
+        'linkedin': 1300,
+        'facebook': 63206,
+        'instagram': 2200,
+        'twitter': 280,
+        'youtube_shorts': null, // No character limit for scripts
+        'blog': null // No character limit for blog articles
+    };
+    
+    const limit = platformLimits[selectedContentType];
+    let validationMessage = '';
+    let validationClass = '';
+    
+    if (limit) {
+        if (charCount > limit) {
+            validationMessage = `⚠️ Content exceeds ${selectedContentType} limit (${charCount}/${limit} characters)`;
+            validationClass = 'text-danger';
+        } else if (charCount > limit * 0.9) {
+            validationMessage = `⚠️ Content approaching ${selectedContentType} limit (${charCount}/${limit} characters)`;
+            validationClass = 'text-warning';
+        } else {
+            validationMessage = `✅ Content within ${selectedContentType} limits (${charCount}/${limit} characters)`;
+            validationClass = 'text-success';
+        }
+    } else {
+        validationMessage = `📝 Content length: ${charCount} characters`;
+        validationClass = 'text-info';
+    }
+    
+    const displayContent = `
+        <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <small class="${validationClass}">${validationMessage}</small>
+                <small class="text-muted">${getPlatformSpecs()}</small>
+            </div>
+            <pre class="mb-0">${content}</pre>
+        </div>
+    `;
+    
+    $('#contentPreview').html(displayContent);
     
     // Store original content for translation
     $('#contentPreview').data('original-content', content);
@@ -875,6 +1046,19 @@ function displayContent(content) {
     // Show content actions and translation controls
     $('#contentActions').show();
     showTranslationControls();
+}
+
+function getPlatformSpecs() {
+    const specs = {
+        'linkedin': 'LinkedIn: 1,300 chars max, Professional tone, 1-2 hashtags',
+        'facebook': 'Facebook: 63,206 chars max, Conversational tone, 3-5 hashtags',
+        'instagram': 'Instagram: 2,200 chars max, Visual tone, 5-10 hashtags',
+        'twitter': 'Twitter: 280 chars max, Concise tone, 1-2 hashtags',
+        'youtube_shorts': 'YouTube Shorts: 30-45 seconds, Engaging tone',
+        'blog': 'Blog: 1,500-2,500 words, Informative tone, SEO-optimized'
+    };
+    
+    return specs[selectedContentType] || '';
 }
 
 function showTranslationControls() {
@@ -944,26 +1128,136 @@ function translateContent(targetLang) {
 
 function getMockTranslation(content, targetLang) {
     if (targetLang === 'zh') {
-        // Mock Chinese translation
+        // Enhanced Chinese translation for new content structure
         return content
-            .replace(/🚀 Exciting developments in the business world!/, '🚀 商业世界令人兴奋的发展！')
-            .replace(/Based on recent insights, we're seeing remarkable growth in key sectors./, '根据最近的见解，我们看到关键领域出现了显著增长。')
-            .replace(/This represents a significant opportunity for forward-thinking professionals./, '这为有远见的专业人士提供了重要机会。')
-            .replace(/What are your thoughts on these emerging trends?/, '您对这些新兴趋势有什么看法？')
-            .replace(/#BusinessGrowth #Innovation #ProfessionalDevelopment/, '#商业增长 #创新 #职业发展')
-            .replace(/Hey everyone! 👋 Just wanted to share some amazing insights/, '大家好！👋 想分享一些令人惊叹的见解')
-            .replace(/The way things are evolving in our industry is truly fascinating./, '我们行业的发展方式确实令人着迷。')
-            .replace(/What do you think about these changes?/, '您对这些变化有什么看法？')
-            .replace(/Drop a comment below!/, '在下面留言吧！')
-            .replace(/#Community #Insights #Discussion/, '#社区 #见解 #讨论')
-            .replace(/✨ Today's inspiration comes from some incredible developments/, '✨ 今天的灵感来自一些令人难以置信的发展')
-            .replace(/The possibilities are endless when we embrace innovation and creativity./, '当我们拥抱创新和创造力时，可能性是无限的。')
-            .replace(/What's inspiring you today?/, '今天什么激励着您？')
-            .replace(/#Inspiration #Innovation #Creativity #Motivation #Growth/, '#灵感 #创新 #创造力 #动力 #成长')
-            .replace(/Breaking: Major developments in the industry!/, '突发：行业的重大发展！')
-            .replace(/This changes everything./, '这改变了一切。')
-            .replace(/Thoughts?/, '想法？')
-            .replace(/#Innovation #Trending/, '#创新 #趋势');
+            // LinkedIn translations
+            .replace(/🚀 \*\*BREAKING: /g, '🚀 **突发：')
+            .replace(/According to recent reports from /g, '根据来自')
+            .replace(/we're witnessing unprecedented /g, '我们正在见证前所未有的')
+            .replace(/This isn't just another trend—it's a fundamental shift/g, '这不仅仅是另一个趋势——这是一个根本性的转变')
+            .replace(/Key Insights:/g, '关键见解：')
+            .replace(/is accelerating faster than predicted/g, '比预期加速得更快')
+            .replace(/Companies embracing /g, '采用')
+            .replace(/are seeing 3x better results/g, '的公司看到了3倍更好的结果')
+            .replace(/Early adopters are gaining significant competitive advantages/g, '早期采用者正在获得显著的竞争优势')
+            .replace(/What This Means for You:/g, '这对您意味着什么：')
+            .replace(/Whether you're a seasoned professional or just starting out/g, '无论您是经验丰富的专业人士还是刚刚起步')
+            .replace(/understanding these developments is crucial for career growth/g, '了解这些发展对职业发展至关重要')
+            .replace(/The Question:/g, '问题：')
+            .replace(/How are you preparing for these changes in your field?/g, '您如何为所在领域的这些变化做准备？')
+            .replace(/Share your thoughts below—I'd love to hear your perspective/g, '在下面分享您的想法——我很想听听您的观点')
+            
+            // Facebook translations
+            .replace(/Hey friends! 👋/g, '朋友们好！👋')
+            .replace(/I just came across some really interesting news/g, '我刚刚看到一些非常有趣的新闻')
+            .replace(/that I had to share with you all/g, '必须与大家分享')
+            .replace(/Apparently, there's been a huge breakthrough in /g, '显然，在')
+            .replace(/that's going to change everything we know about /g, '方面有了重大突破，这将改变我们对')
+            .replace(/I was reading about it this morning and honestly, it blew my mind! 🤯/g, '的一切认知。我今早读到这个消息，说实话，让我震惊了！🤯')
+            .replace(/What do you think about these new developments?/g, '您对这些新发展有什么看法？')
+            .replace(/Are you excited about the possibilities, or do you have concerns?/g, '您对可能性感到兴奋，还是有担忧？')
+            .replace(/Drop a comment below and let's chat about it!/g, '在下面留言，让我们聊聊吧！')
+            .replace(/I'd love to hear your thoughts/g, '我很想听听您的想法')
+            
+            // Instagram translations
+            .replace(/✨ \*\*INSPIRATION ALERT\*\* ✨/g, '✨ **灵感提醒** ✨')
+            .replace(/Today's dose of motivation comes from/g, '今天的动力来自于')
+            .replace(/incredible developments in /g, '令人难以置信的发展')
+            .replace(/that I discovered through /g, '我通过')
+            .replace(/🌟 \*\*The Story:\*\*/g, '🌟 **故事：**')
+            .replace(/When I first read about these breakthroughs in /g, '当我第一次读到这些突破时')
+            .replace(/I couldn't help but feel inspired by the endless possibilities/g, '我不禁被无限的可能性所激励')
+            .replace(/It's amazing how /g, '令人惊讶的是')
+            .replace(/continues to evolve and push boundaries/g, '如何继续发展并突破界限')
+            .replace(/💭 \*\*The Takeaway:\*\*/g, '💭 **要点：**')
+            .replace(/This reminds us that innovation is everywhere/g, '这提醒我们创新无处不在')
+            .replace(/we just need to keep our eyes open and our minds ready/g, '我们只需要保持眼睛开放，思维准备就绪')
+            .replace(/🔥 \*\*The Question:\*\*/g, '🔥 **问题：**')
+            .replace(/What's inspiring you today?/g, '今天什么激励着您？')
+            .replace(/What recent developments have caught your attention/g, '最近哪些发展引起了您的注意')
+            .replace(/and sparked your creativity?/g, '并激发了您的创造力？')
+            .replace(/Share your thoughts below! Let's inspire each other. 💫/g, '在下面分享您的想法！让我们互相激励。💫')
+            
+            // Twitter translations
+            .replace(/🚨 BREAKING: Major /g, '🚨 突发：重大')
+            .replace(/developments reported by /g, '发展由')
+            .replace(/This changes everything in /g, '这改变了一切')
+            .replace(/Game-changer for the industry/g, '行业的游戏规则改变者')
+            .replace(/Thoughts?/g, '想法？')
+            
+            // YouTube translations
+            .replace(/Hey there! You won't BELIEVE what just happened in /g, '大家好！您不会相信刚刚在')
+            .replace(/According to /g, '根据')
+            .replace(/we're seeing revolutionary changes in /g, '我们正在看到革命性的变化')
+            .replace(/that will impact everyone/g, '这将影响每个人')
+            .replace(/Here's what you need to know:/g, '以下是您需要了解的：')
+            .replace(/is evolving faster than ever/g, '比以往任何时候都发展得更快')
+            .replace(/Companies are adapting to new /g, '公司正在适应新的')
+            .replace(/strategies/g, '策略')
+            .replace(/The future of /g, '的未来')
+            .replace(/looks incredibly promising/g, '看起来非常有希望')
+            .replace(/Don't forget to like, subscribe, and share your thoughts/g, '别忘了点赞、订阅并分享您的想法')
+            .replace(/What do you think about these developments?/g, '您对这些发展有什么看法？')
+            
+            // Blog translations
+            .replace(/The Future of /g, '的未来')
+            .replace(/A Comprehensive Analysis/g, '综合分析')
+            .replace(/In today's rapidly evolving landscape/g, '在当今快速发展的环境中')
+            .replace(/understanding the key trends and developments in /g, '了解关键趋势和发展')
+            .replace(/is crucial for success/g, '对成功至关重要')
+            .replace(/Recent reports from /g, '来自')
+            .replace(/highlight significant developments/g, '的最新报告突出了重要发展')
+            .replace(/that are reshaping our industry/g, '正在重塑我们的行业')
+            .replace(/The landscape of /g, '的格局')
+            .replace(/has undergone remarkable transformations/g, '经历了显著的转变')
+            .replace(/According to industry experts and recent data/g, '根据行业专家和最新数据')
+            .replace(/we're witnessing unprecedented changes/g, '我们正在见证前所未有的变化')
+            .replace(/that demand our attention/g, '需要我们的关注')
+            .replace(/Key Developments and Trends/g, '关键发展和趋势')
+            .replace(/Recent breakthroughs in /g, '最近的突破')
+            .replace(/have opened new possibilities/g, '开辟了新的可能性')
+            .replace(/These developments represent a fundamental shift/g, '这些发展代表了一个根本性的转变')
+            .replace(/in how we approach industry challenges/g, '在我们应对行业挑战的方式上')
+            .replace(/The implications of these changes extend far beyond/g, '这些变化的影响远远超出了')
+            .replace(/Companies that embrace /g, '采用')
+            .replace(/are positioning themselves for long-term success/g, '的公司正在为长期成功定位')
+            .replace(/in an increasingly competitive market/g, '在日益竞争的市场中')
+            .replace(/Looking ahead, the trajectory of /g, '展望未来，')
+            .replace(/suggests continued innovation and growth/g, '的轨迹表明持续的创新和增长')
+            .replace(/Early adopters stand to gain significant advantages/g, '早期采用者将获得显著优势')
+            .replace(/in this evolving landscape/g, '在这个不断发展的环境中')
+            .replace(/What This Means for Professionals/g, '这对专业人士意味着什么')
+            .replace(/For Industry Leaders/g, '对于行业领导者')
+            .replace(/Understanding these developments is essential/g, '了解这些发展是必要的')
+            .replace(/for strategic decision-making/g, '对于战略决策')
+            .replace(/and maintaining competitive advantages/g, '和保持竞争优势')
+            .replace(/For Emerging Professionals/g, '对于新兴专业人士')
+            .replace(/These changes present unique opportunities/g, '这些变化提供了独特的机会')
+            .replace(/for career growth and skill development/g, '对于职业发展和技能发展')
+            .replace(/in high-demand areas/g, '在高需求领域')
+            .replace(/For Businesses/g, '对于企业')
+            .replace(/Adapting to these trends requires/g, '适应这些趋势需要')
+            .replace(/proactive planning and investment/g, '主动规划和投资')
+            .replace(/in relevant technologies and methodologies/g, '在相关技术和方法上')
+            .replace(/Actionable Insights/g, '可操作的见解')
+            .replace(/Stay Informed/g, '保持信息灵通')
+            .replace(/Regularly monitor developments in /g, '定期监控')
+            .replace(/through reliable sources like /g, '通过可靠来源如')
+            .replace(/Embrace Change/g, '拥抱变化')
+            .replace(/Be open to new approaches and methodologies/g, '对新方法和方法保持开放')
+            .replace(/Invest in Learning/g, '投资学习')
+            .replace(/Continuously develop skills related to emerging trends/g, '持续发展相关技能')
+            .replace(/Network Actively/g, '积极建立网络')
+            .replace(/Connect with professionals who are leading innovation/g, '与引领创新的专业人士联系')
+            .replace(/in these areas/g, '在这些领域')
+            .replace(/As we navigate this dynamic landscape/g, '当我们在这个动态环境中导航时')
+            .replace(/staying informed and adaptable is more important than ever/g, '保持信息灵通和适应能力比以往任何时候都更重要')
+            .replace(/The developments in /g, '的发展')
+            .replace(/represent both challenges and opportunities/g, '既代表挑战也代表机遇')
+            .replace(/for those willing to embrace change and innovation/g, '对于那些愿意拥抱变化和创新的人')
+            .replace(/By understanding these trends and taking proactive steps/g, '通过了解这些趋势并采取主动措施')
+            .replace(/professionals and businesses can position themselves for success/g, '专业人士和企业可以为成功定位')
+            .replace(/in an increasingly competitive and innovative environment/g, '在日益竞争和创新的环境中');
     } else {
         // Return to English (original content)
         return $('#contentPreview').data('original-content');
