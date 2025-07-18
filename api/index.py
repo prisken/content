@@ -639,6 +639,18 @@ BASE_TEMPLATE = """
             }
         });
         
+        // Translate placeholders
+        $('[data-translate-placeholder]').each(function() {
+            const key = $(this).data('translate-placeholder');
+            const translation = langDict[key];
+            if (translation) {
+                $(this).attr('placeholder', translation);
+                console.log('Translated placeholder ' + key + ' to:', translation);
+            } else {
+                console.log('No translation found for placeholder key: ' + key);
+            }
+        });
+        
         // Update HTML lang attribute
         $('html').attr('lang', lang);
         console.log('Page translation completed');
@@ -971,7 +983,7 @@ GENERATOR_CONTENT = """
                         
                         <!-- Step 3.5: Topic Selection -->
                         <div id="step3_5" class="step-content" style="display: none;">
-                            <h3 class="text-center mb-4">Step 3.5: Choose Your Topic</h3>
+                            <h3 class="text-center mb-4"><span data-translate="step_3_5">Step 3.5</span>: <span data-translate="choose_your_topic">Choose Your Topic</span></h3>
                             
                             <!-- Input fields for specific sources -->
                             <div id="sourceInputs" class="mb-4" style="display: none;">
@@ -979,49 +991,49 @@ GENERATOR_CONTENT = """
                                 <div id="booksInput" class="source-input" style="display: none;">
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label class="form-label">Book Title</label>
-                                            <input type="text" class="form-control" id="bookTitle" placeholder="Enter book title...">
+                                            <label class="form-label" data-translate="book_title">Book Title</label>
+                                            <input type="text" class="form-control" id="bookTitle" data-translate-placeholder="enter_book_title" placeholder="Enter book title...">
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label class="form-label">Author</label>
-                                            <input type="text" class="form-control" id="bookAuthor" placeholder="Enter author name...">
+                                            <label class="form-label" data-translate="author">Author</label>
+                                            <input type="text" class="form-control" id="bookAuthor" data-translate-placeholder="enter_author_name" placeholder="Enter author name...">
                                         </div>
                                     </div>
                                     <button type="button" class="btn btn-outline-primary" onclick="loadBookTopics()">
-                                        <i class="fas fa-search me-2"></i>Find Topics
+                                        <i class="fas fa-search me-2"></i><span data-translate="find_topics">Find Topics</span>
                                     </button>
                                 </div>
                                 
                                 <!-- Podcast input -->
                                 <div id="podcastInput" class="source-input" style="display: none;">
                                     <div class="mb-3">
-                                        <label class="form-label">Podcast Link</label>
-                                        <input type="url" class="form-control" id="podcastLink" placeholder="Enter podcast URL...">
+                                        <label class="form-label" data-translate="podcast_link">Podcast Link</label>
+                                        <input type="url" class="form-control" id="podcastLink" data-translate-placeholder="enter_podcast_url" placeholder="Enter podcast URL...">
                                     </div>
                                     <button type="button" class="btn btn-outline-primary" onclick="loadPodcastTopics()">
-                                        <i class="fas fa-search me-2"></i>Find Topics
+                                        <i class="fas fa-search me-2"></i><span data-translate="find_topics">Find Topics</span>
                                     </button>
                                 </div>
                                 
                                 <!-- Video input -->
                                 <div id="videoInput" class="source-input" style="display: none;">
                                     <div class="mb-3">
-                                        <label class="form-label">YouTube Video Link</label>
-                                        <input type="url" class="form-control" id="videoLink" placeholder="Enter YouTube video URL...">
+                                        <label class="form-label" data-translate="youtube_video_link">YouTube Video Link</label>
+                                        <input type="url" class="form-control" id="videoLink" data-translate-placeholder="enter_youtube_video_url" placeholder="Enter YouTube video URL...">
                                     </div>
                                     <button type="button" class="btn btn-outline-primary" onclick="loadVideoTopics()">
-                                        <i class="fas fa-search me-2"></i>Find Topics
+                                        <i class="fas fa-search me-2"></i><span data-translate="find_topics">Find Topics</span>
                                     </button>
                                 </div>
                                 
                                 <!-- Research paper input -->
                                 <div id="researchInput" class="source-input" style="display: none;">
                                     <div class="mb-3">
-                                        <label class="form-label">Research Paper (PDF)</label>
+                                        <label class="form-label" data-translate="research_paper_pdf">Research Paper (PDF)</label>
                                         <input type="file" class="form-control" id="researchFile" accept=".pdf">
                                     </div>
                                     <button type="button" class="btn btn-outline-primary" onclick="loadResearchTopics()">
-                                        <i class="fas fa-upload me-2"></i>Upload & Find Topics
+                                        <i class="fas fa-upload me-2"></i><span data-translate="upload_find_topics">Upload & Find Topics</span>
                                     </button>
                                 </div>
                             </div>
@@ -1029,9 +1041,9 @@ GENERATOR_CONTENT = """
                             <!-- Topic choices -->
                             <div id="topicChoices" class="mb-4" style="display: none;">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h5 id="topicTitle">Available Topics</h5>
+                                    <h5 id="topicTitle" data-translate="available_topics">Available Topics</h5>
                                     <button type="button" class="btn btn-outline-secondary btn-sm" onclick="refreshTopics()">
-                                        <i class="fas fa-sync-alt me-1"></i>Refresh
+                                        <i class="fas fa-sync-alt me-1"></i><span data-translate="refresh">Refresh</span>
                                     </button>
                                 </div>
                                 <div class="row" id="topicsGrid">
@@ -1041,61 +1053,61 @@ GENERATOR_CONTENT = """
                             
                             <div class="text-center mt-4">
                                 <button type="button" class="btn btn-secondary btn-lg me-3" onclick="prevStep()">
-                                    <i class="fas fa-arrow-left me-2"></i>Previous
+                                    <i class="fas fa-arrow-left me-2"></i><span data-translate="previous">Previous</span>
                                 </button>
                                 <button type="button" class="btn btn-primary btn-lg" onclick="nextStep()" id="nextStepBtn" disabled>
-                                    Next Step <i class="fas fa-arrow-right ms-2"></i>
+                                    <span data-translate="next_step">Next Step</span> <i class="fas fa-arrow-right ms-2"></i>
                                 </button>
                             </div>
                         </div>
                         
                         <!-- Step 4: Tone -->
                         <div id="step4" class="step-content" style="display: none;">
-                            <h3 class="text-center mb-4">Step 4: How Should It Sound?</h3>
+                            <h3 class="text-center mb-4"><span data-translate="step_4">Step 4</span>: <span data-translate="how_should_sound">How Should It Sound?</span></h3>
                             <div class="row">
                                 <div class="col-md-4 col-sm-6 mb-3">
                                     <div class="direction-card" data-tone="professional">
                                         <i class="fas fa-user-tie"></i>
-                                        <div>Professional</div>
+                                        <div data-translate="professional">Professional</div>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-6 mb-3">
                                     <div class="direction-card" data-tone="casual">
                                         <i class="fas fa-smile"></i>
-                                        <div>Casual</div>
+                                        <div data-translate="casual">Casual</div>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-6 mb-3">
                                     <div class="direction-card" data-tone="inspirational">
                                         <i class="fas fa-star"></i>
-                                        <div>Inspirational</div>
+                                        <div data-translate="inspirational">Inspirational</div>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-6 mb-3">
                                     <div class="direction-card" data-tone="educational">
                                         <i class="fas fa-lightbulb"></i>
-                                        <div>Educational</div>
+                                        <div data-translate="educational">Educational</div>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-6 mb-3">
                                     <div class="direction-card" data-tone="humorous">
                                         <i class="fas fa-laugh"></i>
-                                        <div>Humorous</div>
+                                        <div data-translate="humorous">Humorous</div>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-6 mb-3">
                                     <div class="direction-card" data-tone="serious">
                                         <i class="fas fa-exclamation-triangle"></i>
-                                        <div>Serious</div>
+                                        <div data-translate="serious">Serious</div>
                                     </div>
                                 </div>
                             </div>
                             <div class="text-center mt-4">
                                 <button type="button" class="btn btn-secondary btn-lg me-3" onclick="prevStep()">
-                                    <i class="fas fa-arrow-left me-2"></i>Previous
+                                    <i class="fas fa-arrow-left me-2"></i><span data-translate="previous">Previous</span>
                                 </button>
                                 <button type="submit" class="btn btn-primary btn-lg">
-                                    <i class="fas fa-magic me-2"></i>Generate Content
+                                    <i class="fas fa-magic me-2"></i><span data-translate="generate_content">Generate Content</span>
                                 </button>
                             </div>
                         </div>
@@ -1113,14 +1125,14 @@ GENERATOR_CONTENT = """
             
             <div id="result" class="card mt-4" style="display: none;">
                 <div class="card-body p-4">
-                    <h4><i class="fas fa-file-alt me-2"></i>Generated Content</h4>
+                    <h4><i class="fas fa-file-alt me-2"></i><span data-translate="generated_content">Generated Content</span></h4>
                     <div id="generatedContent" class="mt-3"></div>
                     <div class="mt-3">
                         <button class="btn btn-success me-2" onclick="copyContent()">
-                            <i class="fas fa-copy me-1"></i>Copy
+                            <i class="fas fa-copy me-1"></i><span data-translate="copy">Copy</span>
                         </button>
                         <button class="btn btn-primary" onclick="saveContent()">
-                            <i class="fas fa-save me-1"></i>Save to Library
+                            <i class="fas fa-save me-1"></i><span data-translate="save_to_library">Save to Library</span>
                         </button>
                     </div>
                 </div>
