@@ -1,0 +1,149 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles */
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  body {
+    @apply bg-gray-50 text-gray-900;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg transition-colors duration-200;
+  }
+  
+  .card {
+    @apply bg-white rounded-lg shadow-lg p-6;
+  }
+  
+  .input-field {
+    @apply w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+  }
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Loading spinner */
+.spinner {
+  @apply animate-spin rounded-full border-b-2 border-blue-600;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400;
+}
+
+/* Focus styles */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+/* Toast notifications */
+.toast-success {
+  @apply bg-green-500 text-white;
+}
+
+.toast-error {
+  @apply bg-red-500 text-white;
+}
+
+.toast-info {
+  @apply bg-blue-500 text-white;
+}
+
+/* Responsive text */
+.text-responsive {
+  @apply text-sm sm:text-base md:text-lg;
+}
+
+/* Gradient backgrounds */
+.gradient-primary {
+  @apply bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700;
+}
+
+.gradient-secondary {
+  @apply bg-gradient-to-br from-gray-100 to-gray-200;
+}
+
+/* Hover effects */
+.hover-lift {
+  @apply transition-transform duration-200 hover:transform hover:scale-105;
+}
+
+.hover-shadow {
+  @apply transition-shadow duration-200 hover:shadow-lg;
+}
+
+/* Status indicators */
+.status-online {
+  @apply w-2 h-2 bg-green-500 rounded-full;
+}
+
+.status-offline {
+  @apply w-2 h-2 bg-gray-400 rounded-full;
+}
+
+.status-busy {
+  @apply w-2 h-2 bg-yellow-500 rounded-full;
+}
+
+/* Platform colors */
+.platform-linkedin {
+  @apply text-blue-600 bg-blue-100;
+}
+
+.platform-twitter {
+  @apply text-blue-400 bg-blue-100;
+}
+
+.platform-instagram {
+  @apply text-pink-600 bg-pink-100;
+}
+
+.platform-facebook {
+  @apply text-blue-800 bg-blue-100;
+}
+
+.platform-youtube {
+  @apply text-red-600 bg-red-100;
+}
+
+.platform-blog {
+  @apply text-gray-600 bg-gray-100;
+} 
