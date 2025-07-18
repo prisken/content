@@ -5037,14 +5037,14 @@ function editPost(postId) {
 
 function duplicatePost(postId) {
     // Duplicate existing post
-    console.log('Duplicating post:', postId);
+    
     // Placeholder: Duplicate post
     alert('Duplicate post functionality - Post ID: ' + postId);
 }
 
 function deletePost(postId) {
     if (confirm('Are you sure you want to delete this post?')) {
-        console.log('Deleting post:', postId);
+        
         // Placeholder: Delete post
         alert('Delete post functionality - Post ID: ' + postId);
     }
@@ -5054,11 +5054,11 @@ function deletePost(postId) {
 function schedulePost(postId = null) {
     if (postId) {
         // Schedule specific post
-        console.log('Scheduling post:', postId);
+        
         showScheduleModal(postId);
     } else {
         // Schedule new post
-        console.log('Schedule new post');
+        
         showScheduleModal();
     }
 }
@@ -5123,7 +5123,7 @@ function confirmSchedule() {
         return;
     }
     
-    console.log('Scheduling post:', { dateTime, content, account });
+    
     
     // Placeholder: Save schedule
     alert('Post scheduled successfully!');
@@ -5135,7 +5135,7 @@ function confirmSchedule() {
 
 function cancelSchedule(postId) {
     if (confirm('Are you sure you want to cancel this scheduled post?')) {
-        console.log('Canceling schedule for post:', postId);
+        
         // Placeholder: Cancel schedule
         alert('Schedule canceled for post: ' + postId);
     }
@@ -5145,18 +5145,18 @@ function cancelSchedule(postId) {
 function publishNow(postId = null) {
     if (postId) {
         // Publish specific post
-        console.log('Publishing post now:', postId);
+        
         confirmPublish(postId);
     } else {
         // Publish new post
-        console.log('Publish new post now');
+        
         showPublishModal();
     }
 }
 
 function confirmPublish(postId) {
     if (confirm('Are you sure you want to publish this post now?')) {
-        console.log('Confirming publish for post:', postId);
+        
         // Placeholder: Publish post
         alert('Post published successfully!');
     }
@@ -5217,7 +5217,7 @@ function confirmPublishNow() {
         return;
     }
     
-    console.log('Publishing now:', { content, account });
+    
     
     // Placeholder: Publish immediately
     alert('Post published successfully!');
@@ -5233,7 +5233,7 @@ function applyFilters() {
     const directionFilter = document.getElementById('directionFilter').value;
     const dateFilter = document.getElementById('dateFilter').value;
     
-    console.log('Applying filters:', { statusFilter, directionFilter, dateFilter });
+    
     
     // Placeholder: Apply filters
     alert('Filters applied: ' + JSON.stringify({ statusFilter, directionFilter, dateFilter }));
@@ -5250,7 +5250,7 @@ function bulkActions() {
     
     const action = prompt('Choose action: schedule, publish, delete');
     if (action) {
-        console.log('Bulk action:', action, 'on', selectedPosts.length, 'posts');
+        
         // Placeholder: Perform bulk action
         alert('Bulk action "' + action + '" performed on ' + selectedPosts.length + ' posts');
     }
@@ -5258,27 +5258,27 @@ function bulkActions() {
 
 // Analytics Functions
 function analyzePerformance() {
-    console.log('Opening performance analysis');
+    
     // Placeholder: Open analytics
     alert('Performance analysis - This would open detailed analytics dashboard');
 }
 
 function exportData() {
-    console.log('Exporting LinkedIn data');
+    
     // Placeholder: Export data
     alert('Data export - This would download LinkedIn performance data as CSV');
 }
 
 // Settings Functions
 function openLinkedInSettings() {
-    console.log('Opening LinkedIn settings');
+    
     // Placeholder: Open settings
     alert('LinkedIn Settings - This would open account connection and preferences');
 }
 
 // Initialize LinkedIn Manager
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('LinkedIn Manager initialized');
+    
     
     // Add event listeners for checkboxes
     document.querySelectorAll('.post-item input[type="checkbox"]').forEach(checkbox => {
@@ -5312,21 +5312,21 @@ function createNewPost() {
 
 function editPost(postId) {
     // Open edit modal for post
-    console.log('Editing post:', postId);
+    
     // Placeholder: Show edit modal
     alert('Edit post functionality - Post ID: ' + postId);
 }
 
 function duplicatePost(postId) {
     // Duplicate existing post
-    console.log('Duplicating post:', postId);
+    
     // Placeholder: Duplicate post
     alert('Duplicate post functionality - Post ID: ' + postId);
 }
 
 function deletePost(postId) {
     if (confirm('Are you sure you want to delete this post?')) {
-        console.log('Deleting post:', postId);
+        
         // Placeholder: Delete post
         alert('Delete post functionality - Post ID: ' + postId);
     }
@@ -5336,11 +5336,11 @@ function deletePost(postId) {
 function schedulePost(postId = null) {
     if (postId) {
         // Schedule specific post
-        console.log('Scheduling post:', postId);
+        
         showScheduleModal(postId);
     } else {
         // Schedule new post
-        console.log('Schedule new post');
+        
         showScheduleModal();
     }
 }
@@ -5428,7 +5428,7 @@ function confirmSchedule() {
 
 function cancelSchedule(postId) {
     if (confirm('Are you sure you want to cancel this scheduled post?')) {
-        console.log('Canceling schedule for post:', postId);
+        
         // Placeholder: Cancel schedule
         alert('Schedule canceled for post: ' + postId);
     }
@@ -5438,18 +5438,18 @@ function cancelSchedule(postId) {
 function publishNow(postId = null) {
     if (postId) {
         // Publish specific post
-        console.log('Publishing post now:', postId);
+        
         confirmPublish(postId);
     } else {
         // Publish new post
-        console.log('Publish new post now');
+        
         showPublishModal();
     }
 }
 
 function confirmPublish(postId) {
     if (confirm('Are you sure you want to publish this post now?')) {
-        console.log('Confirming publish for post:', postId);
+        
         // Placeholder: Publish post
         alert('Post published successfully!');
     }
@@ -5521,7 +5521,7 @@ function confirmPublishNow() {
         return;
     }
     
-    console.log('Publishing now:', { platform, content, account });
+    
     
     // Placeholder: Publish immediately
     alert('Post published successfully on ' + platform + '!');
@@ -5537,7 +5537,7 @@ function applyFilters() {
     const directionFilter = document.getElementById('directionFilter').value;
     const dateFilter = document.getElementById('dateFilter').value;
     
-    console.log('Applying filters:', { statusFilter, directionFilter, dateFilter });
+    
     
     // Placeholder: Apply filters
     alert('Filters applied: ' + JSON.stringify({ statusFilter, directionFilter, dateFilter }));
@@ -5554,7 +5554,7 @@ function bulkActions() {
     
     const action = prompt('Choose action: schedule, publish, delete');
     if (action) {
-        console.log('Bulk action:', action, 'on', selectedPosts.length, 'posts');
+        
         // Placeholder: Perform bulk action
         alert('Bulk action "' + action + '" performed on ' + selectedPosts.length + ' posts');
     }
@@ -5562,27 +5562,27 @@ function bulkActions() {
 
 // Analytics Functions
 function analyzePerformance() {
-    console.log('Opening performance analysis');
+    
     // Placeholder: Open analytics
     alert('Performance analysis - This would open detailed analytics dashboard');
 }
 
 function exportData() {
-    console.log('Exporting social media data');
+    
     // Placeholder: Export data
     alert('Data export - This would download social media performance data as CSV');
 }
 
 // Settings Functions
 function openSocialMediaSettings() {
-    console.log('Opening social media settings');
+    
     // Placeholder: Open settings
     alert('Social Media Settings - This would open account connections and preferences for all platforms');
 }
 
 // Initialize Social Media Manager
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Social Media Manager initialized');
+    
     
     // Add event listeners for checkboxes
     document.querySelectorAll('.post-item input[type="checkbox"]').forEach(checkbox => {
@@ -5604,4 +5604,4 @@ function updateBulkActionsVisibility() {
 """
 
 if __name__ == '__main__':
-    app.run(debug=False) 
+    app.run() 
