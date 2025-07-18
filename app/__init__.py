@@ -60,6 +60,8 @@ def create_app(config_name='development'):
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
+    
+    # Configure CORS
     cors(app)
     
     # Register blueprints

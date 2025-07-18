@@ -58,4 +58,12 @@ class ProductionConfig:
         'sports_fitness', 'science_research', 'politics_current_events',
         'environment_sustainability', 'personal_development', 'parenting_family',
         'art_creativity', 'real_estate', 'automotive', 'pet_care'
+    ]
+    
+    # CORS Configuration
+    CORS_ORIGINS = [
+        'http://localhost:3000',  # Local development
+        'https://your-frontend-domain.vercel.app',  # Production frontend
+        'https://*.vercel.app',  # Vercel preview deployments
+        'https://*.railway.app'  # Railway preview deployments
     ] 

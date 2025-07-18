@@ -6,7 +6,7 @@ const nextConfig = {
     domains: ['res.cloudinary.com', 'via.placeholder.com'],
   },
   env: {
-    BACKEND_URL: process.env.BACKEND_URL || 'http://localhost:5000',
+    BACKEND_URL: process.env.BACKEND_URL || 'https://content-contentmaker.up.railway.app',
   },
   async rewrites() {
     return [

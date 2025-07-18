@@ -472,3 +472,73 @@ Your Content Creator Pro application is now deployed using a hybrid Vercel + Rai
 5. Plan for scaling as your user base grows
 
 **Remember**: Keep your environment variables secure and never commit them to your repository! 
+
+## 🎯 **Your Health Check URL:**
+
+```
+https://content-contentmaker.up.railway.app/health
+```
+
+## 🧪 **Test Your API Now:**
+
+### **1. Health Check:**
+```bash
+curl https://content-contentmaker.up.railway.app/health
+```
+
+### **2. API Status:**
+```bash
+curl https://content-contentmaker.up.railway.app/api/status
+```
+
+### **3. Root Endpoint:**
+```bash
+curl https://content-contentmaker.up.railway.app/
+```
+
+## 📋 **Expected Responses:**
+
+### **Health Check Response:**
+```json
+{
+  "status": "healthy",
+  "timestamp": "2024-12-19T22:30:44Z",
+  "version": "1.0.0"
+}
+```
+
+### **API Status Response:**
+```json
+{
+  "status": "running",
+  "services": {
+    "database": "connected",
+    "cloudinary": "configured",
+    "deepseek": "configured"
+  }
+}
+```
+
+## 🚀 **Quick Test:**
+
+You can test this right now in your terminal:
+
+```bash
+curl https://content-contentmaker.up.railway.app/health
+```
+
+## 📝 **Important Notes:**
+
+- **Your app is running** on port 8080 internally
+- **Railway is proxying** to your public domain
+- **The URL is**: `content-contentmaker.up.railway.app`
+- **You have 10 changes pending** - make sure to apply them after adding environment variables
+
+##  **Next Steps:**
+
+1. **Test the health check** with the URL above
+2. **Add environment variables** in the Variables tab
+3. **Apply the 10 changes** to deploy with variables
+4. **Test content generation** once variables are added
+
+Try the health check now and let me know what response you get! 🎯 
