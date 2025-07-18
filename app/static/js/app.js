@@ -551,7 +551,7 @@ function checkAuthStatus() {
             url: '/auth/profile',
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': 'Bearer ' + token
             },
             success: function(response) {
                 if (response.success) {
@@ -658,14 +658,14 @@ function updateUIForLoggedOutUser() {
 function apiRequest(url, method = 'GET', data = null, options = {}) {
     const token = localStorage.getItem('auth_token');
     const defaultOptions = {
-        url: `${apiBaseUrl}${url}`,
+        url: apiBaseUrl + url,
         method: method,
         contentType: 'application/json',
         headers: {}
     };
     
     if (token) {
-        defaultOptions.headers['Authorization'] = `Bearer ${token}`;
+        defaultOptions.headers['Authorization'] = 'Bearer ' + token;
     }
     
     if (data) {
@@ -813,7 +813,7 @@ function showLoading(element, text = 'Loading...') {
     
     const originalText = $element.text();
     $element.data('original-text', originalText);
-    $element.html(`<i class="fas fa-spinner fa-spin me-1"></i>${text}`);
+            $element.html('<i class="fas fa-spinner fa-spin me-1"></i>' + text);
 }
 
 function hideLoading(element) {
@@ -891,7 +891,7 @@ function switchLanguage(lang) {
     
     // Send AJAX request to update server-side language preference
     $.ajax({
-        url: `/language/${lang}`,
+        url: '/language/' + lang,
         method: 'GET',
         headers: {
             'X-Requested-With': 'XMLHttpRequest'
@@ -921,7 +921,7 @@ function updateLanguageDisplay(lang) {
     
     // Update active state in dropdown
     $('.language-option').removeClass('active');
-    $(`.language-option[data-lang="${lang}"]`).addClass('active');
+            $('.language-option[data-lang="' + lang + '"]').addClass('active');
 }
 
 function translatePage(lang) {
@@ -935,9 +935,9 @@ function translatePage(lang) {
         const translation = langDict[key];
         if (translation) {
             $(this).text(translation);
-            console.log(`Translated ${key} to:`, translation);
+            console.log('Translated ' + key + ' to:', translation);
         } else {
-            console.log(`No translation found for key: ${key}`);
+            console.log('No translation found for key: ' + key);
         }
     });
     
@@ -996,7 +996,7 @@ function translateContent(targetLang) {
             
             if (response.success) {
                 // Update content preview
-                contentPreview.html(`<pre>${response.translated_content}</pre>`);
+                contentPreview.html('<pre>' + response.translated_content + '</pre>');
                 
                 // Update language indicators
                 updateContentLanguageIndicator(targetLang);
@@ -1019,7 +1019,7 @@ function translateContent(targetLang) {
 
 function updateContentLanguageIndicator(lang) {
     $('.content-language').hide();
-    $(`.content-language.${lang}`).show();
+            $('.content-language.' + lang).show();
 }
 
 function updateTranslationButtonStates(activeLang) {
