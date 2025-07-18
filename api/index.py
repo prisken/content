@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from flask import Flask, render_template_string, jsonify, request, session, redirect, url_for, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
@@ -8,6 +9,522 @@ os.environ['VERCEL_ENV'] = 'production'
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-here-change-in-production'  # Required for session management
+
+# Content Management System
+class ContentManager:
+    def __init__(self):
+        self.content_id_counter = 1000
+        self.user_content = {}  # Store content by user
+    
+    def generate_content_id(self):
+        """Generate unique content ID"""
+        self.content_id_counter += 1
+        return f"CC{self.content_id_counter:06d}"
+    
+    def create_content(self, user_email, direction, platform, source, topic, tone, content_text):
+        """Create new content entry"""
+        content_id = self.generate_content_id()
+        timestamp = datetime.now().isoformat()
+        
+        content_entry = {
+            'id': content_id,
+            'user_email': user_email,
+            'direction': direction,
+            'platform': platform,
+            'source': source,
+            'topic': topic,
+            'tone': tone,
+            'content': content_text,
+            'created_at': timestamp,
+            'performance': {
+                'views': 0,
+                'likes': 0,
+                'shares': 0,
+                'comments': 0
+            }
+        }
+        
+        if user_email not in self.user_content:
+            self.user_content[user_email] = []
+        
+        self.user_content[user_email].append(content_entry)
+        return content_entry
+    
+    def get_user_content(self, user_email, limit=10):
+        """Get user's content sorted by creation date"""
+        if user_email not in self.user_content:
+            return []
+        return sorted(self.user_content[user_email], 
+                     key=lambda x: x['created_at'], reverse=True)[:limit]
+    
+    def get_content_by_direction(self, user_email, direction):
+        """Get user's content filtered by direction"""
+        if user_email not in self.user_content:
+            return []
+        return [c for c in self.user_content[user_email] if c['direction'] == direction]
+    
+    def update_performance(self, content_id, platform, views=None, likes=None, shares=None, comments=None):
+        """Update content performance metrics"""
+        for user_content in self.user_content.values():
+            for content in user_content:
+                if content['id'] == content_id and content['platform'] == platform:
+                    if views is not None:
+                        content['performance']['views'] = views
+                    if likes is not None:
+                        content['performance']['likes'] = likes
+                    if shares is not None:
+                        content['performance']['shares'] = shares
+                    if comments is not None:
+                        content['performance']['comments'] = comments
+                    return content
+        return None
+
+# Initialize content manager
+content_manager = ContentManager()
+
+# Sample content for demo purposes
+def initialize_demo_content():
+    """Initialize demo content for demonstration"""
+    demo_user = "demo@contentcreator.com"
+    
+    # Create sample content entries
+    sample_content = [
+        {
+            'direction': 'business_finance',
+            'platform': 'linkedin',
+            'source': 'news',
+            'topic': 'Market Analysis: Latest Trends in Financial Markets',
+            'tone': 'professional',
+            'content': '🚀 Exciting developments in the business world! Based on recent insights, we\'re seeing remarkable growth in key sectors. This represents a significant opportunity for forward-thinking professionals. What are your thoughts on these emerging trends? #BusinessGrowth #Innovation #ProfessionalDevelopment'
+        },
+        {
+            'direction': 'business_finance',
+            'platform': 'twitter',
+            'source': 'books',
+            'topic': 'Key Business Principles from the Book',
+            'tone': 'educational',
+            'content': '📚 Just finished reading an amazing business book! Key takeaway: Success isn\'t about having all the answers, it\'s about asking the right questions. What\'s the best business advice you\'ve ever received? #BusinessTips #Leadership #Growth'
+        },
+        {
+            'direction': 'technology',
+            'platform': 'instagram',
+            'source': 'videos',
+            'topic': 'Main Takeaways from the Video Content',
+            'tone': 'casual',
+            'content': '💻 Tech tip of the day! Just learned this amazing productivity hack from a YouTube video. Game changer for anyone working remotely! What\'s your favorite productivity tool? #TechTips #Productivity #RemoteWork'
+        },
+        {
+            'direction': 'business_finance',
+            'platform': 'blog',
+            'source': 'research',
+            'topic': 'Key Findings from the Research Paper',
+            'tone': 'professional',
+            'content': 'New research reveals fascinating insights into market dynamics. The data shows a clear correlation between innovation investment and long-term growth. This study provides valuable insights for business leaders looking to make strategic decisions.'
+        }
+    ]
+    
+    # Add sample content to manager
+    for i, content_data in enumerate(sample_content):
+        content_manager.create_content(
+            demo_user,
+            content_data['direction'],
+            content_data['platform'],
+            content_data['source'],
+            content_data['topic'],
+            content_data['tone'],
+            content_data['content']
+        )
+    
+    # Add some performance data
+    content_manager.update_performance('CC1001', 'linkedin', views=156, likes=23, shares=5, comments=8)
+    content_manager.update_performance('CC1002', 'twitter', views=89, likes=45, shares=12, comments=15)
+    content_manager.update_performance('CC1003', 'instagram', views=234, likes=67, shares=8, comments=12)
+    content_manager.update_performance('CC1004', 'blog', views=567, likes=89, shares=23, comments=34)
+
+# Initialize demo content
+initialize_demo_content()
+
+def generate_dashboard_content(user_email, user_content):
+    """Generate dynamic dashboard content based on user's content"""
+    
+    # Get user's name
+    user_name = user_email.split('@')[0] if '@' in user_email else user_email
+    
+    # Calculate stats
+    total_content = len(user_content)
+    this_month = len([c for c in user_content if c['created_at'].startswith('2024-07')])
+    library_items = total_content
+    social_posts = len([c for c in user_content if c['platform'] in ['linkedin', 'twitter', 'instagram', 'facebook']])
+    
+    # Get recent content by direction
+    recent_content_html = ""
+    for content in user_content[:4]:
+        direction_icon = get_direction_icon(content['direction'])
+        direction_name = get_direction_name(content['direction'])
+        platform_name = get_platform_name(content['platform'])
+        time_ago = get_time_ago(content['created_at'])
+        badge_color = get_platform_badge_color(content['platform'])
+        
+        recent_content_html += f"""
+        <div class="d-flex align-items-center mb-3">
+            {direction_icon}
+            <div class="flex-grow-1">
+                <strong><span data-translate="{content['direction']}">{direction_name}</span>: {content['topic'][:50]}{'...' if len(content['topic']) > 50 else ''}</strong>
+                <br><small class="text-muted">{time_ago}</small>
+            </div>
+            <span class="badge {badge_color}" data-translate="{content['platform']}">{platform_name}</span>
+        </div>
+        """
+    
+    # Generate social media performance
+    social_performance_html = generate_social_performance_html(user_content)
+    
+    # Generate content performance by direction
+    direction_performance_html = generate_direction_performance_html(user_content)
+    
+    return f"""
+    <div class="container">
+        <!-- Welcome Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h2 class="mb-2"><span data-translate="welcome_back">Welcome back</span>, {user_name}!</h2>
+                        <p class="mb-0"><span data-translate="your_focus">Your focus</span>: <strong data-translate="business_finance">Business & Finance</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Stats -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h4 class="mb-3"><i class="fas fa-chart-bar me-2"></i><span data-translate="quick_stats">Quick Stats</span></h4>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-file-alt fa-2x text-primary mb-2"></i>
+                        <h3 class="mb-1">{total_content}</h3>
+                        <p class="text-muted mb-0" data-translate="content_generated">Content Generated</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-calendar fa-2x text-success mb-2"></i>
+                        <h3 class="mb-1">{this_month}</h3>
+                        <p class="text-muted mb-0" data-translate="this_month">This Month</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-folder fa-2x text-warning mb-2"></i>
+                        <h3 class="mb-1">{library_items}</h3>
+                        <p class="text-muted mb-0" data-translate="library_items">Library Items</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-share-alt fa-2x text-info mb-2"></i>
+                        <h3 class="mb-1">{social_posts}</h3>
+                        <p class="text-muted mb-0" data-translate="social_posts">Social Posts</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-bolt me-2"></i><span data-translate="quick_actions">Quick Actions</span></h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-2 col-6 mb-2">
+                                <a href="/generator" class="btn btn-primary w-100">
+                                    <i class="fas fa-plus-circle me-1"></i><span data-translate="generate_new_content">Generate New Content</span>
+                                </a>
+                            </div>
+                            <div class="col-md-2 col-6 mb-2">
+                                <a href="/library" class="btn btn-outline-primary w-100">
+                                    <i class="fas fa-folder me-1"></i><span data-translate="view_library">View Library</span>
+                                </a>
+                            </div>
+                            <div class="col-md-2 col-6 mb-2">
+                                <a href="#" class="btn btn-outline-success w-100">
+                                    <i class="fas fa-share-alt me-1"></i><span data-translate="social_media">Social Media</span>
+                                </a>
+                            </div>
+                            <div class="col-md-2 col-6 mb-2">
+                                <a href="/settings" class="btn btn-outline-secondary w-100">
+                                    <i class="fas fa-cog me-1"></i><span data-translate="settings">Settings</span>
+                                </a>
+                            </div>
+                            <div class="col-md-2 col-6 mb-2">
+                                <a href="#" class="btn btn-outline-info w-100">
+                                    <i class="fas fa-chart-line me-1"></i><span data-translate="analytics">Analytics</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Content by Direction -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-clock me-2"></i><span data-translate="recent_content_by_direction">Recent Content by Direction</span></h5>
+                    </div>
+                    <div class="card-body">
+                        {recent_content_html if recent_content_html else '<p class="text-muted">No content generated yet.</p>'}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Social Media Performance -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i><span data-translate="social_media_performance">Social Media Performance</span></h5>
+                    </div>
+                    <div class="card-body">
+                        {social_performance_html}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Content Performance by Direction -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i><span data-translate="content_performance_by_direction">Content Performance by Direction</span></h5>
+                    </div>
+                    <div class="card-body">
+                        {direction_performance_html}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    """
+
+def get_direction_icon(direction):
+    """Get icon for content direction"""
+    icons = {
+        'business_finance': '<i class="fas fa-briefcase text-primary me-3"></i>',
+        'technology': '<i class="fas fa-microchip text-success me-3"></i>',
+        'health_wellness': '<i class="fas fa-heartbeat text-danger me-3"></i>',
+        'education': '<i class="fas fa-graduation-cap text-info me-3"></i>',
+        'entertainment': '<i class="fas fa-film text-warning me-3"></i>',
+        'travel_tourism': '<i class="fas fa-plane text-primary me-3"></i>',
+        'food_cooking': '<i class="fas fa-utensils text-success me-3"></i>',
+        'fashion_beauty': '<i class="fas fa-tshirt text-danger me-3"></i>',
+        'sports_fitness': '<i class="fas fa-dumbbell text-warning me-3"></i>',
+        'science_research': '<i class="fas fa-flask text-info me-3"></i>',
+        'politics_news': '<i class="fas fa-newspaper text-primary me-3"></i>',
+        'environment': '<i class="fas fa-leaf text-success me-3"></i>',
+        'personal_dev': '<i class="fas fa-user-graduate text-info me-3"></i>',
+        'parenting_family': '<i class="fas fa-baby text-warning me-3"></i>',
+        'art_creativity': '<i class="fas fa-palette text-danger me-3"></i>',
+        'real_estate': '<i class="fas fa-home text-primary me-3"></i>',
+        'automotive': '<i class="fas fa-car text-secondary me-3"></i>',
+        'pet_care': '<i class="fas fa-paw text-warning me-3"></i>'
+    }
+    return icons.get(direction, '<i class="fas fa-file text-muted me-3"></i>')
+
+def get_direction_name(direction):
+    """Get display name for content direction"""
+    names = {
+        'business_finance': 'Business & Finance',
+        'technology': 'Technology',
+        'health_wellness': 'Health & Wellness',
+        'education': 'Education',
+        'entertainment': 'Entertainment',
+        'travel_tourism': 'Travel & Tourism',
+        'food_cooking': 'Food & Cooking',
+        'fashion_beauty': 'Fashion & Beauty',
+        'sports_fitness': 'Sports & Fitness',
+        'science_research': 'Science & Research',
+        'politics_news': 'Politics & News',
+        'environment': 'Environment',
+        'personal_dev': 'Personal Development',
+        'parenting_family': 'Parenting & Family',
+        'art_creativity': 'Art & Creativity',
+        'real_estate': 'Real Estate',
+        'automotive': 'Automotive',
+        'pet_care': 'Pet Care'
+    }
+    return names.get(direction, direction.replace('_', ' ').title())
+
+def get_platform_name(platform):
+    """Get display name for platform"""
+    names = {
+        'linkedin': 'LinkedIn Post',
+        'facebook': 'Facebook Post',
+        'instagram': 'Instagram Post',
+        'twitter': 'Twitter Post',
+        'youtube': 'YouTube Short',
+        'blog': 'Blog Article'
+    }
+    return names.get(platform, platform.title())
+
+def get_platform_badge_color(platform):
+    """Get badge color for platform"""
+    colors = {
+        'linkedin': 'bg-primary',
+        'facebook': 'bg-primary',
+        'instagram': 'bg-success',
+        'twitter': 'bg-info',
+        'youtube': 'bg-danger',
+        'blog': 'bg-warning'
+    }
+    return colors.get(platform, 'bg-secondary')
+
+def get_time_ago(timestamp):
+    """Get human-readable time ago"""
+    try:
+        created_time = datetime.fromisoformat(timestamp)
+        now = datetime.now()
+        diff = now - created_time
+        
+        if diff.days > 0:
+            if diff.days == 1:
+                return "1 day ago"
+            elif diff.days < 7:
+                return f"{diff.days} days ago"
+            else:
+                weeks = diff.days // 7
+                if weeks == 1:
+                    return "1 week ago"
+                else:
+                    return f"{weeks} weeks ago"
+        elif diff.seconds > 3600:
+            hours = diff.seconds // 3600
+            if hours == 1:
+                return "1 hour ago"
+            else:
+                return f"{hours} hours ago"
+        else:
+            minutes = diff.seconds // 60
+            if minutes < 1:
+                return "Just now"
+            elif minutes == 1:
+                return "1 minute ago"
+            else:
+                return f"{minutes} minutes ago"
+    except:
+        return "Recently"
+
+def generate_social_performance_html(user_content):
+    """Generate social media performance HTML"""
+    platforms = ['linkedin', 'twitter', 'instagram', 'facebook']
+    platform_icons = {
+        'linkedin': '<i class="fab fa-linkedin text-primary me-2"></i>',
+        'twitter': '<i class="fab fa-twitter text-info me-2"></i>',
+        'instagram': '<i class="fab fa-instagram text-danger me-2"></i>',
+        'facebook': '<i class="fab fa-facebook text-primary me-2"></i>'
+    }
+    
+    html = ""
+    for platform in platforms:
+        platform_content = [c for c in user_content if c['platform'] == platform]
+        total_views = sum(c['performance']['views'] for c in platform_content)
+        total_likes = sum(c['performance']['likes'] for c in platform_content)
+        post_count = len(platform_content)
+        
+        if post_count > 0:
+            html += f"""
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    {platform_icons[platform]}
+                    <strong data-translate="{platform}">{get_platform_name(platform)}</strong>
+                </div>
+                <div class="text-end">
+                    <div>{total_views} views, {total_likes} likes</div>
+                    <small class="text-muted">{post_count} posts</small>
+                </div>
+            </div>
+            """
+        else:
+            html += f"""
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    {platform_icons[platform]}
+                    <strong data-translate="{platform}">{get_platform_name(platform)}</strong>
+                </div>
+                <div class="text-end">
+                    <div class="text-muted">No posts yet</div>
+                </div>
+            </div>
+            """
+    
+    return html if html else '<p class="text-muted">No social media content yet.</p>'
+
+def generate_direction_performance_html(user_content):
+    """Generate content performance by direction HTML"""
+    directions = {}
+    for content in user_content:
+        direction = content['direction']
+        if direction not in directions:
+            directions[direction] = {
+                'count': 0,
+                'total_views': 0,
+                'total_likes': 0,
+                'total_shares': 0
+            }
+        directions[direction]['count'] += 1
+        directions[direction]['total_views'] += content['performance']['views']
+        directions[direction]['total_likes'] += content['performance']['likes']
+        directions[direction]['total_shares'] += content['performance']['shares']
+    
+    if not directions:
+        return '<p class="text-muted">No content generated yet.</p>'
+    
+    html = '<div class="row">'
+    for direction, stats in directions.items():
+        direction_name = get_direction_name(direction)
+        direction_icon = get_direction_icon(direction).replace(' me-3', ' me-2')
+        
+        html += f"""
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    {direction_icon}
+                    <h6 class="mb-2">{direction_name}</h6>
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <div class="text-primary"><strong>{stats['count']}</strong></div>
+                            <small class="text-muted">Posts</small>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-success"><strong>{stats['total_views']}</strong></div>
+                            <small class="text-muted">Views</small>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-info"><strong>{stats['total_likes']}</strong></div>
+                            <small class="text-muted">Likes</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        """
+    
+    html += '</div>'
+    return html
 
 # Base template with navigation
 BASE_TEMPLATE = """
@@ -458,6 +975,11 @@ BASE_TEMPLATE = """
             'dont_have_account': 'Don\'t have an account?',
             'register_here': 'Register here',
             'demo_credentials': 'Demo Credentials:',
+            'social_media_performance': 'Social Media Performance',
+            'content_performance_by_direction': 'Content Performance by Direction',
+            'no_content_generated_yet': 'No content generated yet.',
+            'no_social_media_content_yet': 'No social media content yet.',
+            'no_posts_yet': 'No posts yet',
             'translate_to_chinese': 'Translate to Chinese',
             'translate_to_english': 'Translate to English',
             'step_5': 'Step 5',
@@ -664,6 +1186,11 @@ BASE_TEMPLATE = """
             'dont_have_account': '没有账户？',
             'register_here': '在此注册',
             'demo_credentials': '演示凭据：',
+            'social_media_performance': '社交媒体表现',
+            'content_performance_by_direction': '按方向的内容表现',
+            'no_content_generated_yet': '尚未生成内容。',
+            'no_social_media_content_yet': '尚无社交媒体内容。',
+            'no_posts_yet': '尚无帖子',
             'translate_to_chinese': '翻译成中文',
             'translate_to_english': '翻译成英文',
             'step_5': '第5步',
@@ -1820,15 +2347,24 @@ document.getElementById('generatorForm').addEventListener('submit', function(e) 
         const topics = generateTopics(selectedDirection, selectedSource);
         const selectedTopicText = topics[selectedTopic];
         
+        // Generate sample content based on selections
+        const sampleContent = generateSampleContent(selectedDirection, selectedPlatform, selectedTopicText, selectedTone);
+        
         document.getElementById('generatedContent').innerHTML = `
             <div class="alert alert-success">
                 <h5>Generated Content for ${selectedDirection} - ${selectedPlatform}</h5>
                 <p><strong>Topic:</strong> ${selectedTopicText}</p>
                 <p><strong>Source:</strong> ${selectedSource}</p>
                 <p><strong>Tone:</strong> ${selectedTone}</p>
-                <p>This is a sample generated content based on your selections. In the full implementation, this would be AI-generated content from the selected source with the chosen tone.</p>
+                <div class="mt-3 p-3 bg-light rounded">
+                    <h6>Generated Content:</h6>
+                    <p>${sampleContent}</p>
+                </div>
             </div>
         `;
+        
+        // Save content to server
+        saveGeneratedContent(selectedDirection, selectedPlatform, selectedSource, selectedTopicText, selectedTone, sampleContent);
         
         // Show translation buttons based on current language
         if (currentLanguage === 'zh') {
@@ -1847,6 +2383,70 @@ function copyContent() {
 function saveContent() {
     // Save functionality
     alert('Content saved to library!');
+}
+
+function generateSampleContent(direction, platform, topic, tone) {
+    // Generate sample content based on direction, platform, topic, and tone
+    const contentTemplates = {
+        'business_finance': {
+            'linkedin': '🚀 Exciting developments in the business world! Based on recent insights, we\'re seeing remarkable growth in key sectors. This represents a significant opportunity for forward-thinking professionals. What are your thoughts on these emerging trends? #BusinessGrowth #Innovation #ProfessionalDevelopment',
+            'twitter': '📈 Key insight: Success isn\'t about having all the answers, it\'s about asking the right questions. What\'s the best business advice you\'ve ever received? #BusinessTips #Leadership #Growth',
+            'instagram': '💼 Business tip of the day! Just learned this amazing strategy that\'s completely changed how I approach challenges. Game changer for anyone in business! What\'s your favorite business hack? #BusinessTips #Success #Entrepreneur',
+            'facebook': 'Hey everyone! 👋 Just wanted to share some amazing insights I\'ve discovered. The way things are evolving in our industry is truly fascinating. What do you think about these changes? Drop a comment below!',
+            'youtube': 'In today\'s video, we\'re diving deep into the latest business trends and what they mean for entrepreneurs. This is crucial information that could change your entire approach to business.',
+            'blog': 'The landscape of modern business is evolving at an unprecedented pace. Recent developments in market dynamics reveal fascinating insights into what drives success in today\'s competitive environment.'
+        },
+        'technology': {
+            'linkedin': '💻 Fascinating developments in the tech world! The pace of innovation is truly remarkable. These advancements are reshaping how we work and live. What technology trends are you most excited about? #TechInnovation #DigitalTransformation #FutureOfWork',
+            'twitter': '🔥 Tech tip: Just discovered this amazing productivity hack that\'s saving me hours every week. What\'s your favorite tech shortcut? #TechTips #Productivity #Innovation',
+            'instagram': '⚡ Tech tip of the day! This new tool I found is absolutely incredible. Perfect for anyone working remotely or managing multiple projects. What\'s your go-to tech solution? #TechTips #RemoteWork #Productivity',
+            'facebook': 'Tech enthusiasts! 🤖 Just learned about some incredible new developments that are going to change everything. The future is here, and it\'s amazing! What tech are you most excited about?',
+            'youtube': 'Today we\'re exploring the cutting-edge technologies that are transforming industries worldwide. This is essential viewing for anyone interested in the future of technology.',
+            'blog': 'The rapid evolution of technology continues to reshape our world in profound ways. Understanding these changes is crucial for anyone looking to stay ahead in the digital age.'
+        }
+    };
+    
+    // Get template for direction and platform, or use default
+    const directionTemplates = contentTemplates[direction] || contentTemplates['business_finance'];
+    const content = directionTemplates[platform] || directionTemplates['linkedin'];
+    
+    // Adjust tone if needed
+    if (tone === 'casual') {
+        return content.replace(/🚀|💻|🔥|⚡/g, '😊').replace(/Fascinating|Exciting|Remarkable/g, 'Pretty cool');
+    } else if (tone === 'professional') {
+        return content.replace(/😊|🔥|⚡/g, '📊').replace(/Pretty cool/g, 'Significant');
+    }
+    
+    return content;
+}
+
+function saveGeneratedContent(direction, platform, source, topic, tone, content) {
+    // Send content to server to save
+    fetch('/api/save-content', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            direction: direction,
+            platform: platform,
+            source: source,
+            topic: topic,
+            tone: tone,
+            content: content
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('Content saved successfully:', data.content_id);
+        } else {
+            console.error('Failed to save content:', data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error saving content:', error);
+    });
 }
 
 // Content translation functions
@@ -3015,9 +3615,17 @@ def generator():
 @login_required
 def dashboard():
     """User dashboard page"""
+    user_email = session.get('user', '')
+    
+    # Get user's content
+    user_content = content_manager.get_user_content(user_email, limit=10)
+    
+    # Generate dashboard content with real data
+    dashboard_content = generate_dashboard_content(user_email, user_content)
+    
     return render_template_string(BASE_TEMPLATE,
                                 title="Dashboard",
-                                content=DASHBOARD_CONTENT)
+                                content=dashboard_content)
 
 @app.route('/library')
 def library():
@@ -3408,6 +4016,41 @@ def get_news_sources():
         'success': True,
         'news_sources': news_sources
     })
+
+@app.route('/api/save-content', methods=['POST'])
+def save_content():
+    """Save generated content to user's library"""
+    try:
+        if 'user' not in session:
+            return jsonify({
+                'success': False,
+                'error': 'User not logged in'
+            }), 401
+        
+        data = request.get_json()
+        user_email = session['user']
+        
+        content_entry = content_manager.create_content(
+            user_email=user_email,
+            direction=data.get('direction'),
+            platform=data.get('platform'),
+            source=data.get('source'),
+            topic=data.get('topic'),
+            tone=data.get('tone'),
+            content_text=data.get('content')
+        )
+        
+        return jsonify({
+            'success': True,
+            'content_id': content_entry['id'],
+            'message': 'Content saved successfully'
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
 
 @app.route('/api/generate', methods=['POST'])
 def generate_content():
