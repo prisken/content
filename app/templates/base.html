@@ -30,17 +30,17 @@
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('main.dashboard') }}">
-                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                            <i class="fas fa-tachometer-alt me-1"></i><span data-translate="dashboard">Dashboard</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('main.generator') }}">
-                            <i class="fas fa-plus-circle me-1"></i>Generator
+                            <i class="fas fa-plus-circle me-1"></i><span data-translate="generator">Generator</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('main.library') }}">
-                            <i class="fas fa-folder me-1"></i>Library
+                            <i class="fas fa-folder me-1"></i><span data-translate="library">Library</span>
                         </a>
                     </li>
                 </ul>
@@ -54,25 +54,25 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item language-option" href="#" data-lang="en">
-                                <i class="fas fa-flag me-2"></i>English
+                                <i class="fas fa-flag me-2"></i><span data-translate="english">English</span>
                             </a></li>
                             <li><a class="dropdown-item language-option" href="#" data-lang="zh">
-                                <i class="fas fa-flag me-2"></i>中文
+                                <i class="fas fa-flag me-2"></i><span data-translate="chinese">中文</span>
                             </a></li>
                         </ul>
                     </li>
                     
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user me-1"></i>Account
+                            <i class="fas fa-user me-1"></i><span data-translate="account">Account</span>
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{{ url_for('main.settings') }}">
-                                <i class="fas fa-cog me-2"></i>Settings
+                                <i class="fas fa-cog me-2"></i><span data-translate="settings">Settings</span>
                             </a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="#" id="logout-btn">
-                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                <i class="fas fa-sign-out-alt me-2"></i><span data-translate="logout">Logout</span>
                             </a></li>
                         </ul>
                     </li>
@@ -91,12 +91,12 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
-                    <p class="mb-0">&copy; 2024 Content Creator Pro. All rights reserved.</p>
+                    <p class="mb-0">&copy; 2024 Content Creator Pro. <span data-translate="all_rights_reserved">All rights reserved.</span></p>
                 </div>
                 <div class="col-md-6 text-end">
-                    <a href="#" class="text-muted me-3">Privacy Policy</a>
-                    <a href="#" class="text-muted me-3">Terms of Service</a>
-                    <a href="#" class="text-muted">Support</a>
+                    <a href="#" class="text-muted me-3" data-translate="privacy_policy">Privacy Policy</a>
+                    <a href="#" class="text-muted me-3" data-translate="terms_of_service">Terms of Service</a>
+                    <a href="#" class="text-muted" data-translate="support">Support</a>
                 </div>
             </div>
         </div>

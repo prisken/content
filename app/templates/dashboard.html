@@ -9,8 +9,8 @@
         <div class="col-12">
             <div class="card bg-primary text-white">
                 <div class="card-body">
-                    <h2 class="mb-2">Welcome back, <span class="user-name">User</span>!</h2>
-                    <p class="mb-0">Your focus: <strong>Business & Finance</strong></p>
+                    <h2 class="mb-2"><span data-translate="welcome_back">Welcome back</span>, <span class="user-name">User</span>!</h2>
+                    <p class="mb-0">Your focus: <strong data-translate="business_finance">Business & Finance</strong></p>
                 </div>
             </div>
         </div>
@@ -19,14 +19,14 @@
     <!-- Quick Stats -->
     <div class="row mb-4">
         <div class="col-12">
-            <h4 class="mb-3"><i class="fas fa-chart-bar me-2"></i>Quick Stats</h4>
+            <h4 class="mb-3"><i class="fas fa-chart-bar me-2"></i><span data-translate="dashboard_overview">Quick Stats</span></h4>
         </div>
         <div class="col-md-3 mb-3">
             <div class="card text-center">
                 <div class="card-body">
                     <i class="fas fa-file-alt fa-2x text-primary mb-2"></i>
                     <h3 class="mb-1">45</h3>
-                    <p class="text-muted mb-0">Content Generated</p>
+                    <p class="text-muted mb-0" data-translate="total_content">Content Generated</p>
                 </div>
             </div>
         </div>
@@ -35,7 +35,7 @@
                 <div class="card-body">
                     <i class="fas fa-calendar fa-2x text-success mb-2"></i>
                     <h3 class="mb-1">12</h3>
-                    <p class="text-muted mb-0">This Month</p>
+                    <p class="text-muted mb-0" data-translate="this_month">This Month</p>
                 </div>
             </div>
         </div>
@@ -64,18 +64,18 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                    <h5 class="mb-0"><i class="fas fa-bolt me-2"></i><span data-translate="quick_actions">Quick Actions</span></h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-2 col-6 mb-2">
                             <a href="{{ url_for('main.generator') }}" class="btn btn-primary w-100">
-                                <i class="fas fa-plus-circle me-1"></i>Generate New Content
+                                <i class="fas fa-plus-circle me-1"></i><span data-translate="create_new_content">Generate New Content</span>
                             </a>
                         </div>
                         <div class="col-md-2 col-6 mb-2">
                             <a href="{{ url_for('main.library') }}" class="btn btn-outline-primary w-100">
-                                <i class="fas fa-folder me-1"></i>View Library
+                                <i class="fas fa-folder me-1"></i><span data-translate="view_library">View Library</span>
                             </a>
                         </div>
                         <div class="col-md-2 col-6 mb-2">

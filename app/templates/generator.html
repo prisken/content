@@ -76,16 +76,16 @@
     <div class="row mb-4">
         <div class="col-12">
             <h1 class="h2 mb-2">
-                <i class="fas fa-magic me-2 text-primary"></i>Content Generator
+                <i class="fas fa-magic me-2 text-primary"></i><span data-translate="content_generator">Content Generator</span>
             </h1>
-            <p class="text-muted">Create engaging content in minutes with AI-powered generation</p>
+            <p class="text-muted" data-translate="generate_content_desc">Create engaging content in minutes with AI-powered generation</p>
         </div>
     </div>
 
     <!-- Quick Start Options -->
     <div class="row mb-4">
         <div class="col-12">
-            <h5 class="mb-3">Quick Start</h5>
+            <h5 class="mb-3" data-translate="quick_start">Quick Start</h5>
             
             <!-- Quick Start with Preferences -->
             <div id="preferencesQuickStart" class="mb-3" style="display: none;">
@@ -93,12 +93,12 @@
                     <div class="d-flex align-items-center">
                         <i class="fas fa-magic me-2"></i>
                         <div class="flex-grow-1">
-                            <strong>Use Your Preferences</strong>
+                            <strong data-translate="quick_start_preferences">Use Your Preferences</strong>
                             <br>
-                            <small>Generate content based on your saved preferences</small>
+                            <small data-translate="generate_content_desc">Generate content based on your saved preferences</small>
                         </div>
                         <button class="btn btn-primary btn-sm" onclick="quickStartWithPreferences()">
-                            <i class="fas fa-rocket me-1"></i>Quick Start
+                            <i class="fas fa-rocket me-1"></i><span data-translate="quick_start">Quick Start</span>
                         </button>
                     </div>
                 </div>
@@ -150,7 +150,7 @@
         <div class="col-lg-8">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0">Create Your Content</h5>
+                    <h5 class="mb-0" data-translate="generate_content">Create Your Content</h5>
                 </div>
                 <div class="card-body">
                     <!-- Step Indicator -->
@@ -160,26 +160,26 @@
 
                     <!-- Step 1: Content Direction -->
                     <div id="step1" class="step-content">
-                        <h6 class="mb-3">Step 1: Choose Your Focus</h6>
+                        <h6 class="mb-3"><span data-translate="step_1">Step 1</span>: <span data-translate="choose_direction">Choose Your Focus</span></h6>
                         <div class="row" id="directionGrid">
                             <!-- Directions will be loaded dynamically -->
                         </div>
                         <div class="mt-3">
                             <button class="btn btn-primary" onclick="nextStep()" disabled id="step1Next">
-                                Next <i class="fas fa-arrow-right ms-1"></i>
+                                <span data-translate="next">Next</span> <i class="fas fa-arrow-right ms-1"></i>
                             </button>
                         </div>
                     </div>
 
                     <!-- Step 2: Content Type -->
                     <div id="step2" class="step-content" style="display: none;">
-                        <h6 class="mb-3">Step 2: What Type of Content?</h6>
+                        <h6 class="mb-3"><span data-translate="step_2">Step 2</span>: <span data-translate="choose_platform">What Type of Content?</span></h6>
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <div class="card direction-card h-100" data-content-type="linkedin">
                                     <div class="card-body text-center">
                                         <i class="fab fa-linkedin fa-2x text-primary mb-2"></i>
-                                        <h6 class="card-title">LinkedIn Post</h6>
+                                        <h6 class="card-title" data-translate="linkedin">LinkedIn Post</h6>
                                         <small class="text-muted">Professional networking</small>
                                     </div>
                                 </div>
@@ -188,7 +188,7 @@
                                 <div class="card direction-card h-100" data-content-type="facebook">
                                     <div class="card-body text-center">
                                         <i class="fab fa-facebook fa-2x text-primary mb-2"></i>
-                                        <h6 class="card-title">Facebook Post</h6>
+                                        <h6 class="card-title" data-translate="facebook">Facebook Post</h6>
                                         <small class="text-muted">Community engagement</small>
                                     </div>
                                 </div>
@@ -197,7 +197,7 @@
                                 <div class="card direction-card h-100" data-content-type="instagram">
                                     <div class="card-body text-center">
                                         <i class="fab fa-instagram fa-2x text-primary mb-2"></i>
-                                        <h6 class="card-title">Instagram Post</h6>
+                                        <h6 class="card-title" data-translate="instagram">Instagram Post</h6>
                                         <small class="text-muted">Visual storytelling</small>
                                     </div>
                                 </div>
@@ -206,7 +206,7 @@
                                 <div class="card direction-card h-100" data-content-type="twitter">
                                     <div class="card-body text-center">
                                         <i class="fab fa-twitter fa-2x text-primary mb-2"></i>
-                                        <h6 class="card-title">Twitter Post</h6>
+                                        <h6 class="card-title" data-translate="twitter">Twitter Post</h6>
                                         <small class="text-muted">Quick updates</small>
                                     </div>
                                 </div>
@@ -215,7 +215,7 @@
                                 <div class="card direction-card h-100" data-content-type="youtube_shorts">
                                     <div class="card-body text-center">
                                         <i class="fab fa-youtube fa-2x text-primary mb-2"></i>
-                                        <h6 class="card-title">YouTube Shorts</h6>
+                                        <h6 class="card-title" data-translate="youtube_shorts">YouTube Shorts</h6>
                                         <small class="text-muted">Video content</small>
                                     </div>
                                 </div>
@@ -224,7 +224,7 @@
                                 <div class="card direction-card h-100" data-content-type="blog">
                                     <div class="card-body text-center">
                                         <i class="fas fa-blog fa-2x text-primary mb-2"></i>
-                                        <h6 class="card-title">Blog Article</h6>
+                                        <h6 class="card-title" data-translate="blog_article">Blog Article</h6>
                                         <small class="text-muted">In-depth content</small>
                                     </div>
                                 </div>
@@ -232,17 +232,17 @@
                         </div>
                         <div class="mt-3">
                             <button class="btn btn-secondary me-2" onclick="prevStep()">
-                                <i class="fas fa-arrow-left me-1"></i> Back
+                                <i class="fas fa-arrow-left me-1"></i> <span data-translate="back">Back</span>
                             </button>
                             <button class="btn btn-primary" onclick="nextStep()" disabled id="step2Next">
-                                Next <i class="fas fa-arrow-right ms-1"></i>
+                                <span data-translate="next">Next</span> <i class="fas fa-arrow-right ms-1"></i>
                             </button>
                         </div>
                     </div>
 
                     <!-- Step 3: Information Source -->
                     <div id="step3" class="step-content" style="display: none;">
-                        <h6 class="mb-3">Step 3: What Inspires You?</h6>
+                        <h6 class="mb-3"><span data-translate="step_3">Step 3</span>: <span data-translate="what_inspires">What Inspires You?</span></h6>
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <div class="card direction-card h-100" data-source-type="news">

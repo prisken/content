@@ -2388,6 +2388,13 @@ def switch_language(lang):
     """Switch application language"""
     if lang in ['en', 'zh']:
         session['language'] = lang
+        # Return JSON response for AJAX requests
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({
+                'success': True,
+                'language': lang,
+                'message': 'Language switched successfully'
+            })
     return redirect(request.referrer or url_for('index'))
 
 @app.route('/api/translate', methods=['POST'])

@@ -8,19 +8,19 @@
     <div class="row align-items-center min-vh-75">
         <div class="col-lg-6">
             <h1 class="display-4 fw-bold mb-4">
-                Create Engaging Content with 
-                <span class="text-gradient">AI Power</span>
+                <span data-translate="hero_title">Create Engaging Content with</span>
+                <span class="text-gradient" data-translate="hero_subtitle">AI Power</span>
             </h1>
-            <p class="lead mb-4">
+            <p class="lead mb-4" data-translate="hero_description">
                 Generate professional social media posts, blog articles, and more with our AI-powered platform. 
                 Choose from 18 content directions and create content that resonates with your audience.
             </p>
             <div class="d-flex gap-3">
                 <a href="{{ url_for('main.generator') }}" class="btn btn-primary btn-lg">
-                    <i class="fas fa-magic me-2"></i>Start Creating
+                    <i class="fas fa-magic me-2"></i><span data-translate="start_creating">Start Creating</span>
                 </a>
                 <a href="#features" class="btn btn-outline-primary btn-lg">
-                    <i class="fas fa-info-circle me-2"></i>Learn More
+                    <i class="fas fa-info-circle me-2"></i><span data-translate="learn_more">Learn More</span>
                 </a>
             </div>
         </div>
@@ -29,27 +29,27 @@
                 <div class="card shadow-lg border-0">
                     <div class="card-body p-5">
                         <i class="fas fa-rocket fa-4x text-primary mb-4"></i>
-                        <h3>Quick Start</h3>
-                        <p class="text-muted">Get started in minutes with our intuitive content generator</p>
+                        <h3 data-translate="quick_start">Quick Start</h3>
+                        <p class="text-muted" data-translate="quick_start_desc">Get started in minutes with our intuitive content generator</p>
                         <div class="row text-start">
                             <div class="col-6">
                                 <div class="d-flex align-items-center mb-3">
                                     <i class="fas fa-check-circle text-success me-2"></i>
-                                    <span>18 Content Directions</span>
+                                    <span data-translate="content_directions">18 Content Directions</span>
                                 </div>
                                 <div class="d-flex align-items-center mb-3">
                                     <i class="fas fa-check-circle text-success me-2"></i>
-                                    <span>6 Platforms</span>
+                                    <span data-translate="platforms">6 Platforms</span>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="d-flex align-items-center mb-3">
                                     <i class="fas fa-check-circle text-success me-2"></i>
-                                    <span>AI-Powered</span>
+                                    <span data-translate="ai_powered">AI-Powered</span>
                                 </div>
                                 <div class="d-flex align-items-center mb-3">
                                     <i class="fas fa-check-circle text-success me-2"></i>
-                                    <span>Regional Adaptation</span>
+                                    <span data-translate="regional_adaptation">Regional Adaptation</span>
                                 </div>
                             </div>
                         </div>
@@ -63,8 +63,8 @@
     <section id="features" class="py-5">
         <div class="row">
             <div class="col-12 text-center mb-5">
-                <h2 class="h1 mb-3">Why Choose Content Creator Pro?</h2>
-                <p class="lead text-muted">Everything you need to create engaging content</p>
+                <h2 class="h1 mb-3" data-translate="why_choose">Why Choose Content Creator Pro?</h2>
+                <p class="lead text-muted" data-translate="why_choose_desc">Everything you need to create engaging content</p>
             </div>
         </div>
         
@@ -73,8 +73,8 @@
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body text-center p-4">
                         <i class="fas fa-brain fa-3x text-primary mb-3"></i>
-                        <h4>AI-Powered Generation</h4>
-                        <p class="text-muted">Advanced AI models create high-quality, engaging content tailored to your needs.</p>
+                        <h4 data-translate="ai_generation">AI-Powered Generation</h4>
+                        <p class="text-muted" data-translate="ai_generation_desc">Advanced AI models create high-quality, engaging content tailored to your needs.</p>
                     </div>
                 </div>
             </div>
@@ -83,8 +83,8 @@
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body text-center p-4">
                         <i class="fas fa-globe fa-3x text-primary mb-3"></i>
-                        <h4>Regional Adaptation</h4>
-                        <p class="text-muted">Content automatically adapts to your region with cultural sensitivity and local relevance.</p>
+                        <h4 data-translate="regional_adaptation_title">Regional Adaptation</h4>
+                        <p class="text-muted" data-translate="regional_adaptation_desc">Content automatically adapts to your region with cultural sensitivity and local relevance.</p>
                     </div>
                 </div>
             </div>
@@ -93,8 +93,8 @@
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body text-center p-4">
                         <i class="fas fa-share-alt fa-3x text-primary mb-3"></i>
-                        <h4>Multi-Platform Support</h4>
-                        <p class="text-muted">Create content for LinkedIn, Facebook, Instagram, Twitter, YouTube, and blogs.</p>
+                        <h4 data-translate="multi_platform">Multi-Platform Support</h4>
+                        <p class="text-muted" data-translate="multi_platform_desc">Create content for LinkedIn, Facebook, Instagram, Twitter, YouTube, and blogs.</p>
                     </div>
                 </div>
             </div>
@@ -105,8 +105,8 @@
     <section class="py-5 bg-light">
         <div class="row">
             <div class="col-12 text-center mb-5">
-                <h2 class="h1 mb-3">Content Directions</h2>
-                <p class="lead text-muted">Choose from 18 specialized content directions</p>
+                <h2 class="h1 mb-3" data-translate="content_directions_title">Content Directions</h2>
+                <p class="lead text-muted" data-translate="content_directions_desc">Choose from 18 specialized content directions</p>
             </div>
         </div>
         
@@ -115,7 +115,7 @@
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center p-3">
                         <i class="fas fa-briefcase fa-2x text-primary mb-2"></i>
-                        <h6>Business & Finance</h6>
+                        <h6 data-translate="business_finance">Business & Finance</h6>
                     </div>
                 </div>
             </div>
@@ -124,7 +124,7 @@
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center p-3">
                         <i class="fas fa-microchip fa-2x text-primary mb-2"></i>
-                        <h6>Technology</h6>
+                        <h6 data-translate="technology">Technology</h6>
                     </div>
                 </div>
             </div>
@@ -133,7 +133,7 @@
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center p-3">
                         <i class="fas fa-heart fa-2x text-primary mb-2"></i>
-                        <h6>Health & Wellness</h6>
+                        <h6 data-translate="health_wellness">Health & Wellness</h6>
                     </div>
                 </div>
             </div>
@@ -142,7 +142,7 @@
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center p-3">
                         <i class="fas fa-graduation-cap fa-2x text-primary mb-2"></i>
-                        <h6>Education</h6>
+                        <h6 data-translate="education">Education</h6>
                     </div>
                 </div>
             </div>
@@ -151,7 +151,7 @@
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center p-3">
                         <i class="fas fa-film fa-2x text-primary mb-2"></i>
-                        <h6>Entertainment</h6>
+                        <h6 data-translate="entertainment">Entertainment</h6>
                     </div>
                 </div>
             </div>
@@ -160,7 +160,7 @@
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center p-3">
                         <i class="fas fa-plane fa-2x text-primary mb-2"></i>
-                        <h6>Travel & Tourism</h6>
+                        <h6 data-translate="travel_tourism">Travel & Tourism</h6>
                     </div>
                 </div>
             </div>
@@ -169,7 +169,7 @@
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center p-3">
                         <i class="fas fa-utensils fa-2x text-primary mb-2"></i>
-                        <h6>Food & Cooking</h6>
+                        <h6 data-translate="food_cooking">Food & Cooking</h6>
                     </div>
                 </div>
             </div>
@@ -178,7 +178,7 @@
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center p-3">
                         <i class="fas fa-tshirt fa-2x text-primary mb-2"></i>
-                        <h6>Fashion & Beauty</h6>
+                        <h6 data-translate="fashion_beauty">Fashion & Beauty</h6>
                     </div>
                 </div>
             </div>
@@ -186,7 +186,7 @@
         
         <div class="text-center mt-4">
             <a href="{{ url_for('main.generator') }}" class="btn btn-primary">
-                View All Directions <i class="fas fa-arrow-right ms-1"></i>
+                <span data-translate="view_all_directions">View All Directions</span> <i class="fas fa-arrow-right ms-1"></i>
             </a>
         </div>
     </section>
@@ -195,10 +195,10 @@
     <section class="py-5">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">
-                <h2 class="h1 mb-4">Ready to Create Amazing Content?</h2>
-                <p class="lead mb-4">Join thousands of creators who are already using Content Creator Pro to generate engaging content.</p>
+                <h2 class="h1 mb-4" data-translate="ready_to_create">Ready to Create Amazing Content?</h2>
+                <p class="lead mb-4" data-translate="ready_to_create_desc">Join thousands of creators who are already using Content Creator Pro to generate engaging content.</p>
                 <a href="{{ url_for('main.generator') }}" class="btn btn-primary btn-lg">
-                    <i class="fas fa-rocket me-2"></i>Get Started Now
+                    <i class="fas fa-rocket me-2"></i><span data-translate="get_started_now">Get Started Now</span>
                 </a>
             </div>
         </div>
