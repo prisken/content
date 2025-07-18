@@ -86,6 +86,24 @@
     <div class="row mb-4">
         <div class="col-12">
             <h5 class="mb-3">Quick Start</h5>
+            
+            <!-- Quick Start with Preferences -->
+            <div id="preferencesQuickStart" class="mb-3" style="display: none;">
+                <div class="alert alert-info">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-magic me-2"></i>
+                        <div class="flex-grow-1">
+                            <strong>Use Your Preferences</strong>
+                            <br>
+                            <small>Generate content based on your saved preferences</small>
+                        </div>
+                        <button class="btn btn-primary btn-sm" onclick="quickStartWithPreferences()">
+                            <i class="fas fa-rocket me-1"></i>Quick Start
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
             <div class="row">
                 <div class="col-md-3 mb-3">
                     <div class="card quick-start-card h-100" data-quick-start="business-linkedin">
@@ -466,6 +484,7 @@ let currentContentLanguage = 'en';
 $(document).ready(function() {
     loadDirections();
     setupEventListeners();
+    loadUserPreferences();
 });
 
 function loadDirections() {
@@ -536,6 +555,119 @@ function getDefaultDirections() {
         { key: 'entertainment', name: 'Entertainment', subcategories: ['movies', 'music'] },
         { key: 'travel_tourism', name: 'Travel & Tourism', subcategories: ['destinations', 'tips'] }
     ];
+}
+
+function loadUserPreferences() {
+    // Load saved preferences from localStorage
+    const preferences = JSON.parse(localStorage.getItem('contentPreferences') || '{}');
+    
+    // Apply primary direction if set
+    if (preferences.primaryDirection) {
+        selectedDirection = preferences.primaryDirection;
+        // Highlight the selected direction card
+        $(`[data-direction="${selectedDirection}"]`).addClass('selected');
+        $('#step1Next').prop('disabled', false);
+    }
+    
+    // Apply default tone if set
+    if (preferences.defaultTone) {
+        selectedTone = preferences.defaultTone;
+    }
+    
+    // Apply preferred content types to quick start cards
+    if (preferences.preferredContentTypes && preferences.preferredContentTypes.length > 0) {
+        updateQuickStartCards(preferences.preferredContentTypes);
+    }
+    
+    // Apply favorite sources
+    if (preferences.favoriteSources && preferences.favoriteSources.length > 0) {
+        selectedSourceType = preferences.favoriteSources[0]; // Use first preferred source
+    }
+    
+    // Show preferences quick start if user has saved preferences
+    if (preferences.primaryDirection && preferences.preferredContentTypes && preferences.preferredContentTypes.length > 0) {
+        $('#preferencesQuickStart').show();
+    }
+}
+
+function quickStartWithPreferences() {
+    const preferences = JSON.parse(localStorage.getItem('contentPreferences') || '{}');
+    
+    if (!preferences.primaryDirection || !preferences.preferredContentTypes || preferences.preferredContentTypes.length === 0) {
+        alert('Please set your content preferences in Settings first.');
+        return;
+    }
+    
+    // Set selections based on preferences
+    selectedDirection = preferences.primaryDirection;
+    selectedContentType = preferences.preferredContentTypes[0]; // Use first preferred type
+    selectedSourceType = preferences.favoriteSources && preferences.favoriteSources.length > 0 ? preferences.favoriteSources[0] : 'news';
+    selectedTone = preferences.defaultTone || 'professional';
+    
+    // Jump to step 4 (tone selection) with pre-filled selections
+    currentStep = 4;
+    showStep(4);
+    updateProgress();
+    
+    // Pre-select the tone
+    $(`[data-tone="${selectedTone}"]`).addClass('selected');
+    $('#generateBtn').prop('disabled', false);
+    
+    // Show success message
+    showPreferenceMessage('Content preferences applied! Ready to generate.');
+}
+
+function showPreferenceMessage(message) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'alert alert-success alert-dismissible fade show position-fixed';
+    alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    alertDiv.innerHTML = `
+        <i class="fas fa-check-circle me-2"></i>${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(alertDiv);
+    
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.parentNode.removeChild(alertDiv);
+        }
+    }, 3000);
+}
+
+function updateQuickStartCards(preferredTypes) {
+    // Update quick start cards based on preferred content types
+    const directionContent = getDirectionSpecificContent();
+    const preferredType = preferredTypes[0] || 'linkedin'; // Default to LinkedIn
+    
+    // Update quick start cards with preferred content type
+    $('.quick-start-card').each(function() {
+        const card = $(this);
+        const quickStart = card.data('quick-start');
+        const [direction] = quickStart.split('-');
+        
+        // Update card to use preferred content type
+        card.data('quick-start', `${direction}-${preferredType}`);
+        
+        // Update card title
+        const contentTypeNames = {
+            'linkedin': 'LinkedIn',
+            'facebook': 'Facebook',
+            'instagram': 'Instagram',
+            'twitter': 'Twitter',
+            'youtube_shorts': 'YouTube Shorts',
+            'blog': 'Blog'
+        };
+        
+        const directionNames = {
+            'business': 'Business News',
+            'tech': 'Tech Trends',
+            'health': 'Health Tips',
+            'education': 'Industry Insights'
+        };
+        
+        card.find('.card-title').text(`${directionNames[direction] || direction} → ${contentTypeNames[preferredType]}`);
+    });
 }
 
 function setupEventListeners() {

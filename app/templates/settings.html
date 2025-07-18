@@ -398,18 +398,129 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Load saved preferences
+    loadSavedPreferences();
+    
     // Profile form submission
     document.getElementById('profileForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        alert('Profile settings saved successfully!');
+        saveProfileSettings();
     });
     
     // Content preferences form submission
     document.getElementById('contentForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        alert('Content preferences saved successfully!');
+        saveContentPreferences();
     });
 });
+
+function loadSavedPreferences() {
+    const preferences = JSON.parse(localStorage.getItem('contentPreferences') || '{}');
+    
+    // Load primary direction
+    if (preferences.primaryDirection) {
+        document.getElementById('primaryDirection').value = preferences.primaryDirection;
+    }
+    
+    // Load default tone
+    if (preferences.defaultTone) {
+        document.getElementById('defaultTone').value = preferences.defaultTone;
+    }
+    
+    // Load secondary directions
+    if (preferences.secondaryDirections) {
+        preferences.secondaryDirections.forEach(direction => {
+            const checkbox = document.getElementById(`sec${direction.charAt(0).toUpperCase() + direction.slice(1)}`);
+            if (checkbox) checkbox.checked = true;
+        });
+    }
+    
+    // Load preferred content types
+    if (preferences.preferredContentTypes) {
+        preferences.preferredContentTypes.forEach(type => {
+            const checkbox = document.getElementById(`pref${type.charAt(0).toUpperCase() + type.slice(1)}`);
+            if (checkbox) checkbox.checked = true;
+        });
+    }
+    
+    // Load favorite sources
+    if (preferences.favoriteSources) {
+        preferences.favoriteSources.forEach(source => {
+            const checkbox = document.getElementById(`source${source.charAt(0).toUpperCase() + source.slice(1)}`);
+            if (checkbox) checkbox.checked = true;
+        });
+    }
+}
+
+function saveProfileSettings() {
+    const profileData = {
+        name: document.getElementById('userName').value,
+        company: document.getElementById('userCompany').value,
+        industry: document.getElementById('userIndustry').value,
+        region: document.getElementById('userRegion').value,
+        language: document.getElementById('userLanguage').value
+    };
+    
+    localStorage.setItem('userProfile', JSON.stringify(profileData));
+    showSuccessMessage('Profile settings saved successfully!');
+}
+
+function saveContentPreferences() {
+    // Get primary direction and default tone
+    const primaryDirection = document.getElementById('primaryDirection').value;
+    const defaultTone = document.getElementById('defaultTone').value;
+    
+    // Get secondary directions
+    const secondaryDirections = [];
+    document.querySelectorAll('input[id^="sec"]:checked').forEach(checkbox => {
+        secondaryDirections.push(checkbox.value);
+    });
+    
+    // Get preferred content types
+    const preferredContentTypes = [];
+    document.querySelectorAll('input[id^="pref"]:checked').forEach(checkbox => {
+        preferredContentTypes.push(checkbox.value);
+    });
+    
+    // Get favorite sources
+    const favoriteSources = [];
+    document.querySelectorAll('input[id^="source"]:checked').forEach(checkbox => {
+        favoriteSources.push(checkbox.value);
+    });
+    
+    // Save preferences
+    const preferences = {
+        primaryDirection,
+        defaultTone,
+        secondaryDirections,
+        preferredContentTypes,
+        favoriteSources,
+        lastUpdated: new Date().toISOString()
+    };
+    
+    localStorage.setItem('contentPreferences', JSON.stringify(preferences));
+    showSuccessMessage('Content preferences saved successfully! Your preferences will be applied to future content generation.');
+}
+
+function showSuccessMessage(message) {
+    // Create a temporary success alert
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'alert alert-success alert-dismissible fade show position-fixed';
+    alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(alertDiv);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.parentNode.removeChild(alertDiv);
+        }
+    }, 3000);
+}
 </script>
 {% endblock %}
 {% endblock %} 
