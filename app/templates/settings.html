@@ -430,7 +430,7 @@ function loadSavedPreferences() {
     // Load secondary directions
     if (preferences.secondaryDirections) {
         preferences.secondaryDirections.forEach(direction => {
-            const checkbox = document.getElementById(`sec${direction.charAt(0).toUpperCase() + direction.slice(1)}`);
+            const checkbox = document.getElementById('sec' + direction.charAt(0).toUpperCase() + direction.slice(1));
             if (checkbox) checkbox.checked = true;
         });
     }
@@ -438,7 +438,7 @@ function loadSavedPreferences() {
     // Load preferred content types
     if (preferences.preferredContentTypes) {
         preferences.preferredContentTypes.forEach(type => {
-            const checkbox = document.getElementById(`pref${type.charAt(0).toUpperCase() + type.slice(1)}`);
+            const checkbox = document.getElementById('pref' + type.charAt(0).toUpperCase() + type.slice(1));
             if (checkbox) checkbox.checked = true;
         });
     }
@@ -446,7 +446,7 @@ function loadSavedPreferences() {
     // Load favorite sources
     if (preferences.favoriteSources) {
         preferences.favoriteSources.forEach(source => {
-            const checkbox = document.getElementById(`source${source.charAt(0).toUpperCase() + source.slice(1)}`);
+            const checkbox = document.getElementById('source' + source.charAt(0).toUpperCase() + source.slice(1));
             if (checkbox) checkbox.checked = true;
         });
     }
