@@ -1,5 +1,7 @@
 import os
-from flask import Flask, render_template_string, jsonify, request
+from flask import Flask, render_template_string, jsonify, request, session, redirect, url_for, flash
+from werkzeug.security import generate_password_hash, check_password_hash
+from functools import wraps
 
 # Set environment variable to indicate serverless mode
 os.environ['VERCEL_ENV'] = 'production'
@@ -60,6 +62,18 @@ BASE_TEMPLATE = """
                     <li class="nav-item">
                         <a class="nav-link" href="/settings"><i class="fas fa-cog me-1"></i>Settings</a>
                     </li>
+                    {% if 'user' in session %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt me-1"></i>Logout</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login"><i class="fas fa-sign-in-alt me-1"></i>Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/register"><i class="fas fa-user-plus me-1"></i>Register</a>
+                    </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
@@ -132,12 +146,9 @@ GENERATOR_CONTENT = """
                                 <label class="form-label">Content Direction</label>
                                 <select class="form-select" id="direction" required>
                                     <option value="">Choose direction...</option>
-                                    <option value="business_finance">Business & Finance</option>
-                                    <option value="technology">Technology</option>
-                                    <option value="health_wellness">Health & Wellness</option>
-                                    <option value="education">Education</option>
-                                    <option value="entertainment">Entertainment</option>
-                                    <option value="travel_tourism">Travel & Tourism</option>
+                                    {% for direction_key, direction_name in ALL_DIRECTIONS %}
+                                    <option value="{{ direction_key }}">{{ direction_name }}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
@@ -630,6 +641,41 @@ function showDemo() {
 </script>
 """
 
+# In-memory user store for demo (replace with DB in production)
+USERS = {}
+
+# Expanded content directions (18+)
+ALL_DIRECTIONS = [
+    ("business_finance", "Business & Finance"),
+    ("technology", "Technology"),
+    ("health_wellness", "Health & Wellness"),
+    ("education", "Education"),
+    ("entertainment", "Entertainment"),
+    ("travel_tourism", "Travel & Tourism"),
+    ("food_cooking", "Food & Cooking"),
+    ("fashion_beauty", "Fashion & Beauty"),
+    ("sports_fitness", "Sports & Fitness"),
+    ("science_research", "Science & Research"),
+    ("politics_current_events", "Politics & Current Events"),
+    ("environment_sustainability", "Environment & Sustainability"),
+    ("personal_development", "Personal Development"),
+    ("parenting_family", "Parenting & Family"),
+    ("art_creativity", "Art & Creativity"),
+    ("real_estate", "Real Estate"),
+    ("automotive", "Automotive"),
+    ("pet_care", "Pet Care"),
+]
+
+# Protect routes (example for dashboard)
+def login_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if 'user' not in session:
+            flash('Please log in to access this page.', 'warning')
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated
+
 @app.route('/')
 def index():
     """Main landing page"""
@@ -647,6 +693,7 @@ def generator():
                                 scripts=GENERATOR_SCRIPTS)
 
 @app.route('/dashboard')
+@login_required
 def dashboard():
     """User dashboard page"""
     return render_template_string(BASE_TEMPLATE,
@@ -668,6 +715,55 @@ def settings():
                                 title="Settings",
                                 content=SETTINGS_CONTENT,
                                 scripts=SETTINGS_SCRIPTS)
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        if email in USERS:
+            flash('Email already registered.', 'danger')
+            return redirect(url_for('register'))
+        USERS[email] = generate_password_hash(password)
+        flash('Registration successful. Please log in.', 'success')
+        return redirect(url_for('login'))
+    return render_template_string(BASE_TEMPLATE, title="Register", content='''
+    <div class="container"><div class="row justify-content-center"><div class="col-md-6">
+    <h2>Register</h2>
+    <form method="post">
+      <div class="mb-3"><label>Email</label><input type="email" name="email" class="form-control" required></div>
+      <div class="mb-3"><label>Password</label><input type="password" name="password" class="form-control" required></div>
+      <button type="submit" class="btn btn-primary">Register</button>
+    </form></div></div></div>
+    ''')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        user_hash = USERS.get(email)
+        if user_hash and check_password_hash(user_hash, password):
+            session['user'] = email
+            flash('Logged in successfully.', 'success')
+            return redirect(url_for('index'))
+        flash('Invalid credentials.', 'danger')
+        return redirect(url_for('login'))
+    return render_template_string(BASE_TEMPLATE, title="Login", content='''
+    <div class="container"><div class="row justify-content-center"><div class="col-md-6">
+    <h2>Login</h2>
+    <form method="post">
+      <div class="mb-3"><label>Email</label><input type="email" name="email" class="form-control" required></div>
+      <div class="mb-3"><label>Password</label><input type="password" name="password" class="form-control" required></div>
+      <button type="submit" class="btn btn-primary">Login</button>
+    </form></div></div></div>
+    ''')
+
+@app.route('/logout')
+def logout():
+    session.pop('user', None)
+    flash('Logged out.', 'info')
+    return redirect(url_for('index'))
 
 @app.route('/health')
 def health():
