@@ -13,7 +13,7 @@ let currentContentLanguage = 'en';
 function generateLinkedInPost(directionContent, sourceInfo) {
     const source = selectedNewsSource || 'reliable sources';
     const keywords = directionContent.keywords;
-    const hashtags = `\n\n#${keywords[0].replace(/\s+/g, '')} #${keywords[1].replace(/\s+/g, '')} #Innovation #ProfessionalDevelopment`;
+    const hashtags = '\n\n#' + keywords[0].replace(/\s+/g, '') + ' #' + keywords[1].replace(/\s+/g, '') + ' #Innovation #ProfessionalDevelopment';
     
     return '🚀 **BREAKING: ' + keywords[0].toUpperCase() + '**\n\n' +
            'According to recent reports from ' + source + ', we\'re witnessing unprecedented ' + keywords[1] + ' in our industry. This isn\'t just another trend—it\'s a fundamental shift.\n\n' +
@@ -31,7 +31,7 @@ function generateLinkedInPost(directionContent, sourceInfo) {
 function generateFacebookPost(directionContent, sourceInfo) {
     const source = selectedNewsSource || 'reliable sources';
     const keywords = directionContent.keywords;
-    const hashtags = `\n\n#${keywords[0].replace(/\s+/g, '')} #${keywords[1].replace(/\s+/g, '')} #Community #Discussion`;
+    const hashtags = '\n\n#' + keywords[0].replace(/\s+/g, '') + ' #' + keywords[1].replace(/\s+/g, '') + ' #Community #Discussion';
     
     return 'Hey friends! 👋\n\n' +
            'I just came across some really interesting news from ' + source + ' that I had to share with you all.\n\n' +
@@ -46,7 +46,7 @@ function generateFacebookPost(directionContent, sourceInfo) {
 function generateInstagramPost(directionContent, sourceInfo) {
     const source = selectedNewsSource || 'reliable sources';
     const keywords = directionContent.keywords;
-    const hashtags = `\n\n#${keywords[0].replace(/\s+/g, '')} #${keywords[1].replace(/\s+/g, '')} #Inspiration #Innovation #Creativity #Motivation #Growth`;
+    const hashtags = '\n\n#' + keywords[0].replace(/\s+/g, '') + ' #' + keywords[1].replace(/\s+/g, '') + ' #Inspiration #Innovation #Creativity #Motivation #Growth';
     
     return '✨ **INSPIRATION ALERT** ✨\n\n' +
            'Today\'s dose of motivation comes from some incredible developments in ' + keywords[0] + ' that I discovered through ' + source + '.\n\n' +
@@ -64,7 +64,7 @@ function generateInstagramPost(directionContent, sourceInfo) {
 function generateTwitterPost(directionContent, sourceInfo) {
     const source = selectedNewsSource || 'reliable sources';
     const keywords = directionContent.keywords;
-    const hashtags = `\n\n#${keywords[0].replace(/\s+/g, '')} #Innovation #Trending`;
+    const hashtags = '\n\n#' + keywords[0].replace(/\s+/g, '') + ' #Innovation #Trending';
     
     return '🚨 BREAKING: Major ' + keywords[0] + ' developments reported by ' + source + '!\n\n' +
            'This changes everything in ' + keywords[1] + '. Game-changer for the industry.\n\n' +
