@@ -235,104 +235,231 @@
                 </div>
             </div>
             
-            <!-- Social Media Integration -->
+            <!-- Social Media Account Management -->
             <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-share-alt me-2"></i>Social Media Integration</h5>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-share-alt me-2"></i>Social Media Account Management</h5>
+                    <button class="btn btn-sm btn-outline-primary" onclick="refreshAccountStatus()">
+                        <i class="fas fa-sync-alt me-1"></i>Refresh Status
+                    </button>
                 </div>
                 <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
+                    <!-- LinkedIn Account -->
+                    <div class="row mb-4 p-3 border rounded">
+                        <div class="col-md-8">
                             <div class="d-flex align-items-center mb-2">
-                                <i class="fab fa-linkedin text-primary me-2"></i>
-                                <span class="me-2">LinkedIn</span>
+                                <i class="fab fa-linkedin text-primary me-2 fa-lg"></i>
+                                <span class="fw-bold me-2">LinkedIn</span>
                                 <span class="badge bg-success">Connected</span>
                             </div>
-                            <small class="text-muted">John Doe (Personal)</small>
+                            <div class="small text-muted mb-2">
+                                <strong>Account:</strong> John Doe (Personal)<br>
+                                <strong>Last Sync:</strong> 2 hours ago<br>
+                                <strong>Permissions:</strong> Read & Write
+                            </div>
+                            <div class="small">
+                                <span class="badge bg-info me-1">Personal Profile</span>
+                                <span class="badge bg-secondary me-1">Company Page</span>
+                            </div>
                         </div>
-                        <div class="col-md-6 text-end">
-                            <button class="btn btn-sm btn-outline-primary">Manage</button>
+                        <div class="col-md-4 text-end">
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-sm btn-outline-primary" onclick="manageLinkedInAccount()">
+                                    <i class="fas fa-cog me-1"></i>Manage
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="disconnectAccount('linkedin')">
+                                    <i class="fas fa-unlink me-1"></i>Disconnect
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-md-6">
+
+                    <!-- Facebook Account -->
+                    <div class="row mb-4 p-3 border rounded">
+                        <div class="col-md-8">
                             <div class="d-flex align-items-center mb-2">
-                                <i class="fab fa-facebook text-primary me-2"></i>
-                                <span class="me-2">Facebook</span>
+                                <i class="fab fa-facebook text-primary me-2 fa-lg"></i>
+                                <span class="fw-bold me-2">Facebook</span>
                                 <span class="badge bg-success">Connected</span>
                             </div>
-                            <small class="text-muted">John Doe</small>
+                            <div class="small text-muted mb-2">
+                                <strong>Account:</strong> John Doe<br>
+                                <strong>Last Sync:</strong> 1 day ago<br>
+                                <strong>Permissions:</strong> Read & Write
+                            </div>
+                            <div class="small">
+                                <span class="badge bg-info me-1">Personal Profile</span>
+                                <span class="badge bg-secondary me-1">Business Page</span>
+                            </div>
                         </div>
-                        <div class="col-md-6 text-end">
-                            <button class="btn btn-sm btn-outline-primary">Manage</button>
+                        <div class="col-md-4 text-end">
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-sm btn-outline-primary" onclick="manageFacebookAccount()">
+                                    <i class="fas fa-cog me-1"></i>Manage
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="disconnectAccount('facebook')">
+                                    <i class="fas fa-unlink me-1"></i>Disconnect
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-md-6">
+
+                    <!-- Instagram Account -->
+                    <div class="row mb-4 p-3 border rounded">
+                        <div class="col-md-8">
                             <div class="d-flex align-items-center mb-2">
-                                <i class="fab fa-instagram text-danger me-2"></i>
-                                <span class="me-2">Instagram</span>
+                                <i class="fab fa-instagram text-danger me-2 fa-lg"></i>
+                                <span class="fw-bold me-2">Instagram</span>
                                 <span class="badge bg-success">Connected</span>
                             </div>
-                            <small class="text-muted">@johndoe</small>
-                        </div>
-                        <div class="col-md-6 text-end">
-                            <button class="btn btn-sm btn-outline-primary">Manage</button>
-                        </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="fab fa-twitter text-info me-2"></i>
-                                <span class="me-2">Twitter</span>
-                                <span class="badge bg-secondary">Not connected</span>
+                            <div class="small text-muted mb-2">
+                                <strong>Account:</strong> @johndoe<br>
+                                <strong>Last Sync:</strong> 3 hours ago<br>
+                                <strong>Permissions:</strong> Read & Write
                             </div>
-                            <small class="text-muted">Connect your Twitter account</small>
-                        </div>
-                        <div class="col-md-6 text-end">
-                            <button class="btn btn-sm btn-primary">Connect</button>
-                        </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="fab fa-youtube text-danger me-2"></i>
-                                <span class="me-2">YouTube</span>
-                                <span class="badge bg-secondary">Not connected</span>
+                            <div class="small">
+                                <span class="badge bg-info me-1">Personal Account</span>
+                                <span class="badge bg-secondary me-1">Business Account</span>
                             </div>
-                            <small class="text-muted">Connect your YouTube channel</small>
                         </div>
-                        <div class="col-md-6 text-end">
-                            <button class="btn btn-sm btn-primary">Connect</button>
+                        <div class="col-md-4 text-end">
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-sm btn-outline-primary" onclick="manageInstagramAccount()">
+                                    <i class="fas fa-cog me-1"></i>Manage
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="disconnectAccount('instagram')">
+                                    <i class="fas fa-unlink me-1"></i>Disconnect
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    
+
+                    <!-- Twitter Account -->
+                    <div class="row mb-4 p-3 border rounded">
+                        <div class="col-md-8">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fab fa-twitter text-info me-2 fa-lg"></i>
+                                <span class="fw-bold me-2">Twitter</span>
+                                <span class="badge bg-secondary">Not Connected</span>
+                            </div>
+                            <div class="small text-muted mb-2">
+                                <strong>Status:</strong> Ready to connect<br>
+                                <strong>Permissions:</strong> Read & Write (upon connection)
+                            </div>
+                            <div class="small">
+                                <span class="text-muted">Connect your Twitter account to start posting</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-sm btn-primary" onclick="connectTwitterAccount()">
+                                    <i class="fab fa-twitter me-1"></i>Connect
+                                </button>
+                                <button class="btn btn-sm btn-outline-secondary" disabled>
+                                    <i class="fas fa-cog me-1"></i>Manage
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- YouTube Account -->
+                    <div class="row mb-4 p-3 border rounded">
+                        <div class="col-md-8">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fab fa-youtube text-danger me-2 fa-lg"></i>
+                                <span class="fw-bold me-2">YouTube</span>
+                                <span class="badge bg-secondary">Not Connected</span>
+                            </div>
+                            <div class="small text-muted mb-2">
+                                <strong>Status:</strong> Ready to connect<br>
+                                <strong>Permissions:</strong> Read & Write (upon connection)
+                            </div>
+                            <div class="small">
+                                <span class="text-muted">Connect your YouTube channel to start posting</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-sm btn-primary" onclick="connectYouTubeAccount()">
+                                    <i class="fab fa-youtube me-1"></i>Connect
+                                </button>
+                                <button class="btn btn-sm btn-outline-secondary" disabled>
+                                    <i class="fas fa-cog me-1"></i>Manage
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                     <hr>
-                    
+
+                    <!-- Account Settings -->
                     <div class="row">
                         <div class="col-md-6">
-                            <label class="form-label">Auto-post to</label>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="linkedin" id="autoLinkedIn" checked>
-                                <label class="form-check-label" for="autoLinkedIn">LinkedIn</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="facebook" id="autoFacebook">
-                                <label class="form-check-label" for="autoFacebook">Facebook</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="instagram" id="autoInstagram">
-                                <label class="form-check-label" for="autoInstagram">Instagram</label>
+                            <h6><i class="fas fa-cog me-2"></i>Account Settings</h6>
+                            <div class="mb-3">
+                                <label class="form-label">Auto-post to connected accounts</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="linkedin" id="autoLinkedIn" checked>
+                                    <label class="form-check-label" for="autoLinkedIn">LinkedIn</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="facebook" id="autoFacebook" checked>
+                                    <label class="form-check-label" for="autoFacebook">Facebook</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="instagram" id="autoInstagram">
+                                    <label class="form-check-label" for="autoInstagram">Instagram</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="twitter" id="autoTwitter">
+                                    <label class="form-check-label" for="autoTwitter">Twitter</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="youtube" id="autoYouTube">
+                                    <label class="form-check-label" for="autoYouTube">YouTube</label>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Default posting time</label>
-                            <input type="time" class="form-control" value="09:00" id="defaultPostTime">
-                            <small class="text-muted">Local timezone</small>
+                            <h6><i class="fas fa-clock me-2"></i>Posting Schedule</h6>
+                            <div class="mb-3">
+                                <label class="form-label">Default posting time</label>
+                                <input type="time" class="form-control" value="09:00" id="defaultPostTime">
+                                <small class="text-muted">Local timezone</small>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Posting frequency</label>
+                                <select class="form-select" id="postingFrequency">
+                                    <option value="daily">Daily</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="biweekly">Bi-weekly</option>
+                                    <option value="monthly">Monthly</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security & Permissions -->
+                    <hr>
+                    <div class="row">
+                        <div class="col-12">
+                            <h6><i class="fas fa-shield-alt me-2"></i>Security & Permissions</h6>
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Data Security:</strong> Your social media credentials are encrypted and stored securely. 
+                                We only request the minimum permissions needed for posting and analytics.
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="viewPermissions()">
+                                    <i class="fas fa-eye me-1"></i>View Permissions
+                                </button>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="exportAccountData()">
+                                    <i class="fas fa-download me-1"></i>Export Data
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="revokeAllPermissions()">
+                                    <i class="fas fa-ban me-1"></i>Revoke All
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -520,6 +647,317 @@ function showSuccessMessage(message) {
             alertDiv.parentNode.removeChild(alertDiv);
         }
     }, 3000);
+}
+
+// Social Media Account Management Functions
+function refreshAccountStatus() {
+    console.log('Refreshing account status...');
+    // Simulate API call to refresh account status
+    showSuccessMessage('Account status refreshed successfully!');
+}
+
+function manageLinkedInAccount() {
+    showAccountManagementModal('LinkedIn', {
+        accountName: 'John Doe (Personal)',
+        permissions: ['Read Profile', 'Write Posts', 'Access Analytics'],
+        lastSync: '2 hours ago',
+        connectedPages: ['Personal Profile', 'Company Page']
+    });
+}
+
+function manageFacebookAccount() {
+    showAccountManagementModal('Facebook', {
+        accountName: 'John Doe',
+        permissions: ['Read Profile', 'Write Posts', 'Access Pages'],
+        lastSync: '1 day ago',
+        connectedPages: ['Personal Profile', 'Business Page']
+    });
+}
+
+function manageInstagramAccount() {
+    showAccountManagementModal('Instagram', {
+        accountName: '@johndoe',
+        permissions: ['Read Profile', 'Write Posts', 'Access Insights'],
+        lastSync: '3 hours ago',
+        connectedPages: ['Personal Account', 'Business Account']
+    });
+}
+
+function connectTwitterAccount() {
+    showConnectionModal('Twitter', 'https://twitter.com/oauth/authorize?client_id=your_app_id&redirect_uri=your_redirect_uri&scope=tweet.read,tweet.write,users.read');
+}
+
+function connectYouTubeAccount() {
+    showConnectionModal('YouTube', 'https://accounts.google.com/oauth/authorize?client_id=your_app_id&redirect_uri=your_redirect_uri&scope=https://www.googleapis.com/auth/youtube.upload');
+}
+
+function disconnectAccount(platform) {
+    if (confirm(`Are you sure you want to disconnect your ${platform} account? This will remove all permissions and stop auto-posting.`)) {
+        console.log(`Disconnecting ${platform} account...`);
+        // Simulate API call to disconnect account
+        showSuccessMessage(`${platform} account disconnected successfully!`);
+        
+        // Update UI to show disconnected state
+        updateAccountStatus(platform, 'disconnected');
+    }
+}
+
+function showAccountManagementModal(platform, accountInfo) {
+    const modalHtml = `
+    <div class="modal fade" id="accountModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fab fa-${platform.toLowerCase()} me-2"></i>${platform} Account Management
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Account Information</h6>
+                            <p><strong>Account:</strong> ${accountInfo.accountName}</p>
+                            <p><strong>Last Sync:</strong> ${accountInfo.lastSync}</p>
+                            <p><strong>Status:</strong> <span class="badge bg-success">Connected</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Permissions</h6>
+                            <ul class="list-unstyled">
+                                ${accountInfo.permissions.map(perm => `<li><i class="fas fa-check text-success me-2"></i>${perm}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Connected Pages</h6>
+                            <div class="mb-3">
+                                ${accountInfo.connectedPages.map(page => `
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="${page}" id="page_${page.replace(/\s+/g, '_')}" checked>
+                                    <label class="form-check-label" for="page_${page.replace(/\s+/g, '_')}">${page}</label>
+                                </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Posting Settings</h6>
+                            <div class="mb-3">
+                                <label class="form-label">Default posting time for ${platform}</label>
+                                <input type="time" class="form-control" value="09:00">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Content type preferences</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="text" checked>
+                                    <label class="form-check-label">Text posts</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="images" checked>
+                                    <label class="form-check-label">Image posts</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="videos">
+                                    <label class="form-check-label">Video posts</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="saveAccountSettings('${platform}')">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    `;
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById('accountModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Add modal to body
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('accountModal'));
+    modal.show();
+}
+
+function showConnectionModal(platform, authUrl) {
+    const modalHtml = `
+    <div class="modal fade" id="connectionModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fab fa-${platform.toLowerCase()} me-2"></i>Connect ${platform} Account
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <i class="fab fa-${platform.toLowerCase()} fa-3x text-primary mb-3"></i>
+                        <h5>Connect your ${platform} account</h5>
+                        <p class="text-muted">We'll need permission to post content and access analytics on your behalf.</p>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <h6>Permissions we'll request:</h6>
+                        <ul class="mb-0">
+                            <li>Read your profile information</li>
+                            <li>Post content on your behalf</li>
+                            <li>Access analytics and insights</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <a href="${authUrl}" class="btn btn-primary btn-lg" target="_blank">
+                            <i class="fab fa-${platform.toLowerCase()} me-2"></i>Connect ${platform} Account
+                        </a>
+                    </div>
+                    
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            You'll be redirected to ${platform} to authorize the connection
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    `;
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById('connectionModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Add modal to body
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('connectionModal'));
+    modal.show();
+}
+
+function saveAccountSettings(platform) {
+    console.log(`Saving ${platform} account settings...`);
+    // Simulate API call to save settings
+    showSuccessMessage(`${platform} account settings saved successfully!`);
+    
+    // Close modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('accountModal'));
+    modal.hide();
+}
+
+function updateAccountStatus(platform, status) {
+    // Update the UI to reflect the new connection status
+    const platformElement = document.querySelector(`[onclick*="${platform}"]`).closest('.row');
+    const badge = platformElement.querySelector('.badge');
+    const statusText = platformElement.querySelector('.small.text-muted');
+    
+    if (status === 'disconnected') {
+        badge.className = 'badge bg-secondary';
+        badge.textContent = 'Not Connected';
+        statusText.innerHTML = `<strong>Status:</strong> Ready to connect<br><strong>Permissions:</strong> Read & Write (upon connection)`;
+    }
+}
+
+function viewPermissions() {
+    const permissionsHtml = `
+    <div class="modal fade" id="permissionsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-shield-alt me-2"></i>Account Permissions</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>LinkedIn</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Read Profile</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Write Posts</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Access Analytics</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Facebook</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Read Profile</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Write Posts</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Access Pages</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Instagram</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Read Profile</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Write Posts</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Access Insights</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Twitter & YouTube</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-times text-muted me-2"></i>Not connected</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    `;
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById('permissionsModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Add modal to body
+    document.body.insertAdjacentHTML('beforeend', permissionsHtml);
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('permissionsModal'));
+    modal.show();
+}
+
+function exportAccountData() {
+    console.log('Exporting account data...');
+    // Simulate data export
+    showSuccessMessage('Account data exported successfully! Check your downloads.');
+}
+
+function revokeAllPermissions() {
+    if (confirm('Are you sure you want to revoke all social media permissions? This will disconnect all accounts and stop all auto-posting.')) {
+        console.log('Revoking all permissions...');
+        // Simulate API call to revoke all permissions
+        showSuccessMessage('All permissions revoked successfully!');
+        
+        // Update all account statuses to disconnected
+        ['linkedin', 'facebook', 'instagram', 'twitter', 'youtube'].forEach(platform => {
+            updateAccountStatus(platform, 'disconnected');
+        });
+    }
 }
 </script>
 {% endblock %}
