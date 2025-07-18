@@ -605,8 +605,10 @@ def generate_social_media_manager_content(user_email, social_content, selected_p
     published_posts = len([c for c in social_content if c.get('status') == 'published'])
     scheduled_posts = len([c for c in social_content if c.get('status') == 'scheduled'])
     draft_posts = len([c for c in social_content if c.get('status') == 'draft'])
-    total_views = sum(c['performance']['views'] for c in social_content)
-    total_likes = sum(c['performance']['likes'] for c in social_content)
+    
+    # Safely calculate performance metrics
+    total_views = sum(c.get('performance', {}).get('views', 0) for c in social_content)
+    total_likes = sum(c.get('performance', {}).get('likes', 0) for c in social_content)
     
     # Platform-specific stats
     platform_stats = {}
@@ -617,8 +619,8 @@ def generate_social_media_manager_content(user_email, social_content, selected_p
             'published': len([c for c in platform_content if c.get('status') == 'published']),
             'scheduled': len([c for c in platform_content if c.get('status') == 'scheduled']),
             'draft': len([c for c in platform_content if c.get('status') == 'draft']),
-            'views': sum(c['performance']['views'] for c in platform_content),
-            'likes': sum(c['performance']['likes'] for c in platform_content)
+            'views': sum(c.get('performance', {}).get('views', 0) for c in platform_content),
+            'likes': sum(c.get('performance', {}).get('likes', 0) for c in platform_content)
         }
     
     # Platform icons and colors
@@ -1110,9 +1112,9 @@ def generate_social_media_posts_list(social_content):
                     </div>
                     <div class="col-md-4 text-end">
                         <div class="small text-muted">
-                            <div><i class="fas fa-eye me-1"></i>{content['performance']['views']:,} views</div>
-                            <div><i class="fas fa-thumbs-up me-1"></i>{content['performance']['likes']:,} likes</div>
-                            <div><i class="fas fa-share me-1"></i>{content['performance']['shares']:,} shares</div>
+                            <div><i class="fas fa-eye me-1"></i>{content.get('performance', {}).get('views', 0):,} views</div>
+                            <div><i class="fas fa-thumbs-up me-1"></i>{content.get('performance', {}).get('likes', 0):,} likes</div>
+                            <div><i class="fas fa-share me-1"></i>{content.get('performance', {}).get('shares', 0):,} shares</div>
                         </div>
                     </div>
                 </div>
@@ -1200,9 +1202,9 @@ def generate_linkedin_posts_list(linkedin_content):
                     </div>
                     <div class="col-md-4 text-end">
                         <div class="small text-muted">
-                            <div><i class="fas fa-eye me-1"></i>{content['performance']['views']:,} views</div>
-                            <div><i class="fas fa-thumbs-up me-1"></i>{content['performance']['likes']:,} likes</div>
-                            <div><i class="fas fa-share me-1"></i>{content['performance']['shares']:,} shares</div>
+                            <div><i class="fas fa-eye me-1"></i>{content.get('performance', {}).get('views', 0):,} views</div>
+                            <div><i class="fas fa-thumbs-up me-1"></i>{content.get('performance', {}).get('likes', 0):,} likes</div>
+                            <div><i class="fas fa-share me-1"></i>{content.get('performance', {}).get('shares', 0):,} shares</div>
                         </div>
                     </div>
                 </div>
@@ -1243,9 +1245,9 @@ def generate_performance_insights(linkedin_content):
     
     # Calculate insights
     total_posts = len(linkedin_content)
-    avg_views = sum(c['performance']['views'] for c in linkedin_content) / total_posts
-    avg_likes = sum(c['performance']['likes'] for c in linkedin_content) / total_posts
-    best_performing = max(linkedin_content, key=lambda x: x['performance']['views'])
+    avg_views = sum(c.get('performance', {}).get('views', 0) for c in linkedin_content) / total_posts
+    avg_likes = sum(c.get('performance', {}).get('likes', 0) for c in linkedin_content) / total_posts
+    best_performing = max(linkedin_content, key=lambda x: x.get('performance', {}).get('views', 0))
     
     return f"""
     <div class="small">
@@ -1257,7 +1259,7 @@ def generate_performance_insights(linkedin_content):
         <div class="mb-2">
             <strong>Best Performing:</strong>
             <div class="text-muted">{best_performing['topic'][:30]}...</div>
-            <div class="text-success">{best_performing['performance']['views']:,} views</div>
+            <div class="text-success">{best_performing.get('performance', {}).get('views', 0):,} views</div>
         </div>
         <div>
             <strong>Engagement Rate:</strong>
