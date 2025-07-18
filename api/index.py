@@ -2254,72 +2254,72 @@ SETTINGS_CONTENT = """
                         </div>
                         
                         <div class="mb-3">
-                            <label class="form-label">Preferred Content Types</label>
+                            <label class="form-label" data-translate="preferred_content_types">Preferred Content Types</label>
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="linkedin" id="prefLinkedIn" checked>
-                                        <label class="form-check-label" for="prefLinkedIn">LinkedIn</label>
+                                        <label class="form-check-label" for="prefLinkedIn" data-translate="linkedin">LinkedIn</label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="twitter" id="prefTwitter" checked>
-                                        <label class="form-check-label" for="prefTwitter">Twitter</label>
+                                        <label class="form-check-label" for="prefTwitter" data-translate="twitter">Twitter</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="facebook" id="prefFacebook">
-                                        <label class="form-check-label" for="prefFacebook">Facebook</label>
+                                        <label class="form-check-label" for="prefFacebook" data-translate="facebook">Facebook</label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="instagram" id="prefInstagram">
-                                        <label class="form-check-label" for="prefInstagram">Instagram</label>
+                                        <label class="form-check-label" for="prefInstagram" data-translate="instagram">Instagram</label>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="youtube" id="prefYouTube">
-                                        <label class="form-check-label" for="prefYouTube">YouTube</label>
+                                        <label class="form-check-label" for="prefYouTube" data-translate="youtube">YouTube</label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="blog" id="prefBlog">
-                                        <label class="form-check-label" for="prefBlog">Blog</label>
+                                        <label class="form-check-label" for="prefBlog" data-translate="blog">Blog</label>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         
                         <div class="mb-3">
-                            <label class="form-label">Favorite Sources</label>
+                            <label class="form-label" data-translate="favorite_sources">Favorite Sources</label>
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="news" id="sourceNews" checked>
-                                        <label class="form-check-label" for="sourceNews">News</label>
+                                        <label class="form-check-label" for="sourceNews" data-translate="news">News</label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="books" id="sourceBooks" checked>
-                                        <label class="form-check-label" for="sourceBooks">Books</label>
+                                        <label class="form-check-label" for="sourceBooks" data-translate="books">Books</label>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="research" id="sourceResearch">
-                                        <label class="form-check-label" for="sourceResearch">Research</label>
+                                        <label class="form-check-label" for="sourceResearch" data-translate="research">Research</label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="podcasts" id="sourcePodcasts">
-                                        <label class="form-check-label" for="sourcePodcasts">Podcasts</label>
+                                        <label class="form-check-label" for="sourcePodcasts" data-translate="podcasts">Podcasts</label>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="videos" id="sourceVideos">
-                                        <label class="form-check-label" for="sourceVideos">Videos</label>
+                                        <label class="form-check-label" for="sourceVideos" data-translate="videos">Videos</label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="threads" id="sourceThreads">
-                                        <label class="form-check-label" for="sourceThreads">Threads</label>
+                                        <label class="form-check-label" for="sourceThreads" data-translate="threads">Threads</label>
                                     </div>
                                 </div>
                             </div>
@@ -2327,7 +2327,7 @@ SETTINGS_CONTENT = """
                         
                         <div class="text-end">
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-2"></i>Save Preferences
+                                <i class="fas fa-save me-2"></i><span data-translate="save_preferences">Save Preferences</span>
                             </button>
                         </div>
                     </form>
@@ -2337,20 +2337,20 @@ SETTINGS_CONTENT = """
             <!-- Social Media Integration -->
             <div class="card mb-4">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-share-alt me-2"></i>Social Media Integration</h5>
+                    <h5 class="mb-0"><i class="fas fa-share-alt me-2"></i><span data-translate="social_media_integration">Social Media Integration</span></h5>
                 </div>
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <div class="d-flex align-items-center mb-2">
                                 <i class="fab fa-linkedin text-primary me-2"></i>
-                                <span class="me-2">LinkedIn</span>
-                                <span class="badge bg-success">Connected</span>
+                                <span class="me-2" data-translate="linkedin">LinkedIn</span>
+                                <span class="badge bg-success" data-translate="connected">Connected</span>
                             </div>
                             <small class="text-muted">John Doe (Personal)</small>
                         </div>
                         <div class="col-md-6 text-end">
-                            <button class="btn btn-sm btn-outline-primary">Manage</button>
+                            <button class="btn btn-sm btn-outline-primary" data-translate="manage">Manage</button>
                         </div>
                     </div>
                     
@@ -2358,13 +2358,13 @@ SETTINGS_CONTENT = """
                         <div class="col-md-6">
                             <div class="d-flex align-items-center mb-2">
                                 <i class="fab fa-facebook text-primary me-2"></i>
-                                <span class="me-2">Facebook</span>
-                                <span class="badge bg-success">Connected</span>
+                                <span class="me-2" data-translate="facebook">Facebook</span>
+                                <span class="badge bg-success" data-translate="connected">Connected</span>
                             </div>
                             <small class="text-muted">John Doe</small>
                         </div>
                         <div class="col-md-6 text-end">
-                            <button class="btn btn-sm btn-outline-primary">Manage</button>
+                            <button class="btn btn-sm btn-outline-primary" data-translate="manage">Manage</button>
                         </div>
                     </div>
                     
@@ -2372,13 +2372,13 @@ SETTINGS_CONTENT = """
                         <div class="col-md-6">
                             <div class="d-flex align-items-center mb-2">
                                 <i class="fab fa-instagram text-danger me-2"></i>
-                                <span class="me-2">Instagram</span>
-                                <span class="badge bg-success">Connected</span>
+                                <span class="me-2" data-translate="instagram">Instagram</span>
+                                <span class="badge bg-success" data-translate="connected">Connected</span>
                             </div>
                             <small class="text-muted">@johndoe</small>
                         </div>
                         <div class="col-md-6 text-end">
-                            <button class="btn btn-sm btn-outline-primary">Manage</button>
+                            <button class="btn btn-sm btn-outline-primary" data-translate="manage">Manage</button>
                         </div>
                     </div>
                     
@@ -2386,13 +2386,13 @@ SETTINGS_CONTENT = """
                         <div class="col-md-6">
                             <div class="d-flex align-items-center mb-2">
                                 <i class="fab fa-twitter text-info me-2"></i>
-                                <span class="me-2">Twitter</span>
-                                <span class="badge bg-secondary">Not connected</span>
+                                <span class="me-2" data-translate="twitter">Twitter</span>
+                                <span class="badge bg-secondary" data-translate="not_connected">Not connected</span>
                             </div>
-                            <small class="text-muted">Connect your Twitter account</small>
+                            <small class="text-muted" data-translate="connect_twitter_account">Connect your Twitter account</small>
                         </div>
                         <div class="col-md-6 text-end">
-                            <button class="btn btn-sm btn-primary">Connect</button>
+                            <button class="btn btn-sm btn-primary" data-translate="connect">Connect</button>
                         </div>
                     </div>
                     
@@ -2400,13 +2400,13 @@ SETTINGS_CONTENT = """
                         <div class="col-md-6">
                             <div class="d-flex align-items-center mb-2">
                                 <i class="fab fa-youtube text-danger me-2"></i>
-                                <span class="me-2">YouTube</span>
-                                <span class="badge bg-secondary">Not connected</span>
+                                <span class="me-2" data-translate="youtube">YouTube</span>
+                                <span class="badge bg-secondary" data-translate="not_connected">Not connected</span>
                             </div>
-                            <small class="text-muted">Connect your YouTube channel</small>
+                            <small class="text-muted" data-translate="connect_youtube_channel">Connect your YouTube channel</small>
                         </div>
                         <div class="col-md-6 text-end">
-                            <button class="btn btn-sm btn-primary">Connect</button>
+                            <button class="btn btn-sm btn-primary" data-translate="connect">Connect</button>
                         </div>
                     </div>
                     
@@ -2414,24 +2414,24 @@ SETTINGS_CONTENT = """
                     
                     <div class="row">
                         <div class="col-md-6">
-                            <label class="form-label">Auto-post to</label>
+                            <label class="form-label" data-translate="auto_post_to">Auto-post to</label>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" value="linkedin" id="autoLinkedIn" checked>
-                                <label class="form-check-label" for="autoLinkedIn">LinkedIn</label>
+                                <label class="form-check-label" for="autoLinkedIn" data-translate="linkedin">LinkedIn</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" value="facebook" id="autoFacebook">
-                                <label class="form-check-label" for="autoFacebook">Facebook</label>
+                                <label class="form-check-label" for="autoFacebook" data-translate="facebook">Facebook</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" value="instagram" id="autoInstagram">
-                                <label class="form-check-label" for="autoInstagram">Instagram</label>
+                                <label class="form-check-label" for="autoInstagram" data-translate="instagram">Instagram</label>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Default posting time</label>
+                            <label class="form-label" data-translate="default_posting_time">Default posting time</label>
                             <input type="time" class="form-control" value="09:00" id="defaultPostTime">
-                            <small class="text-muted">Local timezone</small>
+                            <small class="text-muted" data-translate="local_timezone">Local timezone</small>
                         </div>
                     </div>
                 </div>
@@ -2442,18 +2442,18 @@ SETTINGS_CONTENT = """
         <div class="col-lg-4">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-crown me-2"></i>Subscription</h5>
+                    <h5 class="mb-0"><i class="fas fa-crown me-2"></i><span data-translate="subscription">Subscription</span></h5>
                 </div>
                 <div class="card-body">
                     <div class="text-center mb-3">
                         <i class="fas fa-crown fa-3x text-warning mb-2"></i>
-                        <h5>Pro Plan</h5>
+                        <h5 data-translate="pro_plan">Pro Plan</h5>
                         <h3 class="text-primary">$19/month</h3>
                     </div>
                     
                     <div class="mb-3">
                         <div class="d-flex justify-content-between mb-2">
-                            <span>Content Generated</span>
+                            <span data-translate="content_generated">Content Generated</span>
                             <span>67/100</span>
                         </div>
                         <div class="progress mb-3">
@@ -2461,7 +2461,7 @@ SETTINGS_CONTENT = """
                         </div>
                         
                         <div class="d-flex justify-content-between mb-2">
-                            <span>Social Media Posts</span>
+                            <span data-translate="social_media_posts">Social Media Posts</span>
                             <span>23/50</span>
                         </div>
                         <div class="progress mb-3">
@@ -2471,22 +2471,22 @@ SETTINGS_CONTENT = """
                     
                     <div class="d-grid gap-2">
                         <button class="btn btn-warning">
-                            <i class="fas fa-arrow-up me-2"></i>Upgrade Plan
+                            <i class="fas fa-arrow-up me-2"></i><span data-translate="upgrade_plan">Upgrade Plan</span>
                         </button>
                         <button class="btn btn-outline-danger">
-                            <i class="fas fa-times me-2"></i>Cancel Subscription
+                            <i class="fas fa-times me-2"></i><span data-translate="cancel_subscription">Cancel Subscription</span>
                         </button>
                     </div>
                     
                     <hr>
                     
-                    <h6>Pro Features</h6>
+                    <h6 data-translate="pro_features">Pro Features</h6>
                     <ul class="list-unstyled">
-                        <li><i class="fas fa-check text-success me-2"></i>Unlimited content generation</li>
-                        <li><i class="fas fa-check text-success me-2"></i>Advanced AI models</li>
-                        <li><i class="fas fa-check text-success me-2"></i>Social media scheduling</li>
-                        <li><i class="fas fa-check text-success me-2"></i>Analytics dashboard</li>
-                        <li><i class="fas fa-check text-success me-2"></i>Priority support</li>
+                        <li><i class="fas fa-check text-success me-2"></i><span data-translate="unlimited_content_generation">Unlimited content generation</span></li>
+                        <li><i class="fas fa-check text-success me-2"></i><span data-translate="advanced_ai_models">Advanced AI models</span></li>
+                        <li><i class="fas fa-check text-success me-2"></i><span data-translate="social_media_scheduling">Social media scheduling</span></li>
+                        <li><i class="fas fa-check text-success me-2"></i><span data-translate="analytics_dashboard">Analytics dashboard</span></li>
+                        <li><i class="fas fa-check text-success me-2"></i><span data-translate="priority_support">Priority support</span></li>
                     </ul>
                 </div>
             </div>
