@@ -125,7 +125,7 @@ def initialize_demo_content():
     
     # Add sample content to manager
     for i, content_data in enumerate(sample_content):
-        content_manager.create_content(
+        content_entry = content_manager.create_content(
             demo_user,
             content_data['direction'],
             content_data['platform'],
@@ -134,6 +134,15 @@ def initialize_demo_content():
             content_data['tone'],
             content_data['content']
         )
+        
+        # Add status information
+        if i == 0:  # First post - published
+            content_entry['status'] = 'published'
+        elif i == 1:  # Second post - scheduled
+            content_entry['status'] = 'scheduled'
+            content_entry['scheduled_time'] = '2024-07-20 10:00 AM'
+        else:  # Other posts - draft
+            content_entry['status'] = 'draft'
     
     # Add some performance data
     content_manager.update_performance('CC1001', 'linkedin', views=156, likes=23, shares=5, comments=8)
@@ -526,6 +535,335 @@ def generate_direction_performance_html(user_content):
     html += '</div>'
     return html
 
+def generate_linkedin_manager_content(user_email, linkedin_content):
+    """Generate LinkedIn manager content"""
+    user_name = user_email.split('@')[0] if '@' in user_email else user_email
+    
+    # Calculate LinkedIn stats
+    total_posts = len(linkedin_content)
+    published_posts = len([c for c in linkedin_content if c.get('status') == 'published'])
+    scheduled_posts = len([c for c in linkedin_content if c.get('status') == 'scheduled'])
+    draft_posts = len([c for c in linkedin_content if c.get('status') == 'draft'])
+    total_views = sum(c['performance']['views'] for c in linkedin_content)
+    total_likes = sum(c['performance']['likes'] for c in linkedin_content)
+    
+    return f"""
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h2 class="mb-2"><i class="fab fa-linkedin me-2"></i>LinkedIn Manager</h2>
+                                <p class="mb-0">Manage and deploy your LinkedIn content with precision</p>
+                            </div>
+                            <div class="text-end">
+                                <button class="btn btn-light" onclick="openLinkedInSettings()">
+                                    <i class="fas fa-cog me-2"></i>LinkedIn Settings
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Stats -->
+        <div class="row mb-4">
+            <div class="col-md-2 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-file-alt fa-2x text-primary mb-2"></i>
+                        <h3 class="mb-1">{total_posts}</h3>
+                        <p class="text-muted mb-0">Total Posts</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                        <h3 class="mb-1">{published_posts}</h3>
+                        <p class="text-muted mb-0">Published</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+                        <h3 class="mb-1">{scheduled_posts}</h3>
+                        <p class="text-muted mb-0">Scheduled</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-edit fa-2x text-info mb-2"></i>
+                        <h3 class="mb-1">{draft_posts}</h3>
+                        <p class="text-muted mb-0">Drafts</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-eye fa-2x text-primary mb-2"></i>
+                        <h3 class="mb-1">{total_views:,}</h3>
+                        <p class="text-muted mb-0">Total Views</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-thumbs-up fa-2x text-success mb-2"></i>
+                        <h3 class="mb-1">{total_likes:,}</h3>
+                        <p class="text-muted mb-0">Total Likes</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="row">
+            <!-- Post Management -->
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-list me-2"></i>Post Management</h5>
+                            <div>
+                                <button class="btn btn-primary btn-sm me-2" onclick="createNewPost()">
+                                    <i class="fas fa-plus me-1"></i>New Post
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm" onclick="bulkActions()">
+                                    <i class="fas fa-tasks me-1"></i>Bulk Actions
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Filters -->
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <select class="form-select" id="statusFilter">
+                                    <option value="">All Status</option>
+                                    <option value="draft">Drafts</option>
+                                    <option value="scheduled">Scheduled</option>
+                                    <option value="published">Published</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select" id="directionFilter">
+                                    <option value="">All Directions</option>
+                                    <option value="business_finance">Business & Finance</option>
+                                    <option value="technology">Technology</option>
+                                    <option value="health_wellness">Health & Wellness</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="date" class="form-control" id="dateFilter" placeholder="Filter by date">
+                            </div>
+                            <div class="col-md-3">
+                                <button class="btn btn-outline-primary w-100" onclick="applyFilters()">
+                                    <i class="fas fa-filter me-1"></i>Apply Filters
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Posts List -->
+                        <div id="postsList">
+                            {generate_linkedin_posts_list(linkedin_content)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Quick Actions -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary" onclick="schedulePost()">
+                                <i class="fas fa-calendar-plus me-2"></i>Schedule Post
+                            </button>
+                            <button class="btn btn-success" onclick="publishNow()">
+                                <i class="fas fa-paper-plane me-2"></i>Publish Now
+                            </button>
+                            <button class="btn btn-info" onclick="analyzePerformance()">
+                                <i class="fas fa-chart-line me-2"></i>Analyze Performance
+                            </button>
+                            <button class="btn btn-warning" onclick="exportData()">
+                                <i class="fas fa-download me-2"></i>Export Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Scheduled Posts -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="fas fa-clock me-2"></i>Upcoming Posts</h6>
+                    </div>
+                    <div class="card-body">
+                        {generate_scheduled_posts_list(linkedin_content)}
+                    </div>
+                </div>
+                
+                <!-- Performance Insights -->
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Performance Insights</h6>
+                    </div>
+                    <div class="card-body">
+                        {generate_performance_insights(linkedin_content)}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    """
+
+def generate_linkedin_posts_list(linkedin_content):
+    """Generate LinkedIn posts list HTML"""
+    if not linkedin_content:
+        return '<p class="text-muted text-center">No LinkedIn posts found. Create your first post!</p>'
+    
+    html = ""
+    for content in linkedin_content:
+        status = content.get('status', 'draft')
+        status_badge = get_status_badge(status)
+        direction_icon = get_direction_icon(content['direction'])
+        direction_name = get_direction_name(content['direction'])
+        time_ago = get_time_ago(content['created_at'])
+        
+        html += f"""
+        <div class="card mb-3 post-item" data-id="{content['id']}" data-status="{status}" data-direction="{content['direction']}">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="d-flex align-items-center">
+                        {direction_icon}
+                        <div>
+                            <h6 class="mb-1">{content['topic'][:60]}{'...' if len(content['topic']) > 60 else ''}</h6>
+                            <small class="text-muted">{direction_name} • {time_ago}</small>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="editPost('{content['id']}')">
+                                <i class="fas fa-edit me-2"></i>Edit
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="duplicatePost('{content['id']}')">
+                                <i class="fas fa-copy me-2"></i>Duplicate
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="schedulePost('{content['id']}')">
+                                <i class="fas fa-calendar me-2"></i>Schedule
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="#" onclick="deletePost('{content['id']}')">
+                                <i class="fas fa-trash me-2"></i>Delete
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <p class="mb-2">{content['content'][:150]}{'...' if len(content['content']) > 150 else ''}</p>
+                        <div class="d-flex gap-2">
+                            {status_badge}
+                            <span class="badge bg-primary">{get_platform_name(content['platform'])}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <div class="small text-muted">
+                            <div><i class="fas fa-eye me-1"></i>{content['performance']['views']:,} views</div>
+                            <div><i class="fas fa-thumbs-up me-1"></i>{content['performance']['likes']:,} likes</div>
+                            <div><i class="fas fa-share me-1"></i>{content['performance']['shares']:,} shares</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        """
+    
+    return html
+
+def generate_scheduled_posts_list(linkedin_content):
+    """Generate scheduled posts list HTML"""
+    scheduled_posts = [c for c in linkedin_content if c.get('status') == 'scheduled']
+    
+    if not scheduled_posts:
+        return '<p class="text-muted small">No scheduled posts</p>'
+    
+    html = ""
+    for post in scheduled_posts[:3]:  # Show only next 3
+        scheduled_time = post.get('scheduled_time', 'TBD')
+        html += f"""
+        <div class="d-flex align-items-center mb-2">
+            <div class="flex-grow-1">
+                <div class="small fw-bold">{post['topic'][:40]}{'...' if len(post['topic']) > 40 else ''}</div>
+                <div class="small text-muted">{scheduled_time}</div>
+            </div>
+            <button class="btn btn-sm btn-outline-danger" onclick="cancelSchedule('{post['id']}')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        """
+    
+    return html
+
+def generate_performance_insights(linkedin_content):
+    """Generate performance insights HTML"""
+    if not linkedin_content:
+        return '<p class="text-muted small">No performance data available</p>'
+    
+    # Calculate insights
+    total_posts = len(linkedin_content)
+    avg_views = sum(c['performance']['views'] for c in linkedin_content) / total_posts
+    avg_likes = sum(c['performance']['likes'] for c in linkedin_content) / total_posts
+    best_performing = max(linkedin_content, key=lambda x: x['performance']['views'])
+    
+    return f"""
+    <div class="small">
+        <div class="mb-2">
+            <strong>Average Performance:</strong>
+            <div class="text-muted">{avg_views:.0f} views per post</div>
+            <div class="text-muted">{avg_likes:.0f} likes per post</div>
+        </div>
+        <div class="mb-2">
+            <strong>Best Performing:</strong>
+            <div class="text-muted">{best_performing['topic'][:30]}...</div>
+            <div class="text-success">{best_performing['performance']['views']:,} views</div>
+        </div>
+        <div>
+            <strong>Engagement Rate:</strong>
+            <div class="text-muted">{((avg_likes / avg_views) * 100):.1f}%</div>
+        </div>
+    </div>
+    """
+
+def get_status_badge(status):
+    """Get status badge HTML"""
+    badges = {
+        'draft': '<span class="badge bg-secondary">Draft</span>',
+        'scheduled': '<span class="badge bg-warning">Scheduled</span>',
+        'published': '<span class="badge bg-success">Published</span>',
+        'failed': '<span class="badge bg-danger">Failed</span>'
+    }
+    return badges.get(status, '<span class="badge bg-secondary">Draft</span>')
+
 # Base template with navigation
 BASE_TEMPLATE = """
 <!DOCTYPE html>
@@ -740,6 +1078,9 @@ BASE_TEMPLATE = """
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/library"><i class="fas fa-book me-1"></i><span data-translate="library">Library</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/linkedin-manager"><i class="fab fa-linkedin me-1"></i><span data-translate="linkedin_manager">LinkedIn Manager</span></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/settings"><i class="fas fa-cog me-1"></i><span data-translate="settings">Settings</span></a>
@@ -980,6 +1321,7 @@ BASE_TEMPLATE = """
             'no_content_generated_yet': 'No content generated yet.',
             'no_social_media_content_yet': 'No social media content yet.',
             'no_posts_yet': 'No posts yet',
+            'linkedin_manager': 'LinkedIn Manager',
             'translate_to_chinese': 'Translate to Chinese',
             'translate_to_english': 'Translate to English',
             'step_5': 'Step 5',
@@ -1191,6 +1533,7 @@ BASE_TEMPLATE = """
             'no_content_generated_yet': '尚未生成内容。',
             'no_social_media_content_yet': '尚无社交媒体内容。',
             'no_posts_yet': '尚无帖子',
+            'linkedin_manager': 'LinkedIn管理器',
             'translate_to_chinese': '翻译成中文',
             'translate_to_english': '翻译成英文',
             'step_5': '第5步',
@@ -3635,6 +3978,21 @@ def library():
                                 content=LIBRARY_CONTENT,
                                 scripts=LIBRARY_SCRIPTS)
 
+@app.route('/linkedin-manager')
+@login_required
+def linkedin_manager():
+    """LinkedIn post management and deployment page"""
+    user_email = session.get('user', '')
+    user_content = content_manager.get_user_content(user_email, limit=50)
+    linkedin_content = [c for c in user_content if c['platform'] == 'linkedin']
+    
+    linkedin_manager_content = generate_linkedin_manager_content(user_email, linkedin_content)
+    
+    return render_template_string(BASE_TEMPLATE,
+                                title="LinkedIn Manager",
+                                content=linkedin_manager_content,
+                                scripts=LINKEDIN_MANAGER_SCRIPTS)
+
 @app.route('/settings')
 def settings():
     """User settings page"""
@@ -4052,6 +4410,122 @@ def save_content():
             'error': str(e)
         }), 500
 
+@app.route('/api/linkedin/schedule', methods=['POST'])
+def schedule_linkedin_post():
+    """Schedule a LinkedIn post"""
+    try:
+        if 'user' not in session:
+            return jsonify({
+                'success': False,
+                'error': 'User not logged in'
+            }), 401
+        
+        data = request.get_json()
+        content_id = data.get('content_id')
+        scheduled_time = data.get('scheduled_time')
+        account = data.get('account', 'primary')
+        
+        # Update content status
+        for user_content in content_manager.user_content.values():
+            for content in user_content:
+                if content['id'] == content_id:
+                    content['status'] = 'scheduled'
+                    content['scheduled_time'] = scheduled_time
+                    content['linkedin_account'] = account
+                    
+                    return jsonify({
+                        'success': True,
+                        'message': 'Post scheduled successfully',
+                        'scheduled_time': scheduled_time
+                    })
+        
+        return jsonify({
+            'success': False,
+            'error': 'Content not found'
+        }), 404
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/linkedin/publish', methods=['POST'])
+def publish_linkedin_post():
+    """Publish a LinkedIn post immediately"""
+    try:
+        if 'user' not in session:
+            return jsonify({
+                'success': False,
+                'error': 'User not logged in'
+            }), 401
+        
+        data = request.get_json()
+        content_id = data.get('content_id')
+        account = data.get('account', 'primary')
+        
+        # Update content status
+        for user_content in content_manager.user_content.values():
+            for content in user_content:
+                if content['id'] == content_id:
+                    content['status'] = 'published'
+                    content['published_time'] = datetime.now().isoformat()
+                    content['linkedin_account'] = account
+                    
+                    return jsonify({
+                        'success': True,
+                        'message': 'Post published successfully',
+                        'published_time': content['published_time']
+                    })
+        
+        return jsonify({
+            'success': False,
+            'error': 'Content not found'
+        }), 404
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/linkedin/update-status', methods=['POST'])
+def update_linkedin_post_status():
+    """Update LinkedIn post status"""
+    try:
+        if 'user' not in session:
+            return jsonify({
+                'success': False,
+                'error': 'User not logged in'
+            }), 401
+        
+        data = request.get_json()
+        content_id = data.get('content_id')
+        status = data.get('status')
+        
+        # Update content status
+        for user_content in content_manager.user_content.values():
+            for content in user_content:
+                if content['id'] == content_id:
+                    content['status'] = status
+                    
+                    return jsonify({
+                        'success': True,
+                        'message': f'Post status updated to {status}',
+                        'status': status
+                    })
+        
+        return jsonify({
+            'success': False,
+            'error': 'Content not found'
+        }), 404
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 @app.route('/api/generate', methods=['POST'])
 def generate_content():
     """Generate content (demo mode)"""
@@ -4064,6 +4538,288 @@ def generate_content():
             'request_data': data
         }
     })
+
+# LinkedIn Manager Scripts
+LINKEDIN_MANAGER_SCRIPTS = """
+<script>
+// LinkedIn Manager JavaScript Functions
+
+// Post Management Functions
+function createNewPost() {
+    // Redirect to content generator with LinkedIn pre-selected
+    window.location.href = '/generator?platform=linkedin';
+}
+
+function editPost(postId) {
+    // Open edit modal for post
+    console.log('Editing post:', postId);
+    // Placeholder: Show edit modal
+    alert('Edit post functionality - Post ID: ' + postId);
+}
+
+function duplicatePost(postId) {
+    // Duplicate existing post
+    console.log('Duplicating post:', postId);
+    // Placeholder: Duplicate post
+    alert('Duplicate post functionality - Post ID: ' + postId);
+}
+
+function deletePost(postId) {
+    if (confirm('Are you sure you want to delete this post?')) {
+        console.log('Deleting post:', postId);
+        // Placeholder: Delete post
+        alert('Delete post functionality - Post ID: ' + postId);
+    }
+}
+
+// Scheduling Functions
+function schedulePost(postId = null) {
+    if (postId) {
+        // Schedule specific post
+        console.log('Scheduling post:', postId);
+        showScheduleModal(postId);
+    } else {
+        // Schedule new post
+        console.log('Schedule new post');
+        showScheduleModal();
+    }
+}
+
+function showScheduleModal(postId = null) {
+    // Show scheduling modal
+    const modalHtml = `
+    <div class="modal fade" id="scheduleModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Schedule Post</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Schedule Date & Time</label>
+                        <input type="datetime-local" class="form-control" id="scheduleDateTime">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Post Content</label>
+                        <textarea class="form-control" id="scheduleContent" rows="4" placeholder="Enter your post content..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">LinkedIn Account</label>
+                        <select class="form-select" id="linkedinAccount">
+                            <option value="primary">Primary Account</option>
+                            <option value="company">Company Page</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="confirmSchedule()">Schedule Post</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    `;
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById('scheduleModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Add modal to body
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('scheduleModal'));
+    modal.show();
+}
+
+function confirmSchedule() {
+    const dateTime = document.getElementById('scheduleDateTime').value;
+    const content = document.getElementById('scheduleContent').value;
+    const account = document.getElementById('linkedinAccount').value;
+    
+    if (!dateTime || !content) {
+        alert('Please fill in all required fields');
+        return;
+    }
+    
+    console.log('Scheduling post:', { dateTime, content, account });
+    
+    // Placeholder: Save schedule
+    alert('Post scheduled successfully!');
+    
+    // Close modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('scheduleModal'));
+    modal.hide();
+}
+
+function cancelSchedule(postId) {
+    if (confirm('Are you sure you want to cancel this scheduled post?')) {
+        console.log('Canceling schedule for post:', postId);
+        // Placeholder: Cancel schedule
+        alert('Schedule canceled for post: ' + postId);
+    }
+}
+
+// Publishing Functions
+function publishNow(postId = null) {
+    if (postId) {
+        // Publish specific post
+        console.log('Publishing post now:', postId);
+        confirmPublish(postId);
+    } else {
+        // Publish new post
+        console.log('Publish new post now');
+        showPublishModal();
+    }
+}
+
+function confirmPublish(postId) {
+    if (confirm('Are you sure you want to publish this post now?')) {
+        console.log('Confirming publish for post:', postId);
+        // Placeholder: Publish post
+        alert('Post published successfully!');
+    }
+}
+
+function showPublishModal() {
+    // Show publish modal
+    const modalHtml = `
+    <div class="modal fade" id="publishModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Publish Post Now</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Post Content</label>
+                        <textarea class="form-control" id="publishContent" rows="4" placeholder="Enter your post content..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">LinkedIn Account</label>
+                        <select class="form-select" id="publishAccount">
+                            <option value="primary">Primary Account</option>
+                            <option value="company">Company Page</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="confirmPublishNow()">Publish Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    `;
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById('publishModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Add modal to body
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('publishModal'));
+    modal.show();
+}
+
+function confirmPublishNow() {
+    const content = document.getElementById('publishContent').value;
+    const account = document.getElementById('publishAccount').value;
+    
+    if (!content) {
+        alert('Please enter post content');
+        return;
+    }
+    
+    console.log('Publishing now:', { content, account });
+    
+    // Placeholder: Publish immediately
+    alert('Post published successfully!');
+    
+    // Close modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('publishModal'));
+    modal.hide();
+}
+
+// Filter Functions
+function applyFilters() {
+    const statusFilter = document.getElementById('statusFilter').value;
+    const directionFilter = document.getElementById('directionFilter').value;
+    const dateFilter = document.getElementById('dateFilter').value;
+    
+    console.log('Applying filters:', { statusFilter, directionFilter, dateFilter });
+    
+    // Placeholder: Apply filters
+    alert('Filters applied: ' + JSON.stringify({ statusFilter, directionFilter, dateFilter }));
+}
+
+// Bulk Actions
+function bulkActions() {
+    const selectedPosts = document.querySelectorAll('.post-item input[type="checkbox"]:checked');
+    
+    if (selectedPosts.length === 0) {
+        alert('Please select posts for bulk actions');
+        return;
+    }
+    
+    const action = prompt('Choose action: schedule, publish, delete');
+    if (action) {
+        console.log('Bulk action:', action, 'on', selectedPosts.length, 'posts');
+        // Placeholder: Perform bulk action
+        alert('Bulk action "' + action + '" performed on ' + selectedPosts.length + ' posts');
+    }
+}
+
+// Analytics Functions
+function analyzePerformance() {
+    console.log('Opening performance analysis');
+    // Placeholder: Open analytics
+    alert('Performance analysis - This would open detailed analytics dashboard');
+}
+
+function exportData() {
+    console.log('Exporting LinkedIn data');
+    // Placeholder: Export data
+    alert('Data export - This would download LinkedIn performance data as CSV');
+}
+
+// Settings Functions
+function openLinkedInSettings() {
+    console.log('Opening LinkedIn settings');
+    // Placeholder: Open settings
+    alert('LinkedIn Settings - This would open account connection and preferences');
+}
+
+// Initialize LinkedIn Manager
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('LinkedIn Manager initialized');
+    
+    // Add event listeners for checkboxes
+    document.querySelectorAll('.post-item input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            updateBulkActionsVisibility();
+        });
+    });
+});
+
+function updateBulkActionsVisibility() {
+    const selectedPosts = document.querySelectorAll('.post-item input[type="checkbox"]:checked');
+    const bulkActionsBtn = document.querySelector('button[onclick="bulkActions()"]');
+    
+    if (bulkActionsBtn) {
+        bulkActionsBtn.disabled = selectedPosts.length === 0;
+    }
+}
+</script>
+"""
 
 if __name__ == '__main__':
     app.run(debug=True) 
