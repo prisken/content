@@ -2537,6 +2537,121 @@ def get_directions():
         'directions': directions_data
     })
 
+@app.route('/api/news-sources')
+def get_news_sources():
+    """Get available news sources by region"""
+    news_sources = {
+        'north_america': {
+            'general': [
+                {'name': 'CNN', 'url': 'cnn.com', 'category': 'General News'},
+                {'name': 'Fox News', 'url': 'foxnews.com', 'category': 'General News'},
+                {'name': 'NBC News', 'url': 'nbcnews.com', 'category': 'General News'},
+                {'name': 'ABC News', 'url': 'abcnews.go.com', 'category': 'General News'}
+            ],
+            'business': [
+                {'name': 'Bloomberg', 'url': 'bloomberg.com', 'category': 'Business News'},
+                {'name': 'CNBC', 'url': 'cnbc.com', 'category': 'Business News'},
+                {'name': 'Wall Street Journal', 'url': 'wsj.com', 'category': 'Business News'},
+                {'name': 'Forbes', 'url': 'forbes.com', 'category': 'Business News'}
+            ],
+            'tech': [
+                {'name': 'TechCrunch', 'url': 'techcrunch.com', 'category': 'Tech News'},
+                {'name': 'The Verge', 'url': 'theverge.com', 'category': 'Tech News'},
+                {'name': 'Wired', 'url': 'wired.com', 'category': 'Tech News'},
+                {'name': 'Ars Technica', 'url': 'arstechnica.com', 'category': 'Tech News'}
+            ]
+        },
+        'europe': {
+            'general': [
+                {'name': 'BBC', 'url': 'bbc.com', 'category': 'General News'},
+                {'name': 'Reuters', 'url': 'reuters.com', 'category': 'General News'},
+                {'name': 'The Guardian', 'url': 'theguardian.com', 'category': 'General News'},
+                {'name': 'Le Monde', 'url': 'lemonde.fr', 'category': 'General News'}
+            ],
+            'business': [
+                {'name': 'Financial Times', 'url': 'ft.com', 'category': 'Business News'},
+                {'name': 'The Economist', 'url': 'economist.com', 'category': 'Business News'},
+                {'name': 'Handelsblatt', 'url': 'handelsblatt.com', 'category': 'Business News'}
+            ],
+            'tech': [
+                {'name': 'Tech.eu', 'url': 'tech.eu', 'category': 'Tech News'},
+                {'name': 'The Next Web', 'url': 'thenextweb.com', 'category': 'Tech News'},
+                {'name': 'EU-Startups', 'url': 'eu-startups.com', 'category': 'Tech News'}
+            ]
+        },
+        'asia_pacific': {
+            'general': [
+                {'name': 'Nikkei', 'url': 'asia.nikkei.com', 'category': 'General News'},
+                {'name': 'South China Morning Post', 'url': 'scmp.com', 'category': 'General News'},
+                {'name': 'Straits Times', 'url': 'straitstimes.com', 'category': 'General News'}
+            ],
+            'business': [
+                {'name': 'Bloomberg Asia', 'url': 'bloomberg.com/asia', 'category': 'Business News'},
+                {'name': 'CNBC Asia', 'url': 'cnbc.com/asia', 'category': 'Business News'},
+                {'name': 'Nikkei Business', 'url': 'business.nikkei.com', 'category': 'Business News'}
+            ],
+            'tech': [
+                {'name': 'Tech in Asia', 'url': 'techinasia.com', 'category': 'Tech News'},
+                {'name': 'KrASIA', 'url': 'kr-asia.com', 'category': 'Tech News'},
+                {'name': '36Kr', 'url': '36kr.com', 'category': 'Tech News'}
+            ]
+        },
+        'latin_america': {
+            'general': [
+                {'name': 'El País', 'url': 'elpais.com', 'category': 'General News'},
+                {'name': 'Folha de S.Paulo', 'url': 'folha.uol.com.br', 'category': 'General News'},
+                {'name': 'Clarín', 'url': 'clarin.com', 'category': 'General News'}
+            ],
+            'business': [
+                {'name': 'América Economía', 'url': 'americaeconomia.com', 'category': 'Business News'},
+                {'name': 'Valor Econômico', 'url': 'valor.com.br', 'category': 'Business News'}
+            ],
+            'tech': [
+                {'name': 'TechCrunch Latin America', 'url': 'techcrunch.com/latam', 'category': 'Tech News'},
+                {'name': 'Contxto', 'url': 'contxto.com', 'category': 'Tech News'},
+                {'name': 'PulsoSocial', 'url': 'pulsosocial.com', 'category': 'Tech News'}
+            ]
+        },
+        'middle_east': {
+            'general': [
+                {'name': 'Al Jazeera', 'url': 'aljazeera.com', 'category': 'General News'},
+                {'name': 'Gulf News', 'url': 'gulfnews.com', 'category': 'General News'},
+                {'name': 'The National', 'url': 'thenational.ae', 'category': 'General News'}
+            ],
+            'business': [
+                {'name': 'Arabian Business', 'url': 'arabianbusiness.com', 'category': 'Business News'},
+                {'name': 'MEED', 'url': 'meed.com', 'category': 'Business News'},
+                {'name': 'Gulf Business', 'url': 'gulfbusiness.com', 'category': 'Business News'}
+            ],
+            'tech': [
+                {'name': 'Wamda', 'url': 'wamda.com', 'category': 'Tech News'},
+                {'name': 'MENAbytes', 'url': 'menabytes.com', 'category': 'Tech News'},
+                {'name': 'Magnitt', 'url': 'magnitt.com', 'category': 'Tech News'}
+            ]
+        },
+        'africa': {
+            'general': [
+                {'name': 'Business Day', 'url': 'businessday.ng', 'category': 'General News'},
+                {'name': 'Daily Nation', 'url': 'nation.co.ke', 'category': 'General News'},
+                {'name': 'The East African', 'url': 'theeastafrican.co.ke', 'category': 'General News'}
+            ],
+            'business': [
+                {'name': 'African Business', 'url': 'africanbusinessmagazine.com', 'category': 'Business News'},
+                {'name': 'Ventures Africa', 'url': 'venturesafrica.com', 'category': 'Business News'}
+            ],
+            'tech': [
+                {'name': 'TechCabal', 'url': 'techcabal.com', 'category': 'Tech News'},
+                {'name': 'Disrupt Africa', 'url': 'disrupt-africa.com', 'category': 'Tech News'},
+                {'name': 'WeeTracker', 'url': 'weetracker.com', 'category': 'Tech News'}
+            ]
+        }
+    }
+    
+    return jsonify({
+        'success': True,
+        'news_sources': news_sources
+    })
+
 @app.route('/api/generate', methods=['POST'])
 def generate_content():
     """Generate content (demo mode)"""
