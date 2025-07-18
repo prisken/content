@@ -106,7 +106,16 @@ def add_sample_directions():
         # Check if direction already exists
         existing = ContentDirection.query.filter_by(direction_key=direction_data['direction_key']).first()
         if not existing:
-            direction = ContentDirection(**direction_data)
+            direction = ContentDirection(
+                direction_key=direction_data['direction_key'],
+                direction_name=direction_data['direction_name'],
+                language_style=direction_data['language_style']
+            )
+            # Set the JSON fields using the property setters
+            direction.subcategories_list = direction_data['subcategories']
+            direction.sources_list = direction_data['sources']
+            direction.hashtags_list = direction_data['hashtags']
+            direction.regional_adaptation_dict = direction_data['regional_adaptation']
             db.session.add(direction)
     
     db.session.commit()
@@ -120,9 +129,9 @@ def add_sample_user():
             email='demo@contentcreator.com',
             name='Demo User',
             region='global',
-            language='en',
-            subscription_tier='premium'
+            language='en'
         )
+        user.subscription_tier = 'premium'  # Set after creation
         db.session.add(user)
         db.session.commit()
         print(f"Sample user created: {user.email}")
