@@ -240,15 +240,7 @@ BASE_TEMPLATE = """
 
     <!-- Main Content -->
     <div class="main-content">
-        <!-- Debug Translation Test -->
-        <div class="container mb-3" id="debug-translation">
-            <div class="alert alert-info">
-                <h6>Translation Debug</h6>
-                <button class="btn btn-sm btn-primary me-2" onclick="switchLanguage('en')">Switch to English</button>
-                <button class="btn btn-sm btn-warning me-2" onclick="switchLanguage('zh')">Switch to Chinese</button>
-                <button class="btn btn-sm btn-info" onclick="console.log('Current language:', currentLanguage); console.log('Translation keys:', Object.keys(translations.en).length);">Debug Info</button>
-            </div>
-        </div>
+
         
         <!-- Flash Messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -370,7 +362,67 @@ BASE_TEMPLATE = """
             // Generator page
             'create_engaging_content': 'Create engaging content with AI assistance',
             'choose_your_focus': 'Choose Your Focus',
-            'next_step': 'Next Step'
+            'next_step': 'Next Step',
+            
+            // Step titles
+            'step_2': 'Step 2',
+            'step_3': 'Step 3',
+            'step_3_5': 'Step 3.5',
+            'step_4': 'Step 4',
+            'what_type_content': 'What Type of Content?',
+            'what_inspires_you': 'What Inspires You?',
+            'choose_your_topic': 'Choose Your Topic',
+            'how_should_sound': 'How Should It Sound?',
+            
+            // Content types
+            'linkedin_post': 'LinkedIn Post',
+            'facebook_post': 'Facebook Post',
+            'instagram_post': 'Instagram Post',
+            'twitter_post': 'Twitter Post',
+            'youtube_short': 'YouTube Short',
+            'blog_article': 'Blog Article',
+            
+            // Inspiration sources
+            'latest_news': 'Latest News',
+            'popular_books': 'Popular Books',
+            'trending_threads': 'Trending Threads',
+            'podcasts': 'Podcasts',
+            'youtube_videos': 'YouTube Videos',
+            'research_papers': 'Research Papers',
+            'case_studies': 'Case Studies',
+            'trending_topics': 'Trending Topics',
+            
+            // Topic selection
+            'book_title': 'Book Title',
+            'author': 'Author',
+            'enter_book_title': 'Enter book title...',
+            'enter_author_name': 'Enter author name...',
+            'find_topics': 'Find Topics',
+            'podcast_link': 'Podcast Link',
+            'enter_podcast_url': 'Enter podcast URL...',
+            'youtube_video_link': 'YouTube Video Link',
+            'enter_youtube_video_url': 'Enter YouTube video URL...',
+            'research_paper_pdf': 'Research Paper (PDF)',
+            'upload_find_topics': 'Upload & Find Topics',
+            'available_topics': 'Available Topics',
+            'refresh': 'Refresh',
+            
+            // Tone options
+            'professional': 'Professional',
+            'casual': 'Casual',
+            'inspirational': 'Inspirational',
+            'educational': 'Educational',
+            'humorous': 'Humorous',
+            'serious': 'Serious',
+            
+            // Navigation buttons
+            'previous': 'Previous',
+            'generate_content': 'Generate Content',
+            
+            // Result section
+            'generated_content': 'Generated Content',
+            'copy': 'Copy',
+            'save_to_library': 'Save to Library'
         },
         zh: {
             // Navigation
@@ -464,7 +516,67 @@ BASE_TEMPLATE = """
             // Generator page
             'create_engaging_content': '使用AI辅助创建引人入胜的内容',
             'choose_your_focus': '选择您的重点',
-            'next_step': '下一步'
+            'next_step': '下一步',
+            
+            // Step titles
+            'step_2': '第2步',
+            'step_3': '第3步',
+            'step_3_5': '第3.5步',
+            'step_4': '第4步',
+            'what_type_content': '什么类型的内容？',
+            'what_inspires_you': '什么激励着您？',
+            'choose_your_topic': '选择您的主题',
+            'how_should_sound': '应该听起来如何？',
+            
+            // Content types
+            'linkedin_post': '领英帖子',
+            'facebook_post': '脸书帖子',
+            'instagram_post': 'Instagram帖子',
+            'twitter_post': '推特帖子',
+            'youtube_short': 'YouTube短视频',
+            'blog_article': '博客文章',
+            
+            // Inspiration sources
+            'latest_news': '最新新闻',
+            'popular_books': '热门书籍',
+            'trending_threads': '热门讨论',
+            'podcasts': '播客',
+            'youtube_videos': 'YouTube视频',
+            'research_papers': '研究论文',
+            'case_studies': '案例研究',
+            'trending_topics': '热门话题',
+            
+            // Topic selection
+            'book_title': '书名',
+            'author': '作者',
+            'enter_book_title': '输入书名...',
+            'enter_author_name': '输入作者姓名...',
+            'find_topics': '查找主题',
+            'podcast_link': '播客链接',
+            'enter_podcast_url': '输入播客URL...',
+            'youtube_video_link': 'YouTube视频链接',
+            'enter_youtube_video_url': '输入YouTube视频URL...',
+            'research_paper_pdf': '研究论文(PDF)',
+            'upload_find_topics': '上传并查找主题',
+            'available_topics': '可用主题',
+            'refresh': '刷新',
+            
+            // Tone options
+            'professional': '专业',
+            'casual': '随意',
+            'inspirational': '励志',
+            'educational': '教育',
+            'humorous': '幽默',
+            'serious': '严肃',
+            
+            // Navigation buttons
+            'previous': '上一步',
+            'generate_content': '生成内容',
+            
+            // Result section
+            'generated_content': '生成的内容',
+            'copy': '复制',
+            'save_to_library': '保存到库'
         }
     };
     
@@ -745,42 +857,42 @@ GENERATOR_CONTENT = """
                         
                         <!-- Step 2: Content Type -->
                         <div id="step2" class="step-content" style="display: none;">
-                            <h3 class="text-center mb-4">Step 2: What Type of Content?</h3>
+                            <h3 class="text-center mb-4"><span data-translate="step_2">Step 2</span>: <span data-translate="what_type_content">What Type of Content?</span></h3>
                             <div class="row">
                                 <div class="col-md-4 col-sm-6 mb-3">
                                     <div class="direction-card" data-platform="linkedin">
                                         <i class="fab fa-linkedin"></i>
-                                        <div>LinkedIn Post</div>
+                                        <div data-translate="linkedin_post">LinkedIn Post</div>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-6 mb-3">
                                     <div class="direction-card" data-platform="facebook">
                                         <i class="fab fa-facebook"></i>
-                                        <div>Facebook Post</div>
+                                        <div data-translate="facebook_post">Facebook Post</div>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-6 mb-3">
                                     <div class="direction-card" data-platform="instagram">
                                         <i class="fab fa-instagram"></i>
-                                        <div>Instagram Post</div>
+                                        <div data-translate="instagram_post">Instagram Post</div>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-6 mb-3">
                                     <div class="direction-card" data-platform="twitter">
                                         <i class="fab fa-twitter"></i>
-                                        <div>Twitter Post</div>
+                                        <div data-translate="twitter_post">Twitter Post</div>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-6 mb-3">
                                     <div class="direction-card" data-platform="youtube">
                                         <i class="fab fa-youtube"></i>
-                                        <div>YouTube Short</div>
+                                        <div data-translate="youtube_short">YouTube Short</div>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-6 mb-3">
                                     <div class="direction-card" data-platform="blog">
                                         <i class="fas fa-blog"></i>
-                                        <div>Blog Article</div>
+                                        <div data-translate="blog_article">Blog Article</div>
                                     </div>
                                 </div>
                             </div>
@@ -790,70 +902,70 @@ GENERATOR_CONTENT = """
                                 </button>
                                 <button type="button" class="btn btn-primary btn-lg" onclick="nextStep()">
                                     Next Step <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                            <div class="text-center mt-4">
+                                <button type="button" class="btn btn-secondary btn-lg me-3" onclick="prevStep()">
+                                    <i class="fas fa-arrow-left me-2"></i><span data-translate="previous">Previous</span>
+                                </button>
+                                <button type="button" class="btn btn-primary btn-lg" onclick="nextStep()">
+                                    <span data-translate="next_step">Next Step</span> <i class="fas fa-arrow-right ms-2"></i>
                                 </button>
                             </div>
                         </div>
                         
                         <!-- Step 3: Inspiration Source -->
                         <div id="step3" class="step-content" style="display: none;">
-                            <h3 class="text-center mb-4">Step 3: What Inspires You?</h3>
+                            <h3 class="text-center mb-4"><span data-translate="step_3">Step 3</span>: <span data-translate="what_inspires_you">What Inspires You?</span></h3>
                             <div class="row">
                                 <div class="col-md-4 col-sm-6 mb-3">
                                     <div class="direction-card" data-source="news">
                                         <i class="fas fa-newspaper"></i>
-                                        <div>Latest News</div>
+                                        <div data-translate="latest_news">Latest News</div>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-6 mb-3">
                                     <div class="direction-card" data-source="books">
                                         <i class="fas fa-book"></i>
-                                        <div>Popular Books</div>
+                                        <div data-translate="popular_books">Popular Books</div>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-6 mb-3">
                                     <div class="direction-card" data-source="threads">
                                         <i class="fas fa-comments"></i>
-                                        <div>Trending Threads</div>
+                                        <div data-translate="trending_threads">Trending Threads</div>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-6 mb-3">
                                     <div class="direction-card" data-source="podcasts">
                                         <i class="fas fa-podcast"></i>
-                                        <div>Podcasts</div>
+                                        <div data-translate="podcasts">Podcasts</div>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-6 mb-3">
                                     <div class="direction-card" data-source="videos">
                                         <i class="fas fa-video"></i>
-                                        <div>YouTube Videos</div>
+                                        <div data-translate="youtube_videos">YouTube Videos</div>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-6 mb-3">
                                     <div class="direction-card" data-source="research">
                                         <i class="fas fa-file-alt"></i>
-                                        <div>Research Papers</div>
+                                        <div data-translate="research_papers">Research Papers</div>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-6 mb-3">
                                     <div class="direction-card" data-source="case_studies">
                                         <i class="fas fa-chart-bar"></i>
-                                        <div>Case Studies</div>
+                                        <div data-translate="case_studies">Case Studies</div>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-6 mb-3">
                                     <div class="direction-card" data-source="trends">
                                         <i class="fas fa-fire"></i>
-                                        <div>Trending Topics</div>
+                                        <div data-translate="trending_topics">Trending Topics</div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="text-center mt-4">
-                                <button type="button" class="btn btn-secondary btn-lg me-3" onclick="prevStep()">
-                                    <i class="fas fa-arrow-left me-2"></i>Previous
-                                </button>
-                                <button type="button" class="btn btn-primary btn-lg" onclick="nextStep()">
-                                    Next Step <i class="fas fa-arrow-right ms-2"></i>
-                                </button>
                             </div>
                         </div>
                         
