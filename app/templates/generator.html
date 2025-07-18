@@ -470,5 +470,9 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{{ url_for('static', filename='js/generator.js', v='1.0.1') }}"></script>
+<script>
+// Debug script to test for syntax errors
+console.log('Generator template loaded successfully');
+</script>
+<script src="{{ url_for('static', filename='js/generator.js', v='1.0.2') }}"></script>
 {% endblock %} 
