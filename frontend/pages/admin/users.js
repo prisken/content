@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import ProtectedRoute from '../../components/ProtectedRoute'
+import { apiClient } from '../../lib/api'
 import { 
   Users, 
   Search, 
@@ -44,15 +45,14 @@ const AdminUsers = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true)
-      const params = new URLSearchParams({
+      const params = {
         page: currentPage,
         per_page: 10,
         search: searchTerm,
         role: roleFilter
-      })
+      }
 
-      const response = await fetch(`/api/admin/users?${params}`)
-      const data = await response.json()
+      const data = await apiClient.getUsers(params)
 
       if (data.success) {
         setUsers(data.data.users)
@@ -91,15 +91,7 @@ const AdminUsers = () => {
   const handleUpdateUser = async () => {
     try {
       setActionLoading(true)
-      const response = await fetch(`/api/admin/users/${selectedUser.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(editForm)
-      })
-
-      const data = await response.json()
+      const data = await apiClient.updateUser(selectedUser.id, editForm)
 
       if (data.success) {
         toast.success('User updated successfully')
@@ -119,11 +111,7 @@ const AdminUsers = () => {
   const handleDeleteUser = async () => {
     try {
       setActionLoading(true)
-      const response = await fetch(`/api/admin/users/${selectedUser.id}`, {
-        method: 'DELETE'
-      })
-
-      const data = await response.json()
+      const data = await apiClient.deleteUser(selectedUser.id)
 
       if (data.success) {
         toast.success('User deleted successfully')
@@ -142,11 +130,7 @@ const AdminUsers = () => {
 
   const handleToggleStatus = async (user) => {
     try {
-      const response = await fetch(`/api/admin/users/${user.id}/toggle-status`, {
-        method: 'POST'
-      })
-
-      const data = await response.json()
+      const data = await apiClient.toggleUserStatus(user.id)
 
       if (data.success) {
         toast.success(data.data.message)
@@ -163,15 +147,7 @@ const AdminUsers = () => {
   const handleResetPassword = async () => {
     try {
       setActionLoading(true)
-      const response = await fetch(`/api/admin/users/${selectedUser.id}/reset-password`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ new_password: newPassword })
-      })
-
-      const data = await response.json()
+      const data = await apiClient.resetUserPassword(selectedUser.id, newPassword)
 
       if (data.success) {
         toast.success('Password reset successfully')
