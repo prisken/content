@@ -64,7 +64,8 @@ export const apiClient = {
       tone: data.tone,
       region: data.region || 'global',
       language: data.language || 'en',
-      user_id: data.user_id || null
+      user_id: data.user_id || null,
+      generate_images: data.generate_images !== false // Default to true
     };
     
     return this.request('/api/generate', {
@@ -75,10 +76,15 @@ export const apiClient = {
 
   // Image Generation
   async generateImage(data) {
-    return this.request('/api/images/generate', {
+    return this.request('/api/generate-image', {
       method: 'POST',
       body: data,
     });
+  },
+
+  // Get Image Specifications
+  async getImageSpecs(platform) {
+    return this.request(`/api/image-specs/${platform}`);
   },
 
   // Get Content Directions

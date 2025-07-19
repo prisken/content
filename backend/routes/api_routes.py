@@ -923,22 +923,51 @@ def generate_content():
         topic = data.get('topic', 'Business Strategy')
         tone = data.get('tone', 'professional')
         language = data.get('language', 'en')
+        generate_images = data.get('generate_images', True)  # New parameter
         
         # Generate content using AI service or fallback
         if AI_SERVICE_AVAILABLE:
-            content = ai_service.generate_content(direction, platform, source, topic, tone, language)
+            content = ai_service.generate_content(
+                direction, platform, source, topic, tone, language, 
+                generate_images=generate_images
+            )
         else:
             content = generate_content_text(direction, platform, source, topic, tone, language)
+            # Add basic structure for non-AI content
+            content = {
+                'content': {
+                    'text': content,
+                    'length': len(content),
+                    'max_length': 1300,
+                    'hashtags': [],
+                    'call_to_action': []
+                },
+                'variations': [],
+                'images': {'primary': None, 'variations': [], 'total_count': 0},
+                'media_suggestions': {'images': [], 'videos': [], 'graphics': []},
+                'platform_specs': {},
+                'metadata': {
+                    'content_direction': direction,
+                    'content_type': platform,
+                    'source_type': source,
+                    'topic': topic,
+                    'tone': tone,
+                    'region': 'global',
+                    'language': language,
+                    'generated_at': '2024-01-15T10:30:00Z'
+                },
+                'cultural_context': {'sensitivity': 'general', 'recommendations': []},
+                'direction_context': {},
+                'analytics': {
+                    'content_metrics': {'character_count': len(content), 'word_count': len(content.split()), 'hashtag_count': 0, 'readability_score': 0, 'engagement_potential': 'medium'},
+                    'platform_optimization': {'optimal_posting_time': 'Varies', 'recommended_frequency': 'Varies', 'audience_demographics': 'Varies', 'content_lifecycle': 'Varies'},
+                    'performance_predictions': {'estimated_reach': 'medium', 'estimated_engagement': 'medium', 'estimated_clicks': 'low', 'viral_potential': 'low'}
+                }
+            }
         
         return jsonify({
             'success': True,
-            'content': content,
-            'direction': direction,
-            'platform': platform,
-            'source': source,
-            'topic': topic,
-            'tone': tone,
-            'language': language
+            'data': content
         })
         
     except Exception as e:
@@ -1200,6 +1229,68 @@ def migrate_database():
         return jsonify({
             'success': True,
             'message': 'Database migration completed successfully'
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500 
+
+@api_routes.route('/generate-image', methods=['POST'])
+def generate_image():
+    """Generate image using Stable Diffusion"""
+    try:
+        data = request.get_json()
+        
+        # Extract parameters
+        platform = data.get('platform', 'facebook')
+        content_direction = data.get('content_direction', 'business_finance')
+        topic = data.get('topic', 'Business Strategy')
+        tone = data.get('tone', 'professional')
+        language = data.get('language', 'en')
+        
+        # Import Stable Diffusion service
+        from app.services.stable_diffusion import StableDiffusionService
+        stable_diffusion = StableDiffusionService()
+        
+        # Generate image
+        image_result = stable_diffusion.generate_image(
+            platform=platform,
+            content_direction=content_direction,
+            topic=topic,
+            tone=tone,
+            language=language
+        )
+        
+        return jsonify({
+            'success': True,
+            'data': image_result
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@api_routes.route('/image-specs/<platform>', methods=['GET'])
+def get_image_specs(platform):
+    """Get image specifications for a specific platform"""
+    try:
+        from app.services.stable_diffusion import StableDiffusionService
+        stable_diffusion = StableDiffusionService()
+        
+        specs = stable_diffusion.get_platform_image_specs(platform)
+        supported_ratios = stable_diffusion.get_supported_ratios()
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'platform': platform,
+                'specifications': specs,
+                'supported_ratios': supported_ratios
+            }
         })
         
     except Exception as e:
