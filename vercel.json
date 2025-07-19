@@ -21,6 +21,11 @@
     }
   ],
   "env": {
-    "BACKEND_URL": "@backend-url"
+    "BACKEND_URL": "https://content-creator-pro-backend-production.up.railway.app"
+  },
+  "functions": {
+    "frontend/pages/api/**/*.js": {
+      "runtime": "nodejs18.x"
+    }
   }
 } 
