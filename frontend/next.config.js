@@ -28,12 +28,9 @@ const nextConfig = {
     unoptimized: true,
   },
 
-  // Output configuration for static export
-  output: 'standalone',
-  
-  // Experimental features
+  // Experimental features - removed optimizeCss to fix build issues
   experimental: {
-    optimizeCss: true,
+    // optimizeCss: true, // Removed to fix build issues
   },
 }
 
