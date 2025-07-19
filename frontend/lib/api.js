@@ -3,6 +3,19 @@ const API_BASE_URL = process.env.BACKEND_URL || 'http://localhost:8000';
 export const apiClient = {
   async request(endpoint, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
+    
+    // Get user from localStorage for admin requests
+    let userEmail = null;
+    try {
+      const savedUser = localStorage.getItem('user');
+      if (savedUser) {
+        const user = JSON.parse(savedUser);
+        userEmail = user.email;
+      }
+    } catch (error) {
+      console.error('Error parsing user data:', error);
+    }
+    
     const config = {
       headers: {
         'Content-Type': 'application/json',
@@ -10,6 +23,11 @@ export const apiClient = {
       },
       ...options,
     };
+
+    // Add user email header for admin requests
+    if (userEmail && endpoint.includes('/admin/')) {
+      config.headers['X-User-Email'] = userEmail;
+    }
 
     if (options.body) {
       config.body = JSON.stringify(options.body);

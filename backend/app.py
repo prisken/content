@@ -69,13 +69,14 @@ else:
     print("Celery not configured - background jobs disabled")
 
 # Import routes
-from routes import auth_routes, content_routes, image_routes, api_routes
+from routes import auth_routes, content_routes, image_routes, api_routes, admin_routes
 
 # Register blueprints
 app.register_blueprint(auth_routes, url_prefix='/api/auth')
 app.register_blueprint(content_routes, url_prefix='/api/content')
 app.register_blueprint(image_routes, url_prefix='/api/images')
 app.register_blueprint(api_routes, url_prefix='/api')
+app.register_blueprint(admin_routes, url_prefix='/api/admin')
 
 # Health check endpoint
 @app.route('/health')
