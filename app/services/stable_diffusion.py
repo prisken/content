@@ -107,10 +107,23 @@ class StableDiffusionService:
             # Get platform configuration
             platform_config = self.platform_configs.get(platform, self.platform_configs['facebook'])
             
-            # Validate aspect ratio is supported
+            # STRICT VALIDATION: Ensure only supported aspect ratios are used
             if platform_config['aspect_ratio'] not in self.supported_ratios:
-                # Fallback to 16:9 if unsupported
-                platform_config = self.platform_configs['facebook']
+                # Get the closest supported ratio for this platform
+                platform_config = self._get_closest_supported_ratio(platform)
+                current_app.logger.warning(f"Platform {platform} uses unsupported ratio, falling back to {platform_config['aspect_ratio']}")
+            
+            # Double-check dimensions match supported ratios
+            width = platform_config['width']
+            height = platform_config['height']
+            aspect_ratio = platform_config['aspect_ratio']
+            
+            # Validate dimensions are exactly what Stable Diffusion expects
+            expected_dims = self.supported_ratios[aspect_ratio]
+            if width != expected_dims['width'] or height != expected_dims['height']:
+                width = expected_dims['width']
+                height = expected_dims['height']
+                current_app.logger.warning(f"Correcting dimensions to Stable Diffusion supported: {width}x{height}")
             
             # Build prompt based on content direction and topic
             base_prompt = self._build_image_prompt(content_direction, topic, tone, platform)
@@ -118,8 +131,8 @@ class StableDiffusionService:
             # Generate image using Stable Diffusion API
             image_data = self._call_stable_diffusion_api(
                 prompt=base_prompt,
-                width=platform_config['width'],
-                height=platform_config['height']
+                width=width,
+                height=height
             )
             
             # Create response with platform-specific metadata
@@ -127,9 +140,9 @@ class StableDiffusionService:
                 'image_data': image_data,
                 'platform': platform,
                 'dimensions': {
-                    'width': platform_config['width'],
-                    'height': platform_config['height'],
-                    'aspect_ratio': platform_config['aspect_ratio']
+                    'width': width,
+                    'height': height,
+                    'aspect_ratio': aspect_ratio
                 },
                 'format': platform_config['format'],
                 'file_size': len(image_data) if image_data else 0,
@@ -138,7 +151,12 @@ class StableDiffusionService:
                 'topic': topic,
                 'tone': tone,
                 'language': language,
-                'stable_diffusion_note': platform_config['note']
+                'stable_diffusion_note': platform_config['note'],
+                'validation': {
+                    'supported_ratio': True,
+                    'dimensions_valid': True,
+                    'fallback_used': platform_config['aspect_ratio'] != self.platform_configs.get(platform, {}).get('aspect_ratio', '')
+                }
             }
             
             return response
@@ -274,3 +292,50 @@ class StableDiffusionService:
             return False, f"Image file size ({file_size:.2f}MB) exceeds platform limit ({max_size/1024/1024:.0f}MB)"
         
         return True, "Image meets platform requirements" 
+    
+    def _get_closest_supported_ratio(self, platform):
+        """Get the closest supported aspect ratio for a platform"""
+        # Platform to best supported ratio mapping
+        platform_ratio_mapping = {
+            'facebook': '16:9',    # Closest to 1.91:1
+            'linkedin': '16:9',    # Closest to 1.91:1
+            'twitter': '16:9',     # Perfect match
+            'instagram': '1:1',    # Perfect match
+            'youtube_shorts': '9:16', # Perfect match
+            'blog': '16:9',        # Closest to 1.91:1
+            'default': '16:9'      # Default fallback
+        }
+        
+        target_ratio = platform_ratio_mapping.get(platform, platform_ratio_mapping['default'])
+        target_dims = self.supported_ratios[target_ratio]
+        
+        return {
+            'width': target_dims['width'],
+            'height': target_dims['height'],
+            'aspect_ratio': target_ratio,
+            'style': 'professional, engaging',
+            'format': 'JPG',
+            'note': f'Using {target_ratio} ratio (closest supported for {platform})'
+        }
+    
+    def validate_dimensions(self, width, height):
+        """Validate if dimensions are supported by Stable Diffusion"""
+        aspect_ratio = self._calculate_aspect_ratio(width, height)
+        return aspect_ratio in self.supported_ratios
+    
+    def _calculate_aspect_ratio(self, width, height):
+        """Calculate aspect ratio from dimensions"""
+        if width == height:
+            return '1:1'
+        elif width > height:
+            # Landscape - check if it's close to 16:9
+            ratio = width / height
+            if abs(ratio - 16/9) < 0.1:  # Allow small tolerance
+                return '16:9'
+        else:
+            # Portrait - check if it's close to 9:16
+            ratio = height / width
+            if abs(ratio - 16/9) < 0.1:  # Allow small tolerance
+                return '9:16'
+        
+        return 'unsupported' 

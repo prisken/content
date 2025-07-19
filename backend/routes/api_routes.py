@@ -1298,3 +1298,41 @@ def get_image_specs(platform):
             'success': False,
             'error': str(e)
         }), 500 
+
+@api_routes.route('/test-stable-diffusion', methods=['GET'])
+def test_stable_diffusion():
+    """Test Stable Diffusion configuration and supported ratios"""
+    try:
+        from app.services.stable_diffusion import StableDiffusionService
+        stable_diffusion = StableDiffusionService()
+        
+        # Get supported ratios
+        supported_ratios = stable_diffusion.get_supported_ratios()
+        
+        # Test platform configurations
+        platform_tests = {}
+        for platform in ['facebook', 'instagram', 'linkedin', 'twitter', 'youtube_shorts', 'blog']:
+            specs = stable_diffusion.get_platform_image_specs(platform)
+            is_valid = stable_diffusion.validate_dimensions(specs['width'], specs['height'])
+            platform_tests[platform] = {
+                'specifications': specs,
+                'dimensions_valid': is_valid,
+                'supported_ratio': specs['aspect_ratio'] in supported_ratios
+            }
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'supported_ratios': supported_ratios,
+                'stable_diffusion_ratios': stable_diffusion.supported_ratios,
+                'platform_tests': platform_tests,
+                'api_key_configured': bool(stable_diffusion.api_key),
+                'api_base_url': stable_diffusion.api_base
+            }
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500 
