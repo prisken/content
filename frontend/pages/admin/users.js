@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import ProtectedRoute from '../../components/ProtectedRoute'
 import { apiClient } from '../../lib/api'
+import { useLanguage } from '../../contexts/LanguageContext'
 import { 
   Users, 
   Search, 
@@ -40,6 +41,7 @@ const AdminUsers = () => {
   const [editForm, setEditForm] = useState({})
   const [newPassword, setNewPassword] = useState('')
   const [actionLoading, setActionLoading] = useState(false)
+  const { t } = useLanguage()
 
   // Fetch users
   const fetchUsers = async () => {
@@ -59,10 +61,10 @@ const AdminUsers = () => {
         setTotalPages(data.data.pagination.pages)
         setTotalUsers(data.data.pagination.total)
       } else {
-        toast.error(data.error || 'Failed to fetch users')
+        toast.error(data.error || t('failed_to_fetch_users'))
       }
     } catch (error) {
-      toast.error('Failed to fetch users')
+      toast.error(t('failed_to_fetch_users'))
       console.error('Error fetching users:', error)
     } finally {
       setLoading(false)
@@ -94,14 +96,14 @@ const AdminUsers = () => {
       const data = await apiClient.updateUser(selectedUser.id, editForm)
 
       if (data.success) {
-        toast.success('User updated successfully')
+        toast.success(t('user_updated_successfully'))
         setShowEditModal(false)
         fetchUsers()
       } else {
-        toast.error(data.error || 'Failed to update user')
+        toast.error(data.error || t('failed_to_update_user'))
       }
     } catch (error) {
-      toast.error('Failed to update user')
+      toast.error(t('failed_to_update_user'))
       console.error('Error updating user:', error)
     } finally {
       setActionLoading(false)
@@ -114,14 +116,14 @@ const AdminUsers = () => {
       const data = await apiClient.deleteUser(selectedUser.id)
 
       if (data.success) {
-        toast.success('User deleted successfully')
+        toast.success(t('user_deleted_successfully'))
         setShowDeleteModal(false)
         fetchUsers()
       } else {
-        toast.error(data.error || 'Failed to delete user')
+        toast.error(data.error || t('failed_to_delete_user'))
       }
     } catch (error) {
-      toast.error('Failed to delete user')
+      toast.error(t('failed_to_delete_user'))
       console.error('Error deleting user:', error)
     } finally {
       setActionLoading(false)
@@ -136,10 +138,10 @@ const AdminUsers = () => {
         toast.success(data.data.message)
         fetchUsers()
       } else {
-        toast.error(data.error || 'Failed to toggle user status')
+        toast.error(data.error || t('failed_to_toggle_user_status'))
       }
     } catch (error) {
-      toast.error('Failed to toggle user status')
+      toast.error(t('failed_to_toggle_user_status'))
       console.error('Error toggling user status:', error)
     }
   }
@@ -150,14 +152,14 @@ const AdminUsers = () => {
       const data = await apiClient.resetUserPassword(selectedUser.id, newPassword)
 
       if (data.success) {
-        toast.success('Password reset successfully')
+        toast.success(t('password_reset_successfully'))
         setShowPasswordModal(false)
         setNewPassword('')
       } else {
-        toast.error(data.error || 'Failed to reset password')
+        toast.error(data.error || t('failed_to_reset_password'))
       }
     } catch (error) {
-      toast.error('Failed to reset password')
+      toast.error(t('failed_to_reset_password'))
       console.error('Error resetting password:', error)
     } finally {
       setActionLoading(false)
@@ -186,12 +188,12 @@ const AdminUsers = () => {
     return isActive ? (
       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
         <UserCheck className="w-3 h-3 mr-1" />
-        Active
+        {t('active')}
       </span>
     ) : (
       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
         <UserX className="w-3 h-3 mr-1" />
-        Inactive
+        {t('inactive')}
       </span>
     )
   }

@@ -5,6 +5,7 @@ import toast from 'react-hot-toast'
 import Head from 'next/head'
 import { User, Lock, Mail, Eye, EyeOff, Sparkles, ArrowRight, UserPlus, CheckCircle, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
+import { useLanguage } from '../contexts/LanguageContext'
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -20,6 +21,7 @@ export default function Register() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [errors, setErrors] = useState({})
   const router = useRouter()
+  const { t } = useLanguage()
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -34,33 +36,33 @@ export default function Register() {
 
     // Name validation
     if (!formData.name.trim()) {
-      newErrors.name = 'Name is required'
+      newErrors.name = t('name_required')
     } else if (formData.name.trim().length < 2) {
-      newErrors.name = 'Name must be at least 2 characters'
+      newErrors.name = t('name_min_length')
     }
 
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!formData.email) {
-      newErrors.email = 'Email is required'
+      newErrors.email = t('email_required')
     } else if (!emailRegex.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address'
+      newErrors.email = t('email_invalid')
     }
 
     // Password validation
     if (!formData.password) {
-      newErrors.password = 'Password is required'
+      newErrors.password = t('password_required')
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters'
+      newErrors.password = t('password_min_length')
     } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
-      newErrors.password = 'Password must contain uppercase, lowercase, and number'
+      newErrors.password = t('password_complexity')
     }
 
     // Confirm password validation
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'Please confirm your password'
+      newErrors.confirmPassword = t('confirm_password_required')
     } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match'
+      newErrors.confirmPassword = t('passwords_not_match')
     }
 
     setErrors(newErrors)
@@ -71,7 +73,7 @@ export default function Register() {
     e.preventDefault()
     
     if (!validateForm()) {
-      toast.error('Please fix the errors in the form')
+      toast.error(t('fix_form_errors'))
       return
     }
 
@@ -87,15 +89,15 @@ export default function Register() {
       })
       
       if (response.success) {
-        toast.success('Registration successful! Please login with your new account.')
+        toast.success(t('registration_successful'))
         router.push('/login')
       } else {
         // Handle specific backend errors
         if (response.error && response.error.includes('already exists')) {
-          setErrors({ email: 'An account with this email already exists' })
-          toast.error('An account with this email already exists')
+          setErrors({ email: t('email_already_exists') })
+          toast.error(t('email_already_exists'))
         } else {
-          toast.error(response.error || 'Registration failed. Please try again.')
+          toast.error(response.error || t('registration_failed'))
         }
       }
     } catch (error) {
@@ -103,13 +105,13 @@ export default function Register() {
       
       // Handle network errors
       if (error.message.includes('fetch')) {
-        toast.error('Network error. Please check your connection and try again.')
+        toast.error(t('network_error'))
       } else if (error.message.includes('API Error: 500')) {
-        toast.error('Server error. Please try again later.')
+        toast.error(t('server_error'))
       } else if (error.message.includes('API Error: 400')) {
-        toast.error('Invalid data. Please check your information.')
+        toast.error(t('invalid_data'))
       } else {
-        toast.error('Registration failed: ' + error.message)
+        toast.error(t('registration_failed') + ': ' + error.message)
       }
     } finally {
       setIsLoading(false)
@@ -128,9 +130,9 @@ export default function Register() {
     if (/\d/.test(password)) strength++
     if (/[^A-Za-z0-9]/.test(password)) strength++
 
-    if (strength <= 2) return { strength, text: 'Weak', color: 'text-red-500' }
-    if (strength <= 4) return { strength, text: 'Fair', color: 'text-yellow-500' }
-    return { strength, text: 'Strong', color: 'text-green-500' }
+    if (strength <= 2) return { strength, text: t('password_weak'), color: 'text-red-500' }
+    if (strength <= 4) return { strength, text: t('password_fair'), color: 'text-yellow-500' }
+    return { strength, text: t('password_strong'), color: 'text-green-500' }
   }
 
   const passwordStrength = getPasswordStrength()
@@ -138,8 +140,8 @@ export default function Register() {
   return (
     <>
       <Head>
-        <title>Register - Content Creator Pro</title>
-        <meta name="description" content="Create your Content Creator Pro account" />
+        <title>{t('register')} - Content Creator Pro</title>
+        <meta name="description" content={t('register_description')} />
       </Head>
 
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -149,10 +151,10 @@ export default function Register() {
               <Sparkles className="w-12 h-12 text-blue-600" />
             </div>
             <h2 className="text-3xl font-extrabold text-gray-900 mb-2">
-              Create Account
+              {t('create_account')}
             </h2>
             <p className="text-lg text-gray-600">
-              Join Content Creator Pro today
+              {t('join_today')}
             </p>
           </div>
         </div>
@@ -162,7 +164,7 @@ export default function Register() {
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                  Full Name *
+                  {t('full_name')} *
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -179,7 +181,7 @@ export default function Register() {
                     className={`appearance-none block w-full pl-10 pr-3 py-3 border rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
                       errors.name ? 'border-red-300' : 'border-gray-300'
                     }`}
-                    placeholder="Enter your full name"
+                    placeholder={t('enter_full_name')}
                   />
                 </div>
                 {errors.name && (
@@ -192,7 +194,7 @@ export default function Register() {
 
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address *
+                  {t('email_address')} *
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -209,7 +211,7 @@ export default function Register() {
                     className={`appearance-none block w-full pl-10 pr-3 py-3 border rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
                       errors.email ? 'border-red-300' : 'border-gray-300'
                     }`}
-                    placeholder="Enter your email address"
+                    placeholder={t('enter_email_address')}
                   />
                 </div>
                 {errors.email && (
@@ -222,7 +224,7 @@ export default function Register() {
 
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                  Password *
+                  {t('password')} *
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -239,7 +241,7 @@ export default function Register() {
                     className={`appearance-none block w-full pl-10 pr-10 py-3 border rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
                       errors.password ? 'border-red-300' : 'border-gray-300'
                     }`}
-                    placeholder="Create a strong password"
+                    placeholder={t('create_strong_password')}
                   />
                   <button
                     type="button"
@@ -286,7 +288,7 @@ export default function Register() {
 
               <div>
                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                  Confirm Password *
+                  {t('confirm_password')} *
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -303,7 +305,7 @@ export default function Register() {
                     className={`appearance-none block w-full pl-10 pr-10 py-3 border rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
                       errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
                     }`}
-                    placeholder="Confirm your password"
+                    placeholder={t('confirm_password')}
                   />
                   <button
                     type="button"
@@ -328,7 +330,7 @@ export default function Register() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="region" className="block text-sm font-medium text-gray-700 mb-2">
-                    Region
+                    {t('region')}
                   </label>
                   <select
                     id="region"
@@ -337,17 +339,17 @@ export default function Register() {
                     onChange={(e) => handleInputChange('region', e.target.value)}
                     className="block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   >
-                    <option value="global">Global</option>
-                    <option value="us">United States</option>
-                    <option value="eu">Europe</option>
-                    <option value="asia">Asia</option>
-                    <option value="au">Australia</option>
+                    <option value="global">{t('global')}</option>
+                    <option value="us">{t('united_states')}</option>
+                    <option value="eu">{t('europe')}</option>
+                    <option value="asia">{t('asia')}</option>
+                    <option value="au">{t('australia')}</option>
                   </select>
                 </div>
 
                 <div>
                   <label htmlFor="language" className="block text-sm font-medium text-gray-700 mb-2">
-                    Language
+                    {t('language')}
                   </label>
                   <select
                     id="language"
@@ -356,10 +358,10 @@ export default function Register() {
                     onChange={(e) => handleInputChange('language', e.target.value)}
                     className="block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   >
-                    <option value="en">English</option>
-                    <option value="zh">中文 (Chinese)</option>
-                    <option value="es">Español (Spanish)</option>
-                    <option value="fr">Français (French)</option>
+                    <option value="en">{t('english')}</option>
+                    <option value="zh">{t('chinese')}</option>
+                    <option value="es">{t('spanish')}</option>
+                    <option value="fr">{t('french')}</option>
                   </select>
                 </div>
               </div>
@@ -372,12 +374,12 @@ export default function Register() {
                 {isLoading ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Creating Account...
+                    {t('creating_account')}
                   </>
                 ) : (
                   <>
                     <UserPlus className="w-4 h-4 mr-2" />
-                    Create Account
+                    {t('create_account')}
                   </>
                 )}
               </button>
@@ -385,9 +387,9 @@ export default function Register() {
 
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
-                Already have an account?{' '}
+                {t('already_have_account')}{' '}
                 <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
-                  Sign in here
+                  {t('sign_in_here')}
                 </Link>
               </p>
             </div>
@@ -395,14 +397,14 @@ export default function Register() {
             <div className="mt-6 bg-green-50 p-4 rounded-lg border border-green-200">
               <h3 className="text-sm font-medium text-green-900 mb-2 flex items-center">
                 <CheckCircle className="w-4 h-4 mr-2" />
-                Why Join Content Creator Pro?
+                {t('why_join_content_creator_pro')}
               </h3>
               <ul className="text-xs text-green-800 space-y-1">
-                <li>• AI-powered content generation</li>
-                <li>• Multi-platform social media support</li>
-                <li>• Regional content adaptation</li>
-                <li>• Content library and management</li>
-                <li>• Post scheduling and analytics</li>
+                <li>• {t('ai_powered_content_generation')}</li>
+                <li>• {t('multi_platform_social_media_support')}</li>
+                <li>• {t('regional_content_adaptation')}</li>
+                <li>• {t('content_library_and_management')}</li>
+                <li>• {t('post_scheduling_and_analytics')}</li>
               </ul>
             </div>
           </div>

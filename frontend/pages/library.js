@@ -4,6 +4,7 @@ import { Search, Filter, Download, Copy, Edit, Trash2, Share2 } from 'lucide-rea
 import { apiClient } from '../lib/api'
 import ContentCard from '../components/ContentCard'
 import ProtectedRoute from '../components/ProtectedRoute'
+import { useLanguage } from '../contexts/LanguageContext'
 
 export default function Library() {
   const [content, setContent] = useState([])
@@ -13,6 +14,7 @@ export default function Library() {
   const [selectedDirection, setSelectedDirection] = useState('all')
   const [sortBy, setSortBy] = useState('newest')
   const [isLoading, setIsLoading] = useState(true)
+  const { t } = useLanguage()
 
   useEffect(() => {
     // Simulate loading content data
@@ -22,50 +24,50 @@ export default function Library() {
         const mockContent = [
           {
             id: 1,
-            title: 'AI in Business: The Future is Now',
-            content: 'Artificial Intelligence is revolutionizing how businesses operate...',
+            title: t('sample_content_1'),
+            content: t('sample_content_1_text'),
             platform: 'LinkedIn',
-            direction: 'Business & Finance',
+            direction: t('business_finance'),
             created: '2024-12-19',
             engagement: 156,
             hashtags: ['AI', 'Business', 'Innovation', 'Technology']
           },
           {
             id: 2,
-            title: 'Digital Marketing Trends 2024',
-            content: 'The landscape of digital marketing continues to evolve...',
+            title: t('sample_content_2'),
+            content: t('sample_content_2_text'),
             platform: 'Twitter',
-            direction: 'Technology',
+            direction: t('technology'),
             created: '2024-12-18',
             engagement: 89,
             hashtags: ['Marketing', 'Digital', 'Trends', '2024']
           },
           {
             id: 3,
-            title: 'Healthy Work-Life Balance Tips',
-            content: 'Maintaining a healthy work-life balance is crucial...',
+            title: t('sample_content_3'),
+            content: t('sample_content_3_text'),
             platform: 'Instagram',
-            direction: 'Health & Wellness',
+            direction: t('health_wellness'),
             created: '2024-12-17',
             engagement: 234,
             hashtags: ['Wellness', 'Balance', 'Health', 'Lifestyle']
           },
           {
             id: 4,
-            title: 'The Future of Remote Work',
-            content: 'Remote work has become the new normal...',
+            title: t('sample_content_4'),
+            content: t('sample_content_4_text'),
             platform: 'LinkedIn',
-            direction: 'Business & Finance',
+            direction: t('business_finance'),
             created: '2024-12-16',
             engagement: 198,
             hashtags: ['RemoteWork', 'FutureOfWork', 'Business']
           },
           {
             id: 5,
-            title: 'Sustainable Living Practices',
-            content: 'Small changes in our daily lives can make a big impact...',
+            title: t('sample_content_5'),
+            content: t('sample_content_5_text'),
             platform: 'Facebook',
-            direction: 'Environment & Sustainability',
+            direction: t('environment'),
             created: '2024-12-15',
             engagement: 145,
             hashtags: ['Sustainability', 'EcoFriendly', 'GreenLiving']
@@ -82,7 +84,7 @@ export default function Library() {
     }
 
     loadContent()
-  }, [])
+  }, [t])
 
   useEffect(() => {
     // Filter and sort content
@@ -115,7 +117,7 @@ export default function Library() {
   }, [content, searchTerm, selectedPlatform, selectedDirection, sortBy])
 
   const platforms = ['all', 'LinkedIn', 'Twitter', 'Instagram', 'Facebook', 'YouTube', 'Blog']
-  const directions = ['all', 'Business & Finance', 'Technology', 'Health & Wellness', 'Education', 'Entertainment', 'Travel & Tourism']
+  const directions = ['all', t('business_finance'), t('technology'), t('health_wellness'), t('education'), t('entertainment'), t('travel_tourism')]
 
   const copyToClipboard = async (text) => {
     try {
@@ -128,20 +130,20 @@ export default function Library() {
   }
 
   const downloadContent = (item) => {
-    const content = `Content Creator Pro - ${item.title}
+    const content = `${t('content_creator_pro')} - ${item.title}
 
-Platform: ${item.platform}
-Direction: ${item.direction}
-Created: ${item.created}
-Engagement: ${item.engagement}
+${t('platform')}: ${item.platform}
+${t('direction')}: ${item.direction}
+${t('created')}: ${item.created}
+${t('engagement')}: ${item.engagement}
 
-Content:
+${t('content')}:
 ${item.content}
 
-Hashtags:
+${t('hashtags')}:
 ${item.hashtags.join(', ')}
 
-Generated on: ${new Date().toLocaleString()}
+${t('generated_on')}: ${new Date().toLocaleString()}
 `
 
     const blob = new Blob([content], { type: 'text/plain' })
@@ -159,16 +161,16 @@ Generated on: ${new Date().toLocaleString()}
     <ProtectedRoute>
       <>
         <Head>
-          <title>Content Library - Content Creator Pro</title>
-          <meta name="description" content="Browse and manage your generated content" />
+          <title>{t('content_library')} - Content Creator Pro</title>
+          <meta name="description" content={t('library_description')} />
         </Head>
 
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-7xl mx-auto">
             {/* Header */}
             <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Content Library</h1>
-              <p className="text-gray-600">View and manage all your generated content</p>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('content_library')}</h1>
+              <p className="text-gray-600">{t('library_subtitle')}</p>
             </div>
 
             {/* Filters and Search */}
@@ -179,7 +181,7 @@ Generated on: ${new Date().toLocaleString()}
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
                     type="text"
-                    placeholder="Search content..."
+                    placeholder={t('search_content')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -194,7 +196,7 @@ Generated on: ${new Date().toLocaleString()}
                 >
                   {platforms.map(platform => (
                     <option key={platform} value={platform}>
-                      {platform === 'all' ? 'All Platforms' : platform}
+                      {platform === 'all' ? t('all_platforms') : platform}
                     </option>
                   ))}
                 </select>
@@ -207,7 +209,7 @@ Generated on: ${new Date().toLocaleString()}
                 >
                   {directions.map(direction => (
                     <option key={direction} value={direction}>
-                      {direction === 'all' ? 'All Directions' : direction}
+                      {direction === 'all' ? t('all_directions') : direction}
                     </option>
                   ))}
                 </select>
@@ -218,10 +220,10 @@ Generated on: ${new Date().toLocaleString()}
                   onChange={(e) => setSortBy(e.target.value)}
                   className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
-                  <option value="newest">Newest First</option>
-                  <option value="oldest">Oldest First</option>
-                  <option value="most_engaged">Most Engaged</option>
-                  <option value="least_engaged">Least Engaged</option>
+                  <option value="newest">{t('newest_first')}</option>
+                  <option value="oldest">{t('oldest_first')}</option>
+                  <option value="most_engaged">{t('most_engaged')}</option>
+                  <option value="least_engaged">{t('least_engaged')}</option>
                 </select>
               </div>
             </div>
@@ -235,8 +237,8 @@ Generated on: ${new Date().toLocaleString()}
                 <div className="text-gray-400 mb-4">
                   <Search className="w-16 h-16 mx-auto" />
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No content found</h3>
-                <p className="text-gray-600">Try adjusting your filters or search terms</p>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">{t('no_content_found')}</h3>
+                <p className="text-gray-600">{t('try_adjusting_filters')}</p>
               </div>
             ) : (
               <div className="space-y-6">
@@ -252,33 +254,33 @@ Generated on: ${new Date().toLocaleString()}
                           </span>
                           <span>{item.direction}</span>
                           <span>{item.created}</span>
-                          <span className="font-medium text-green-600">{item.engagement} engagement</span>
+                          <span className="font-medium text-green-600">{item.engagement} {t('engagement')}</span>
                         </div>
                       </div>
                       <div className="flex space-x-2">
                         <button
                           onClick={() => copyToClipboard(item.content)}
                           className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
-                          title="Copy content"
+                          title={t('copy_content')}
                         >
                           <Copy className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => downloadContent(item)}
                           className="p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors duration-200"
-                          title="Download content"
+                          title={t('download_content')}
                         >
                           <Download className="w-4 h-4" />
                         </button>
                         <button
                           className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
-                          title="Edit content"
+                          title={t('edit_content')}
                         >
                           <Edit className="w-4 h-4" />
                         </button>
                         <button
                           className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
-                          title="Delete content"
+                          title={t('delete_content')}
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -309,7 +311,7 @@ Generated on: ${new Date().toLocaleString()}
             {/* Results Summary */}
             {filteredContent.length > 0 && (
               <div className="mt-8 text-center text-gray-600">
-                Showing {filteredContent.length} of {content.length} content items
+                {t('showing_results_summary', { count: filteredContent.length, total: content.length })}
               </div>
             )}
           </div>

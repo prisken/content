@@ -4,6 +4,7 @@ import toast from 'react-hot-toast'
 import { ChevronRight, Sparkles, Copy, Download, RefreshCw } from 'lucide-react'
 import { apiClient, contentDirections, platforms, sources, tones } from '../lib/api'
 import { useAuth } from '../contexts/AuthContext'
+import { useLanguage } from '../contexts/LanguageContext'
 import { useRouter } from 'next/router'
 
 export default function Generator() {
@@ -11,6 +12,7 @@ export default function Generator() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [generatedContent, setGeneratedContent] = useState(null)
   const { isAuthenticated } = useAuth()
+  const { t } = useLanguage()
   const router = useRouter()
   
   const [formData, setFormData] = useState({
@@ -41,13 +43,13 @@ export default function Generator() {
   const generateContent = async () => {
     // Check if user is authenticated before generating content
     if (!isAuthenticated()) {
-      toast.error('Please login to generate content')
+      toast.error(t('login_required'))
       router.push('/login')
       return
     }
 
     if (!formData.direction || !formData.platform || !formData.source || !formData.topic || !formData.tone) {
-      toast.error('Please fill in all required fields')
+      toast.error(t('fill_all_fields'))
       return
     }
 
@@ -55,9 +57,9 @@ export default function Generator() {
     try {
       const response = await apiClient.generateContent(formData)
       setGeneratedContent(response)
-      toast.success('Content generated successfully!')
+      toast.success(t('content_generated'))
     } catch (error) {
-      toast.error(error.message || 'Failed to generate content')
+      toast.error(error.message || t('generation_failed'))
       console.error('Generation error:', error)
     } finally {
       setIsGenerating(false)
@@ -67,29 +69,29 @@ export default function Generator() {
   const copyToClipboard = async (text) => {
     try {
       await navigator.clipboard.writeText(text)
-      toast.success('Copied to clipboard!')
+      toast.success(t('copied_to_clipboard'))
     } catch (error) {
-      toast.error('Failed to copy to clipboard')
+      toast.error(t('copy_failed'))
     }
   }
 
   const downloadContent = () => {
     if (!generatedContent) return
     
-    const content = `Content Creator Pro - Generated Content
+    const content = `${t('content_creator_pro')} - ${t('generated_content')}
 
-Direction: ${formData.direction}
-Platform: ${formData.platform}
-Topic: ${formData.topic}
-Tone: ${formData.tone}
+${t('direction')}: ${formData.direction}
+${t('platform')}: ${formData.platform}
+${t('topic')}: ${formData.topic}
+${t('tone')}: ${formData.tone}
 
-Content:
+${t('content')}:
 ${generatedContent.content}
 
-Hashtags:
+${t('hashtags')}:
 ${generatedContent.hashtags?.join(', ') || 'N/A'}
 
-Generated on: ${new Date().toLocaleString()}
+${t('generated_on')}: ${new Date().toLocaleString()}
 `
 
     const blob = new Blob([content], { type: 'text/plain' })
@@ -101,7 +103,7 @@ Generated on: ${new Date().toLocaleString()}
     a.click()
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
-    toast.success('Content downloaded!')
+    toast.success(t('content_downloaded'))
   }
 
   const regenerateContent = () => {
@@ -112,8 +114,8 @@ Generated on: ${new Date().toLocaleString()}
   return (
     <>
       <Head>
-        <title>Content Generator - Content Creator Pro</title>
-        <meta name="description" content="Generate AI-powered content for your social media platforms" />
+        <title>{t('content_generator')} - Content Creator Pro</title>
+        <meta name="description" content={t('generator_description')} />
       </Head>
 
       <div className="container mx-auto px-4 py-8">
@@ -121,10 +123,10 @@ Generated on: ${new Date().toLocaleString()}
           {/* Header */}
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Content Generator
+              {t('content_generator')}
             </h1>
             <p className="text-xl text-gray-600">
-              Create engaging content with AI in just a few steps
+              {t('generator_subtitle')}
             </p>
           </div>
 
@@ -154,8 +156,8 @@ Generated on: ${new Date().toLocaleString()}
           <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
             {currentStep === 1 && (
               <div>
-                <h2 className="text-2xl font-bold mb-6">Choose Your Content Direction</h2>
-                <p className="text-gray-600 mb-6">Select the primary focus for your content</p>
+                <h2 className="text-2xl font-bold mb-6">{t('choose_direction')}</h2>
+                <p className="text-gray-600 mb-6">{t('direction_description')}</p>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {contentDirections.map((direction) => (
                     <button
@@ -177,8 +179,8 @@ Generated on: ${new Date().toLocaleString()}
 
             {currentStep === 2 && (
               <div>
-                <h2 className="text-2xl font-bold mb-6">Choose Your Platform</h2>
-                <p className="text-gray-600 mb-6">Select where you'll share your content</p>
+                <h2 className="text-2xl font-bold mb-6">{t('choose_platform')}</h2>
+                <p className="text-gray-600 mb-6">{t('platform_description')}</p>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {platforms.map((platform) => (
                     <button

@@ -4,10 +4,12 @@ import Head from 'next/head'
 import toast from 'react-hot-toast'
 import { CheckCircle, ArrowRight, User, Globe, Target, Bell } from 'lucide-react'
 import ProtectedRoute from '../components/ProtectedRoute'
+import { useLanguage } from '../contexts/LanguageContext'
 
 export default function Setup() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(1)
+  const { t } = useLanguage()
   const [setupData, setSetupData] = useState({
     profile: {
       name: '',
@@ -32,32 +34,32 @@ export default function Setup() {
   })
 
   const steps = [
-    { id: 1, title: 'Profile Setup', icon: User },
-    { id: 2, title: 'Content Preferences', icon: Target },
-    { id: 3, title: 'Social Media', icon: Globe },
-    { id: 4, title: 'Notifications', icon: Bell }
+    { id: 1, title: t('profile_setup'), icon: User },
+    { id: 2, title: t('content_preferences'), icon: Target },
+    { id: 3, title: t('social_media'), icon: Globe },
+    { id: 4, title: t('notifications'), icon: Bell }
   ]
 
   const industries = [
-    'Technology', 'Healthcare', 'Finance', 'Education', 'Marketing',
-    'Real Estate', 'E-commerce', 'Consulting', 'Manufacturing', 'Other'
+    t('technology'), t('healthcare'), t('finance'), t('education'), t('marketing'),
+    t('real_estate'), t('ecommerce'), t('consulting'), t('manufacturing'), t('other')
   ]
 
   const platforms = [
-    { key: 'linkedin', name: 'LinkedIn', icon: '💼' },
-    { key: 'facebook', name: 'Facebook', icon: '📘' },
-    { key: 'instagram', name: 'Instagram', icon: '📷' },
-    { key: 'twitter', name: 'Twitter', icon: '🐦' },
-    { key: 'youtube', name: 'YouTube', icon: '📺' }
+    { key: 'linkedin', name: t('linkedin'), icon: '💼' },
+    { key: 'facebook', name: t('facebook'), icon: '📘' },
+    { key: 'instagram', name: t('instagram'), icon: '📷' },
+    { key: 'twitter', name: t('twitter'), icon: '🐦' },
+    { key: 'youtube', name: t('youtube'), icon: '📺' }
   ]
 
   const goals = [
-    'Increase brand awareness',
-    'Generate leads',
-    'Drive website traffic',
-    'Build community',
-    'Share thought leadership',
-    'Promote products/services'
+    t('increase_brand_awareness'),
+    t('generate_leads'),
+    t('drive_website_traffic'),
+    t('build_community'),
+    t('share_thought_leadership'),
+    t('promote_products_services')
   ]
 
   const handleInputChange = (section, field, value) => {
@@ -104,10 +106,10 @@ export default function Setup() {
     try {
       // In a real app, this would save to backend
       await new Promise(resolve => setTimeout(resolve, 1000))
-      toast.success('Setup completed successfully!')
+      toast.success(t('setup_completed'))
       router.push('/dashboard')
     } catch (error) {
-      toast.error('Failed to complete setup')
+      toast.error(t('setup_failed'))
     }
   }
 
@@ -130,8 +132,8 @@ export default function Setup() {
     <ProtectedRoute>
       <>
         <Head>
-          <title>Setup - Content Creator Pro</title>
-          <meta name="description" content="Complete your account setup" />
+          <title>{t('setup')} - Content Creator Pro</title>
+          <meta name="description" content={t('setup_description')} />
         </Head>
 
         <div className="min-h-screen bg-gray-50">
@@ -139,8 +141,8 @@ export default function Setup() {
             <div className="max-w-4xl mx-auto">
               {/* Header */}
               <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome to Content Creator Pro</h1>
-                <p className="text-gray-600">Let's set up your account for the best experience</p>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('welcome_to_content_creator_pro')}</h1>
+                <p className="text-gray-600">{t('setup_subtitle')}</p>
               </div>
 
               {/* Progress Steps */}
@@ -173,49 +175,49 @@ export default function Setup() {
               <div className="bg-white rounded-lg shadow-lg p-8">
                 {currentStep === 1 && (
                   <div>
-                    <h2 className="text-2xl font-bold mb-6">Tell us about yourself</h2>
+                    <h2 className="text-2xl font-bold mb-6">{t('tell_us_about_yourself')}</h2>
                     <div className="space-y-6">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">{t('full_name')} *</label>
                         <input
                           type="text"
                           value={setupData.profile.name}
                           onChange={(e) => handleInputChange('profile', 'name', e.target.value)}
                           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="Enter your full name"
+                          placeholder={t('enter_full_name')}
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Company/Organization</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">{t('company_organization')}</label>
                         <input
                           type="text"
                           value={setupData.profile.company}
                           onChange={(e) => handleInputChange('profile', 'company', e.target.value)}
                           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="Enter your company name"
+                          placeholder={t('enter_company_name')}
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Industry *</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">{t('industry')} *</label>
                         <select
                           value={setupData.profile.industry}
                           onChange={(e) => handleInputChange('profile', 'industry', e.target.value)}
                           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
-                          <option value="">Select your industry</option>
+                          <option value="">{t('select_your_industry')}</option>
                           {industries.map(industry => (
                             <option key={industry} value={industry}>{industry}</option>
                           ))}
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Your Role</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">{t('your_role')}</label>
                         <input
                           type="text"
                           value={setupData.profile.role}
                           onChange={(e) => handleInputChange('profile', 'role', e.target.value)}
                           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="e.g., Marketing Manager, CEO, Content Creator"
+                          placeholder={t('e_g_marketing_manager_ceo_content_creator')}
                         />
                       </div>
                     </div>
@@ -224,16 +226,16 @@ export default function Setup() {
 
                 {currentStep === 2 && (
                   <div>
-                    <h2 className="text-2xl font-bold mb-6">Content Preferences</h2>
+                    <h2 className="text-2xl font-bold mb-6">{t('content_preferences')}</h2>
                     <div className="space-y-6">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Primary Platform *</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">{t('primary_platform')} *</label>
                         <select
                           value={setupData.preferences.primaryPlatform}
                           onChange={(e) => handleInputChange('preferences', 'primaryPlatform', e.target.value)}
                           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
-                          <option value="">Select your primary platform</option>
+                          <option value="">{t('select_your_primary_platform')}</option>
                           {platforms.map(platform => (
                             <option key={platform.key} value={platform.key}>
                               {platform.icon} {platform.name}
@@ -242,22 +244,22 @@ export default function Setup() {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Content Frequency</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">{t('content_frequency')}</label>
                         <select
                           value={setupData.preferences.contentFrequency}
                           onChange={(e) => handleInputChange('preferences', 'contentFrequency', e.target.value)}
                           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
-                          <option value="">Select frequency</option>
-                          <option value="daily">Daily</option>
-                          <option value="weekly">Weekly</option>
-                          <option value="biweekly">Bi-weekly</option>
-                          <option value="monthly">Monthly</option>
+                          <option value="">{t('select_frequency')}</option>
+                          <option value="daily">{t('daily')}</option>
+                          <option value="weekly">{t('weekly')}</option>
+                          <option value="biweekly">{t('biweekly')}</option>
+                          <option value="monthly">{t('monthly')}</option>
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Your Goals *</label>
-                        <p className="text-sm text-gray-500 mb-3">Select all that apply</p>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">{t('your_goals')} *</label>
+                        <p className="text-sm text-gray-500 mb-3">{t('select_all_that_apply')}</p>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           {goals.map(goal => (
                             <label key={goal} className="flex items-center">
@@ -278,8 +280,8 @@ export default function Setup() {
 
                 {currentStep === 3 && (
                   <div>
-                    <h2 className="text-2xl font-bold mb-6">Connect Your Social Media</h2>
-                    <p className="text-gray-600 mb-6">Select the platforms you want to create content for</p>
+                    <h2 className="text-2xl font-bold mb-6">{t('connect_your_social_media')}</h2>
+                    <p className="text-gray-600 mb-6">{t('select_the_platforms_you_want_to_create_content_for')}</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {platforms.map(platform => (
                         <button
@@ -301,8 +303,8 @@ export default function Setup() {
 
                 {currentStep === 4 && (
                   <div>
-                    <h2 className="text-2xl font-bold mb-6">Notification Preferences</h2>
-                    <p className="text-gray-600 mb-6">Choose how you'd like to stay updated</p>
+                    <h2 className="text-2xl font-bold mb-6">{t('notification_preferences')}</h2>
+                    <p className="text-gray-600 mb-6">{t('choose_how_you_d_like_to_stay_updated')}</p>
                     <div className="space-y-4">
                       <label className="flex items-center">
                         <input
@@ -311,7 +313,7 @@ export default function Setup() {
                           onChange={(e) => handleInputChange('notifications', 'email', e.target.checked)}
                           className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                         />
-                        <span className="ml-2 text-sm text-gray-700">Email notifications</span>
+                        <span className="ml-2 text-sm text-gray-700">{t('email_notifications')}</span>
                       </label>
                       <label className="flex items-center">
                         <input
@@ -320,7 +322,7 @@ export default function Setup() {
                           onChange={(e) => handleInputChange('notifications', 'push', e.target.checked)}
                           className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                         />
-                        <span className="ml-2 text-sm text-gray-700">Push notifications</span>
+                        <span className="ml-2 text-sm text-gray-700">{t('push_notifications')}</span>
                       </label>
                       <label className="flex items-center">
                         <input
@@ -329,7 +331,7 @@ export default function Setup() {
                           onChange={(e) => handleInputChange('notifications', 'weeklyReport', e.target.checked)}
                           className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                         />
-                        <span className="ml-2 text-sm text-gray-700">Weekly performance reports</span>
+                        <span className="ml-2 text-sm text-gray-700">{t('weekly_performance_reports')}</span>
                       </label>
                     </div>
                   </div>
@@ -342,7 +344,7 @@ export default function Setup() {
                     disabled={currentStep === 1}
                     className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Previous
+                    {t('previous')}
                   </button>
                   
                   {currentStep < steps.length ? (
@@ -351,7 +353,7 @@ export default function Setup() {
                       disabled={!isStepValid()}
                       className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                     >
-                      Next
+                      {t('next')}
                       <ArrowRight className="w-4 h-4" />
                     </button>
                   ) : (
@@ -359,7 +361,7 @@ export default function Setup() {
                       onClick={completeSetup}
                       className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
                     >
-                      Complete Setup
+                      {t('complete_setup')}
                       <CheckCircle className="w-4 h-4" />
                     </button>
                   )}

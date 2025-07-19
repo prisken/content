@@ -4,6 +4,7 @@ import toast from 'react-hot-toast'
 import { Calendar, Clock, Edit, Trash2, Share2, Eye, Filter, Search, Plus } from 'lucide-react'
 import { apiClient } from '../lib/api'
 import ProtectedRoute from '../components/ProtectedRoute'
+import { useLanguage } from '../contexts/LanguageContext'
 
 export default function PostManagement() {
   const [posts, setPosts] = useState([])
@@ -14,13 +15,14 @@ export default function PostManagement() {
   const [filterStatus, setFilterStatus] = useState('all')
   const [showScheduleModal, setShowScheduleModal] = useState(false)
   const [selectedPost, setSelectedPost] = useState(null)
+  const { t } = useLanguage()
 
   // Mock data for demonstration
   const mockPosts = [
     {
       id: 1,
-      title: 'AI Trends in 2024',
-      content: '🚀 Exciting developments in the business world! Based on recent insights, we\'re seeing remarkable growth in key sectors...',
+      title: t('sample_post_1_title'),
+      content: t('sample_post_1_content'),
       platform: 'linkedin',
       status: 'scheduled',
       scheduledDate: '2024-01-20T10:00:00Z',
@@ -29,8 +31,8 @@ export default function PostManagement() {
     },
     {
       id: 2,
-      title: 'Digital Marketing Tips',
-      content: '💡 Want to boost your social media presence? Here are 5 proven strategies that actually work...',
+      title: t('sample_post_2_title'),
+      content: t('sample_post_2_content'),
       platform: 'instagram',
       status: 'published',
       publishedDate: '2024-01-19T15:30:00Z',
@@ -39,8 +41,8 @@ export default function PostManagement() {
     },
     {
       id: 3,
-      title: 'Business Growth Strategies',
-      content: '📈 The key to sustainable business growth isn\'t just about increasing revenue...',
+      title: t('sample_post_3_title'),
+      content: t('sample_post_3_content'),
       platform: 'facebook',
       status: 'draft',
       createdAt: '2024-01-20T11:45:00Z',
@@ -51,7 +53,7 @@ export default function PostManagement() {
   useEffect(() => {
     setPosts(mockPosts)
     setFilteredPosts(mockPosts)
-  }, [])
+  }, [t])
 
   useEffect(() => {
     filterPosts()
@@ -118,9 +120,9 @@ export default function PostManagement() {
   }
 
   const handleDeletePost = (postId) => {
-    if (confirm('Are you sure you want to delete this post?')) {
+    if (confirm(t('confirm_delete_post'))) {
       setPosts(posts.filter(post => post.id !== postId))
-      toast.success('Post deleted successfully')
+      toast.success(t('post_deleted'))
     }
   }
 
@@ -138,21 +140,21 @@ export default function PostManagement() {
     
     setShowScheduleModal(false)
     setSelectedPost(null)
-    toast.success('Post scheduled successfully')
+    toast.success(t('post_scheduled'))
   }
 
   const handlePublishNow = (post) => {
     const updatedPost = { ...post, status: 'published', publishedDate: new Date().toISOString() }
     setPosts(posts.map(p => p.id === post.id ? updatedPost : p))
-    toast.success('Post published successfully')
+    toast.success(t('post_published'))
   }
 
   return (
     <ProtectedRoute>
       <>
         <Head>
-          <title>Post Management - Content Creator Pro</title>
-          <meta name="description" content="Schedule and manage your social media posts" />
+          <title>{t('post_management')} - Content Creator Pro</title>
+          <meta name="description" content={t('post_management_description')} />
         </Head>
 
         <div className="container mx-auto px-4 py-8">
@@ -160,15 +162,15 @@ export default function PostManagement() {
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">Post Management</h1>
-                <p className="text-gray-600">Schedule and manage your social media content</p>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('post_management')}</h1>
+                <p className="text-gray-600">{t('post_management_subtitle')}</p>
               </div>
               <button
                 onClick={() => setShowScheduleModal(true)}
                 className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
               >
                 <Plus className="w-4 h-4" />
-                New Post
+                {t('new_post')}
               </button>
             </div>
 
@@ -177,7 +179,7 @@ export default function PostManagement() {
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Total Posts</p>
+                    <p className="text-sm text-gray-600">{t('total_posts')}</p>
                     <p className="text-2xl font-bold text-gray-900">{posts.length}</p>
                   </div>
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -188,7 +190,7 @@ export default function PostManagement() {
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Scheduled</p>
+                    <p className="text-sm text-gray-600">{t('scheduled')}</p>
                     <p className="text-2xl font-bold text-blue-600">
                       {posts.filter(p => p.status === 'scheduled').length}
                     </p>
@@ -201,7 +203,7 @@ export default function PostManagement() {
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Published</p>
+                    <p className="text-sm text-gray-600">{t('published')}</p>
                     <p className="text-2xl font-bold text-green-600">
                       {posts.filter(p => p.status === 'published').length}
                     </p>
@@ -214,7 +216,7 @@ export default function PostManagement() {
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Drafts</p>
+                    <p className="text-sm text-gray-600">{t('drafts')}</p>
                     <p className="text-2xl font-bold text-gray-600">
                       {posts.filter(p => p.status === 'draft').length}
                     </p>
@@ -234,7 +236,7 @@ export default function PostManagement() {
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                     <input
                       type="text"
-                      placeholder="Search posts..."
+                      placeholder={t('search_posts')}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -246,23 +248,23 @@ export default function PostManagement() {
                   onChange={(e) => setFilterPlatform(e.target.value)}
                   className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
-                  <option value="all">All Platforms</option>
-                  <option value="linkedin">LinkedIn</option>
-                  <option value="facebook">Facebook</option>
-                  <option value="instagram">Instagram</option>
-                  <option value="twitter">Twitter</option>
-                  <option value="youtube">YouTube</option>
+                  <option value="all">{t('all_platforms')}</option>
+                  <option value="linkedin">{t('linkedin')}</option>
+                  <option value="facebook">{t('facebook')}</option>
+                  <option value="instagram">{t('instagram')}</option>
+                  <option value="twitter">{t('twitter')}</option>
+                  <option value="youtube">{t('youtube')}</option>
                 </select>
                 <select
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
                   className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
-                  <option value="all">All Status</option>
-                  <option value="published">Published</option>
-                  <option value="scheduled">Scheduled</option>
-                  <option value="draft">Draft</option>
-                  <option value="failed">Failed</option>
+                  <option value="all">{t('all_status')}</option>
+                  <option value="published">{t('published')}</option>
+                  <option value="scheduled">{t('scheduled')}</option>
+                  <option value="draft">{t('draft')}</option>
+                  <option value="failed">{t('failed')}</option>
                 </select>
               </div>
             </div>
@@ -270,7 +272,7 @@ export default function PostManagement() {
             {/* Posts List */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200">
               <div className="p-6 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900">Posts ({filteredPosts.length})</h2>
+                <h2 className="text-lg font-semibold text-gray-900">{t('posts')}</h2>
               </div>
               <div className="divide-y divide-gray-200">
                 {filteredPosts.map((post) => (
@@ -286,17 +288,17 @@ export default function PostManagement() {
                         </div>
                         <p className="text-gray-600 mb-3 line-clamp-2">{post.content}</p>
                         <div className="flex items-center space-x-6 text-sm text-gray-500">
-                          <span>Created: {formatDate(post.createdAt)}</span>
+                          <span>{t('created_at')}: {formatDate(post.createdAt)}</span>
                           {post.scheduledDate && (
-                            <span>Scheduled: {formatDate(post.scheduledDate)}</span>
+                            <span>{t('scheduled_at')}: {formatDate(post.scheduledDate)}</span>
                           )}
                           {post.publishedDate && (
-                            <span>Published: {formatDate(post.publishedDate)}</span>
+                            <span>{t('published_at')}: {formatDate(post.publishedDate)}</span>
                           )}
                           {post.engagement && (
                             <span className="flex items-center space-x-1">
                               <Eye className="w-4 h-4" />
-                              <span>{post.engagement.likes} likes</span>
+                              <span>{t('likes')}: {post.engagement.likes}</span>
                             </span>
                           )}
                         </div>
@@ -306,7 +308,7 @@ export default function PostManagement() {
                           <button
                             onClick={() => handlePublishNow(post)}
                             className="p-2 text-green-600 hover:bg-green-50 rounded-lg"
-                            title="Publish now"
+                            title={t('publish_now')}
                           >
                             <Share2 className="w-4 h-4" />
                           </button>
@@ -314,14 +316,14 @@ export default function PostManagement() {
                         <button
                           onClick={() => handleEditPost(post)}
                           className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
-                          title="Edit post"
+                          title={t('edit_post')}
                         >
                           <Edit className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleDeletePost(post.id)}
                           className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
-                          title="Delete post"
+                          title={t('delete_post')}
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -332,8 +334,8 @@ export default function PostManagement() {
                 {filteredPosts.length === 0 && (
                   <div className="p-12 text-center">
                     <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">No posts found</h3>
-                    <p className="text-gray-500">Create your first post to get started</p>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">{t('no_posts_found')}</h3>
+                    <p className="text-gray-500">{t('create_first_post')}</p>
                   </div>
                 )}
               </div>
@@ -346,11 +348,11 @@ export default function PostManagement() {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
               <h3 className="text-lg font-semibold mb-4">
-                {selectedPost ? 'Edit Post' : 'Schedule New Post'}
+                {selectedPost ? t('edit_post') : t('schedule_new_post')}
               </h3>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('title')}</label>
                   <input
                     type="text"
                     defaultValue={selectedPost?.title || ''}
@@ -358,17 +360,17 @@ export default function PostManagement() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Platform</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('platform')}</label>
                   <select className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <option value="linkedin">LinkedIn</option>
-                    <option value="facebook">Facebook</option>
-                    <option value="instagram">Instagram</option>
-                    <option value="twitter">Twitter</option>
-                    <option value="youtube">YouTube</option>
+                    <option value="linkedin">{t('linkedin')}</option>
+                    <option value="facebook">{t('facebook')}</option>
+                    <option value="instagram">{t('instagram')}</option>
+                    <option value="twitter">{t('twitter')}</option>
+                    <option value="youtube">{t('youtube')}</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Schedule Date</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('schedule_date')}</label>
                   <input
                     type="datetime-local"
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -380,13 +382,13 @@ export default function PostManagement() {
                   onClick={() => setShowScheduleModal(false)}
                   className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
                 >
-                  Cancel
+                  {t('cancel')}
                 </button>
                 <button
                   onClick={() => handleSchedulePost({})}
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
-                  Schedule
+                  {t('schedule')}
                 </button>
               </div>
             </div>

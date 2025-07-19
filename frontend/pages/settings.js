@@ -4,6 +4,7 @@ import toast from 'react-hot-toast'
 import { Settings as SettingsIcon, User, Globe, Bell, Shield, Palette, Save, RefreshCw } from 'lucide-react'
 import { apiClient } from '../lib/api'
 import ProtectedRoute from '../components/ProtectedRoute'
+import { useLanguage } from '../contexts/LanguageContext'
 
 export default function Settings() {
   const [isLoading, setIsLoading] = useState(false)
@@ -35,6 +36,7 @@ export default function Settings() {
       compactMode: false
     }
   })
+  const { t } = useLanguage()
 
   useEffect(() => {
     loadSettings()
@@ -85,18 +87,18 @@ export default function Settings() {
     try {
       // In a real app, this would save to backend
       await new Promise(resolve => setTimeout(resolve, 1000))
-      toast.success('Settings saved successfully!')
+      toast.success(t('settings_saved'))
     } catch (error) {
-      toast.error('Failed to save settings')
+      toast.error(t('settings_save_failed'))
     } finally {
       setIsLoading(false)
     }
   }
 
   const resetSettings = () => {
-    if (confirm('Are you sure you want to reset all settings to default?')) {
+    if (confirm(t('confirm_reset_settings'))) {
       loadSettings()
-      toast.success('Settings reset to default')
+      toast.success(t('settings_reset'))
     }
   }
 
@@ -104,8 +106,8 @@ export default function Settings() {
     <ProtectedRoute>
       <>
         <Head>
-          <title>Settings - Content Creator Pro</title>
-          <meta name="description" content="Configure your Content Creator Pro settings" />
+          <title>{t('settings')} - Content Creator Pro</title>
+          <meta name="description" content={t('settings_description')} />
         </Head>
 
         <div className="container mx-auto px-4 py-8">
@@ -113,8 +115,8 @@ export default function Settings() {
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">Settings</h1>
-                <p className="text-gray-600">Configure your account and preferences</p>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('settings')}</h1>
+                <p className="text-gray-600">{t('settings_subtitle')}</p>
               </div>
               <div className="flex space-x-3">
                 <button
@@ -122,7 +124,7 @@ export default function Settings() {
                   className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 flex items-center gap-2"
                 >
                   <RefreshCw className="w-4 h-4" />
-                  Reset
+                  {t('reset')}
                 </button>
                 <button
                   onClick={saveSettings}
@@ -134,7 +136,7 @@ export default function Settings() {
                   ) : (
                     <Save className="w-4 h-4" />
                   )}
-                  {isLoading ? 'Saving...' : 'Save Settings'}
+                  {isLoading ? t('saving') : t('save_settings')}
                 </button>
               </div>
             </div>
@@ -145,27 +147,27 @@ export default function Settings() {
                 <nav className="space-y-2">
                   <a href="#profile" className="flex items-center space-x-3 p-3 rounded-lg bg-blue-50 text-blue-700">
                     <User className="w-5 h-5" />
-                    <span>Profile</span>
+                    <span>{t('profile')}</span>
                   </a>
                   <a href="#preferences" className="flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-gray-50">
                     <SettingsIcon className="w-5 h-5" />
-                    <span>Preferences</span>
+                    <span>{t('preferences')}</span>
                   </a>
                   <a href="#social-media" className="flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-gray-50">
                     <Globe className="w-5 h-5" />
-                    <span>Social Media</span>
+                    <span>{t('social_media')}</span>
                   </a>
                   <a href="#appearance" className="flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-gray-50">
                     <Palette className="w-5 h-5" />
-                    <span>Appearance</span>
+                    <span>{t('appearance')}</span>
                   </a>
                   <a href="#notifications" className="flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-gray-50">
                     <Bell className="w-5 h-5" />
-                    <span>Notifications</span>
+                    <span>{t('notifications')}</span>
                   </a>
                   <a href="#security" className="flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-gray-50">
                     <Shield className="w-5 h-5" />
-                    <span>Security</span>
+                    <span>{t('security')}</span>
                   </a>
                 </nav>
               </div>
@@ -176,11 +178,11 @@ export default function Settings() {
                 <section id="profile" className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                   <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
                     <User className="w-5 h-5" />
-                    Profile Settings
+                    {t('profile_settings')}
                   </h2>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">{t('name')}</label>
                       <input
                         type="text"
                         value={settings.profile.name}
@@ -189,7 +191,7 @@ export default function Settings() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">{t('email')}</label>
                       <input
                         type="email"
                         value={settings.profile.email}
@@ -199,30 +201,30 @@ export default function Settings() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Region</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">{t('region')}</label>
                         <select
                           value={settings.profile.region}
                           onChange={(e) => handleSettingChange('profile', 'region', e.target.value)}
                           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
-                          <option value="global">Global</option>
-                          <option value="us">United States</option>
-                          <option value="eu">Europe</option>
-                          <option value="asia">Asia</option>
-                          <option value="au">Australia</option>
+                          <option value="global">{t('global')}</option>
+                          <option value="us">{t('united_states')}</option>
+                          <option value="eu">{t('europe')}</option>
+                          <option value="asia">{t('asia')}</option>
+                          <option value="au">{t('australia')}</option>
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Language</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">{t('language')}</label>
                         <select
                           value={settings.profile.language}
                           onChange={(e) => handleSettingChange('profile', 'language', e.target.value)}
                           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
-                          <option value="en">English</option>
-                          <option value="zh">中文 (Chinese)</option>
-                          <option value="es">Español (Spanish)</option>
-                          <option value="fr">Français (French)</option>
+                          <option value="en">{t('english')}</option>
+                          <option value="zh">{t('chinese')}</option>
+                          <option value="es">{t('spanish')}</option>
+                          <option value="fr">{t('french')}</option>
                         </select>
                       </div>
                     </div>
@@ -233,50 +235,50 @@ export default function Settings() {
                 <section id="preferences" className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                   <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
                     <SettingsIcon className="w-5 h-5" />
-                    Content Preferences
+                    {t('content_preferences')}
                   </h2>
                   <div className="space-y-4">
                     <div className="grid grid-cols-3 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Default Direction</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">{t('default_direction')}</label>
                         <select
                           value={settings.preferences.defaultDirection}
                           onChange={(e) => handleSettingChange('preferences', 'defaultDirection', e.target.value)}
                           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
-                          <option value="business_finance">Business & Finance</option>
-                          <option value="technology">Technology</option>
-                          <option value="health_wellness">Health & Wellness</option>
-                          <option value="education">Education</option>
-                          <option value="entertainment">Entertainment</option>
+                          <option value="business_finance">{t('business_finance')}</option>
+                          <option value="technology">{t('technology')}</option>
+                          <option value="health_wellness">{t('health_wellness')}</option>
+                          <option value="education">{t('education')}</option>
+                          <option value="entertainment">{t('entertainment')}</option>
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Default Platform</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">{t('default_platform')}</label>
                         <select
                           value={settings.preferences.defaultPlatform}
                           onChange={(e) => handleSettingChange('preferences', 'defaultPlatform', e.target.value)}
                           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
-                          <option value="linkedin">LinkedIn</option>
-                          <option value="facebook">Facebook</option>
-                          <option value="instagram">Instagram</option>
-                          <option value="twitter">Twitter</option>
-                          <option value="youtube_shorts">YouTube Shorts</option>
+                          <option value="linkedin">{t('linkedin')}</option>
+                          <option value="facebook">{t('facebook')}</option>
+                          <option value="instagram">{t('instagram')}</option>
+                          <option value="twitter">{t('twitter')}</option>
+                          <option value="youtube_shorts">{t('youtube_shorts')}</option>
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Default Tone</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">{t('default_tone')}</label>
                         <select
                           value={settings.preferences.defaultTone}
                           onChange={(e) => handleSettingChange('preferences', 'defaultTone', e.target.value)}
                           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
-                          <option value="professional">Professional</option>
-                          <option value="casual">Casual</option>
-                          <option value="inspirational">Inspirational</option>
-                          <option value="educational">Educational</option>
-                          <option value="entertaining">Entertaining</option>
+                          <option value="professional">{t('professional')}</option>
+                          <option value="casual">{t('casual')}</option>
+                          <option value="inspirational">{t('inspirational')}</option>
+                          <option value="educational">{t('educational')}</option>
+                          <option value="entertaining">{t('entertaining')}</option>
                         </select>
                       </div>
                     </div>
@@ -288,7 +290,7 @@ export default function Settings() {
                           onChange={(e) => handleSettingChange('preferences', 'autoSave', e.target.checked)}
                           className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                         />
-                        <span className="ml-2 text-sm text-gray-700">Auto-save drafts</span>
+                        <span className="ml-2 text-sm text-gray-700">{t('auto_save_drafts')}</span>
                       </label>
                       <label className="flex items-center">
                         <input
@@ -297,7 +299,7 @@ export default function Settings() {
                           onChange={(e) => handleSettingChange('preferences', 'notifications', e.target.checked)}
                           className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                         />
-                        <span className="ml-2 text-sm text-gray-700">Email notifications</span>
+                        <span className="ml-2 text-sm text-gray-700">{t('email_notifications')}</span>
                       </label>
                     </div>
                   </div>
@@ -307,7 +309,7 @@ export default function Settings() {
                 <section id="social-media" className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                   <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
                     <Globe className="w-5 h-5" />
-                    Social Media Connections
+                    {t('social_media_connections')}
                   </h2>
                   <div className="space-y-4">
                     {Object.entries(settings.socialMedia).map(([platform, config]) => (
@@ -325,7 +327,7 @@ export default function Settings() {
                           <div>
                             <h3 className="font-medium capitalize">{platform}</h3>
                             <p className="text-sm text-gray-500">
-                              {config.connected ? 'Connected' : 'Not connected'}
+                              {config.connected ? t('connected') : t('not_connected')}
                             </p>
                           </div>
                         </div>
@@ -337,7 +339,7 @@ export default function Settings() {
                               : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
                           }`}
                         >
-                          {config.connected ? 'Disconnect' : 'Connect'}
+                          {config.connected ? t('disconnect') : t('connect')}
                         </button>
                       </div>
                     ))}
@@ -348,31 +350,31 @@ export default function Settings() {
                 <section id="appearance" className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                   <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
                     <Palette className="w-5 h-5" />
-                    Appearance
+                    {t('appearance')}
                   </h2>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Theme</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">{t('theme')}</label>
                       <select
                         value={settings.appearance.theme}
                         onChange={(e) => handleSettingChange('appearance', 'theme', e.target.value)}
                         className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       >
-                        <option value="light">Light</option>
-                        <option value="dark">Dark</option>
-                        <option value="auto">Auto (System)</option>
+                        <option value="light">{t('light')}</option>
+                        <option value="dark">{t('dark')}</option>
+                        <option value="auto">{t('auto_system')}</option>
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Font Size</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">{t('font_size')}</label>
                       <select
                         value={settings.appearance.fontSize}
                         onChange={(e) => handleSettingChange('appearance', 'fontSize', e.target.value)}
                         className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       >
-                        <option value="small">Small</option>
-                        <option value="medium">Medium</option>
-                        <option value="large">Large</option>
+                        <option value="small">{t('small')}</option>
+                        <option value="medium">{t('medium')}</option>
+                        <option value="large">{t('large')}</option>
                       </select>
                     </div>
                     <label className="flex items-center">
@@ -382,7 +384,7 @@ export default function Settings() {
                         onChange={(e) => handleSettingChange('appearance', 'compactMode', e.target.checked)}
                         className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                       />
-                      <span className="ml-2 text-sm text-gray-700">Compact mode</span>
+                      <span className="ml-2 text-sm text-gray-700">{t('compact_mode')}</span>
                     </label>
                   </div>
                 </section>
