@@ -12,6 +12,7 @@ An AI-powered content creation platform designed for professionals, businesses, 
 - **Content Editing**: Rich text editor with version history
 - **Social Media Integration**: Direct posting to multiple platforms
 - **Quick Start Templates**: Pre-configured content generation workflows
+- **User Management**: Admin panel for user management and role-based access
 
 ### Content Directions
 - Business & Finance
@@ -37,154 +38,167 @@ An AI-powered content creation platform designed for professionals, businesses, 
 
 ### Backend
 - **Framework**: Flask (Python)
-- **Database**: SQLAlchemy with SQLite/PostgreSQL
+- **Database**: SQLAlchemy with PostgreSQL (production)
 - **AI Services**: DeepSeek API, Stable Diffusion, Runway
 - **Authentication**: JWT-based authentication
 - **API**: RESTful API with JSON responses
+- **Deployment**: Railway
 
 ### Frontend
-- **Framework**: Bootstrap 5
-- **JavaScript**: jQuery with custom modules
-- **Styling**: Custom CSS with modern design
-- **Icons**: Font Awesome 6
+- **Framework**: Next.js (React)
+- **Styling**: Tailwind CSS
+- **State Management**: React Context
+- **Deployment**: Vercel
 
 ### AI Integration
 - **Text Generation**: DeepSeek API
 - **Image Generation**: Stable Diffusion
 - **Video Generation**: Runway API
 
-## 📋 Prerequisites
+## 🚀 Quick Start
 
+### Option 1: Deploy to Production (Recommended)
+
+1. **Clone the repository**:
+   ```bash
+   git clone <repository-url>
+   cd content-creation
+   ```
+
+2. **Run automated deployment**:
+   ```bash
+   chmod +x deploy.sh
+   ./deploy.sh
+   ```
+
+3. **Follow the prompts** to deploy to Vercel and Railway.
+
+### Option 2: Local Development
+
+#### Prerequisites
 - Python 3.8 or higher
-- pip (Python package manager)
+- Node.js 16 or higher
 - Git
 
-## 🚀 Installation
-
-### 1. Clone the Repository
+#### Backend Setup
 ```bash
-git clone <repository-url>
-cd content-creation
-```
-
-### 2. Create Virtual Environment
-```bash
+# Create virtual environment
 python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# On Windows
-venv\Scripts\activate
-
-# On macOS/Linux
-source venv/bin/activate
-```
-
-### 3. Install Dependencies
-```bash
+# Install dependencies
 pip install -r requirements.txt
-```
 
-### 4. Environment Configuration
-Create a `.env` file in the root directory:
-```env
-# Flask Configuration
-FLASK_ENV=development
-SECRET_KEY=your-secret-key-here
-JWT_SECRET_KEY=your-jwt-secret-key-here
+# Set up environment
+cp env.example .env
+# Edit .env with your configuration
 
-# Database Configuration
-DATABASE_URL=sqlite:///content_creator_dev.db
-
-# AI Services Configuration
-DEEPSEEK_API_KEY=your-deepseek-api-key
-DEEPSEEK_API_BASE=https://api.deepseek.com
-
-# Social Media APIs (Optional)
-LINKEDIN_CLIENT_ID=your-linkedin-client-id
-LINKEDIN_CLIENT_SECRET=your-linkedin-client-secret
-FACEBOOK_APP_ID=your-facebook-app-id
-FACEBOOK_APP_SECRET=your-facebook-app-secret
-TWITTER_API_KEY=your-twitter-api-key
-TWITTER_API_SECRET=your-twitter-api-secret
-```
-
-### 5. Initialize Database
-```bash
+# Initialize database
 flask init-db
-```
 
-### 6. Run the Application
-```bash
+# Run backend
 python run.py
 ```
 
-The application will be available at `http://localhost:5000`
+#### Frontend Setup
+```bash
+# Navigate to frontend directory
+cd frontend
+
+# Install dependencies
+npm install
+
+# Set up environment
+cp env.production.example .env.local
+# Edit .env.local with your backend URL
+
+# Run frontend
+npm run dev
+```
+
+## 🌐 Deployment
+
+### Production Deployment
+- **Frontend**: Deployed on Vercel
+- **Backend**: Deployed on Railway
+- **Database**: PostgreSQL (Railway)
+
+### Environment Variables
+
+#### Backend (Railway)
+```env
+FLASK_ENV=production
+SECRET_KEY=your-secret-key
+DATABASE_URL=postgresql://...
+CORS_ORIGINS=https://your-app.vercel.app
+JWT_SECRET_KEY=your-jwt-secret
+```
+
+#### Frontend (Vercel)
+```env
+BACKEND_URL=https://your-railway-app.railway.app
+NEXT_PUBLIC_APP_NAME=Content Creator Pro
+```
+
+For detailed deployment instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md).
 
 ## 📁 Project Structure
 
 ```
 content-creation/
-├── app/
-│   ├── __init__.py              # Flask app factory
+├── app/                         # Flask backend
+│   ├── __init__.py
 │   ├── models/                  # Database models
-│   │   ├── user.py
-│   │   ├── content.py
-│   │   ├── social_media.py
-│   │   └── content_direction.py
 │   ├── routes/                  # API routes
-│   │   ├── main.py
-│   │   ├── api.py
-│   │   └── auth.py
 │   ├── services/                # Business logic
-│   │   ├── content_generator.py
-│   │   └── direction_manager.py
-│   ├── static/                  # Static files
-│   │   ├── css/
-│   │   ├── js/
-│   │   └── images/
-│   └── templates/               # HTML templates
-│       ├── base.html
-│       └── generator.html
+│   └── utils/                   # Utilities
+├── frontend/                    # Next.js frontend
+│   ├── components/              # React components
+│   ├── pages/                   # Next.js pages
+│   ├── contexts/                # React contexts
+│   ├── lib/                     # Utilities
+│   └── styles/                  # CSS styles
 ├── config/                      # Configuration files
-│   ├── development.py
-│   ├── production.py
-│   └── testing.py
 ├── docs/                        # Documentation
 ├── tests/                       # Test files
 ├── requirements.txt             # Python dependencies
-├── run.py                      # Application entry point
+├── run.py                      # Flask entry point
+├── deploy.sh                   # Deployment script
+├── railway.json                # Railway configuration
+├── vercel.json                 # Vercel configuration
 └── README.md                   # This file
 ```
 
 ## 🔧 Configuration
 
-### Development Configuration
-The application uses different configuration files based on the environment:
-
-- **Development**: `config/development.py`
-- **Production**: `config/production.py`
-- **Testing**: `config/testing.py`
+### Development vs Production
+- **Development**: Uses SQLite database, debug mode enabled
+- **Production**: Uses PostgreSQL, optimized for performance
 
 ### Database Configuration
-The application supports both SQLite (development) and PostgreSQL (production):
-
 ```python
 # Development (SQLite)
 SQLALCHEMY_DATABASE_URI = 'sqlite:///content_creator_dev.db'
 
 # Production (PostgreSQL)
-SQLALCHEMY_DATABASE_URI = 'postgresql://user:password@localhost/dbname'
+SQLALCHEMY_DATABASE_URI = 'postgresql://user:password@host/dbname'
 ```
 
 ## 🧪 Testing
 
-Run the test suite:
+### Backend Tests
 ```bash
-flask test
+# Run all tests
+pytest tests/
+
+# Run specific test file
+pytest tests/test_api.py
 ```
 
-Or run with pytest directly:
+### Frontend Tests
 ```bash
-pytest tests/
+cd frontend
+npm test
 ```
 
 ## 📚 API Documentation
@@ -198,70 +212,27 @@ pytest tests/
 ### Content Generation Endpoints
 - `POST /api/generate` - Generate content
 - `PUT /api/content/<id>` - Update content
-- `GET /api/content/<id>/versions` - Get content versions
-- `POST /api/content/<id>/revert` - Revert to previous version
-- `POST /api/content/<id>/validate` - Validate content
+- `DELETE /api/content/<id>` - Delete content
 
-### Direction Management Endpoints
-- `GET /api/directions` - Get all content directions
-- `GET /api/directions/<key>/sources` - Get direction sources
-- `GET /api/directions/<key>/topics` - Get direction topics
+### Admin Endpoints
+- `GET /api/admin/users` - List all users
+- `PUT /api/admin/users/<id>` - Update user
+- `DELETE /api/admin/users/<id>` - Delete user
+- `POST /api/admin/users/<id>/toggle-status` - Toggle user status
 
-## 🎯 Usage Examples
-
-### Content Generation Workflow
-
-1. **Select Content Direction**: Choose from 18 available directions
-2. **Choose Content Type**: LinkedIn, Facebook, Instagram, Twitter, YouTube Shorts, or Blog
-3. **Select Information Source**: News, Books, Threads, Podcasts, Videos, or Research
-4. **Choose Tone**: Professional, Casual, Inspirational, Educational, Humorous, or Serious
-5. **Generate Content**: AI-powered content generation with regional adaptation
-6. **Edit & Customize**: Use the rich text editor to modify content
-7. **Save & Share**: Save to library or post directly to social media
-
-### Quick Start Templates
-
-The platform includes pre-configured templates for common use cases:
-- Business News → LinkedIn Post
-- Tech Trends → Twitter Update
-- Health Tips → Instagram Caption
-- Industry Insights → Blog Article
-
-## 🔒 Security
+## 🔐 Security
 
 - JWT-based authentication
-- Password hashing
-- CSRF protection
-- Input validation and sanitization
-- Rate limiting (planned)
-- API key management
+- Role-based access control
+- CORS protection
+- Environment variable protection
+- HTTPS enforcement in production
 
-## 🚀 Deployment
+## 📊 Monitoring
 
-### Production Deployment
-
-1. **Set Environment Variables**:
-   ```bash
-   export FLASK_ENV=production
-   export SECRET_KEY=your-production-secret-key
-   export DATABASE_URL=your-production-database-url
-   ```
-
-2. **Install Production Dependencies**:
-   ```bash
-   pip install gunicorn
-   ```
-
-3. **Run with Gunicorn**:
-   ```bash
-   gunicorn -w 4 -b 0.0.0.0:5000 run:app
-   ```
-
-### Docker Deployment (Planned)
-```bash
-docker build -t content-creator-pro .
-docker run -p 5000:5000 content-creator-pro
-```
+- **Health Checks**: `/health` endpoint for Railway
+- **Logs**: Available in Railway and Vercel dashboards
+- **Analytics**: Built-in Vercel analytics
 
 ## 🤝 Contributing
 
@@ -277,39 +248,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🆘 Support
 
-For support and questions:
-- Create an issue in the GitHub repository
-- Contact the development team
-- Check the documentation in the `docs/` folder
-
-## 🔮 Roadmap
-
-### Phase 1 (Current)
-- ✅ Basic content generation
-- ✅ Direction-based content creation
-- ✅ Regional adaptation
-- ✅ Content editing interface
-
-### Phase 2 (Planned)
-- 🔄 Social media integration
-- 🔄 Advanced AI features
-- 🔄 Team collaboration
-- 🔄 Analytics dashboard
-
-### Phase 3 (Future)
-- 📋 Multi-language support
-- 📋 Advanced analytics
-- 📋 API marketplace
-- 📋 Mobile application
-
-## 🙏 Acknowledgments
-
-- DeepSeek for AI text generation
-- Stable Diffusion for image generation
-- Runway for video generation
-- Bootstrap for UI framework
-- Flask community for the web framework
+- **Documentation**: [DEPLOYMENT.md](./DEPLOYMENT.md)
+- **Issues**: Create an issue in the GitHub repository
+- **Email**: support@contentcreatorpro.com
 
 ---
 
-**Content Creator Pro** - Empowering creators with AI-driven content generation. 
+**Built with ❤️ for content creators worldwide** 

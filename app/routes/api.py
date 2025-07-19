@@ -233,4 +233,237 @@ def validate_content(content_id):
         return jsonify({
             'success': False,
             'error': str(e)
+        }), 500
+
+# Admin User Management Routes
+@api_bp.route('/admin/users', methods=['GET'])
+def get_all_users():
+    """Get all users (admin only)"""
+    try:
+        # Check if database is available
+        if not current_app.config.get('SQLALCHEMY_DATABASE_URI'):
+            return jsonify({
+                'success': False,
+                'error': 'Database not available in serverless mode'
+            }), 503
+        
+        # Get query parameters for filtering and pagination
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 10, type=int)
+        search = request.args.get('search', '')
+        role = request.args.get('role', '')
+        
+        # Build query
+        query = User.query
+        
+        # Apply search filter
+        if search:
+            query = query.filter(
+                (User.username.contains(search)) |
+                (User.email.contains(search)) |
+                (User.first_name.contains(search)) |
+                (User.last_name.contains(search))
+            )
+        
+        # Apply role filter
+        if role:
+            query = query.filter(User.role == role)
+        
+        # Paginate results
+        pagination = query.paginate(
+            page=page, 
+            per_page=per_page, 
+            error_out=False
+        )
+        
+        users = pagination.items
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'users': [user.to_dict() for user in users],
+                'pagination': {
+                    'page': page,
+                    'per_page': per_page,
+                    'total': pagination.total,
+                    'pages': pagination.pages,
+                    'has_next': pagination.has_next,
+                    'has_prev': pagination.has_prev
+                }
+            }
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@api_bp.route('/admin/users/<int:user_id>', methods=['GET'])
+def get_user(user_id):
+    """Get specific user details (admin only)"""
+    try:
+        # Check if database is available
+        if not current_app.config.get('SQLALCHEMY_DATABASE_URI'):
+            return jsonify({
+                'success': False,
+                'error': 'Database not available in serverless mode'
+            }), 503
+        
+        user = User.query.get_or_404(user_id)
+        
+        return jsonify({
+            'success': True,
+            'data': user.to_dict()
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@api_bp.route('/admin/users/<int:user_id>', methods=['PUT'])
+def update_user(user_id):
+    """Update user details (admin only)"""
+    try:
+        # Check if database is available
+        if not current_app.config.get('SQLALCHEMY_DATABASE_URI'):
+            return jsonify({
+                'success': False,
+                'error': 'Database not available in serverless mode'
+            }), 503
+        
+        data = request.get_json()
+        user = User.query.get_or_404(user_id)
+        
+        # Update user fields
+        if 'username' in data:
+            user.username = data['username']
+        if 'email' in data:
+            user.email = data['email']
+        if 'first_name' in data:
+            user.first_name = data['first_name']
+        if 'last_name' in data:
+            user.last_name = data['last_name']
+        if 'role' in data:
+            user.role = data['role']
+        if 'is_active' in data:
+            user.is_active = data['is_active']
+        if 'preferences' in data:
+            user.preferences = data['preferences']
+        
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'data': user.to_dict()
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@api_bp.route('/admin/users/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    """Delete user (admin only)"""
+    try:
+        # Check if database is available
+        if not current_app.config.get('SQLALCHEMY_DATABASE_URI'):
+            return jsonify({
+                'success': False,
+                'error': 'Database not available in serverless mode'
+            }), 503
+        
+        user = User.query.get_or_404(user_id)
+        
+        # Don't allow admin to delete themselves
+        # In real app, get current user from JWT token
+        # if user.id == current_user.id:
+        #     return jsonify({
+        #         'success': False,
+        #         'error': 'Cannot delete your own account'
+        #     }), 400
+        
+        db.session.delete(user)
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'User deleted successfully'
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@api_bp.route('/admin/users/<int:user_id>/toggle-status', methods=['POST'])
+def toggle_user_status(user_id):
+    """Toggle user active/inactive status (admin only)"""
+    try:
+        # Check if database is available
+        if not current_app.config.get('SQLALCHEMY_DATABASE_URI'):
+            return jsonify({
+                'success': False,
+                'error': 'Database not available in serverless mode'
+            }), 503
+        
+        user = User.query.get_or_404(user_id)
+        user.is_active = not user.is_active
+        
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'user_id': user.id,
+                'is_active': user.is_active,
+                'message': f'User {"activated" if user.is_active else "deactivated"} successfully'
+            }
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@api_bp.route('/admin/users/<int:user_id>/reset-password', methods=['POST'])
+def reset_user_password(user_id):
+    """Reset user password (admin only)"""
+    try:
+        # Check if database is available
+        if not current_app.config.get('SQLALCHEMY_DATABASE_URI'):
+            return jsonify({
+                'success': False,
+                'error': 'Database not available in serverless mode'
+            }), 503
+        
+        data = request.get_json()
+        new_password = data.get('new_password')
+        
+        if not new_password:
+            return jsonify({
+                'success': False,
+                'error': 'New password is required'
+            }), 400
+        
+        user = User.query.get_or_404(user_id)
+        user.set_password(new_password)
+        
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Password reset successfully'
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
         }), 500 

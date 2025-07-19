@@ -20,8 +20,7 @@ def login():
         email = data['email']
         password = data['password']
         
-        # In real app, implement proper authentication
-        # For now, just check if user exists
+        # Find user by email
         user = User.query.filter_by(email=email).first()
         
         if not user:
@@ -30,8 +29,19 @@ def login():
                 'error': 'Invalid credentials'
             }), 401
         
-        # In real app, verify password hash
-        # For now, accept any password
+        # Check if user is active
+        if not user.is_active:
+            return jsonify({
+                'success': False,
+                'error': 'Account is deactivated'
+            }), 401
+        
+        # Verify password
+        if not user.check_password(password):
+            return jsonify({
+                'success': False,
+                'error': 'Invalid credentials'
+            }), 401
         
         return jsonify({
             'success': True,
@@ -53,14 +63,18 @@ def register():
     try:
         data = request.get_json()
         
-        if not data or 'email' not in data:
+        if not data or 'email' not in data or 'password' not in data:
             return jsonify({
                 'success': False,
-                'error': 'Email required'
+                'error': 'Email and password required'
             }), 400
         
         email = data['email']
-        name = data.get('name')
+        password = data['password']
+        username = data.get('username', email.split('@')[0])  # Use email prefix as default username
+        first_name = data.get('first_name', '')
+        last_name = data.get('last_name', '')
+        name = data.get('name', f"{first_name} {last_name}".strip())
         region = data.get('region', 'global')
         language = data.get('language', 'en')
         
@@ -72,13 +86,29 @@ def register():
                 'error': 'User already exists'
             }), 409
         
+        # Check if username already exists
+        existing_username = User.query.filter_by(username=username).first()
+        if existing_username:
+            return jsonify({
+                'success': False,
+                'error': 'Username already taken'
+            }), 409
+        
         # Create new user
         user = User(
+            username=username,
             email=email,
+            password_hash='',  # Will be set by set_password
+            first_name=first_name,
+            last_name=last_name,
             name=name,
+            role='user',
             region=region,
             language=language
         )
+        
+        # Set password
+        user.set_password(password)
         
         db.session.add(user)
         db.session.commit()
@@ -155,6 +185,9 @@ def update_preferences():
         
         if 'preferred_directions' in data:
             user.preferred_directions_list = data['preferred_directions']
+        
+        if 'preferences' in data:
+            user.preferences_dict = data['preferences']
         
         db.session.commit()
         

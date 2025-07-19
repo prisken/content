@@ -2,19 +2,38 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  images: {
-    domains: ['res.cloudinary.com', 'via.placeholder.com'],
-  },
+  
+  // Environment variables
   env: {
-    BACKEND_URL: process.env.BACKEND_URL || 'https://content-contentmaker.up.railway.app',
+    BACKEND_URL: process.env.BACKEND_URL || 'http://localhost:8000',
   },
+
+  // API rewrites for production
   async rewrites() {
     return [
       {
         source: '/api/:path*',
-        destination: `${process.env.BACKEND_URL}/api/:path*`,
+        destination: `${process.env.BACKEND_URL || 'http://localhost:8000'}/api/:path*`,
       },
-    ];
+      {
+        source: '/auth/:path*',
+        destination: `${process.env.BACKEND_URL || 'http://localhost:8000'}/auth/:path*`,
+      },
+    ]
+  },
+
+  // Image optimization
+  images: {
+    domains: ['localhost', 'content-creator-pro.railway.app'],
+    unoptimized: true,
+  },
+
+  // Output configuration for static export
+  output: 'standalone',
+  
+  // Experimental features
+  experimental: {
+    optimizeCss: true,
   },
 }
 

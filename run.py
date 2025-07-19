@@ -13,6 +13,16 @@ from app.models.content_direction import ContentDirection, RegionalData
 # Create Flask application
 app = create_app(os.getenv('FLASK_ENV', 'development'))
 
+@app.route('/health')
+def health_check():
+    """Health check endpoint for Railway deployment"""
+    try:
+        # Test database connection
+        db.session.execute('SELECT 1')
+        return {'status': 'healthy', 'database': 'connected'}, 200
+    except Exception as e:
+        return {'status': 'unhealthy', 'error': str(e)}, 500
+
 @app.shell_context_processor
 def make_shell_context():
     """Add database models to Flask shell context"""

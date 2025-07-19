@@ -3,11 +3,15 @@ import Head from 'next/head'
 import toast from 'react-hot-toast'
 import { ChevronRight, Sparkles, Copy, Download, RefreshCw } from 'lucide-react'
 import { apiClient, contentDirections, platforms, sources, tones } from '../lib/api'
+import { useAuth } from '../contexts/AuthContext'
+import { useRouter } from 'next/router'
 
 export default function Generator() {
   const [currentStep, setCurrentStep] = useState(1)
   const [isGenerating, setIsGenerating] = useState(false)
   const [generatedContent, setGeneratedContent] = useState(null)
+  const { isAuthenticated } = useAuth()
+  const router = useRouter()
   
   const [formData, setFormData] = useState({
     direction: '',
@@ -35,6 +39,13 @@ export default function Generator() {
   }
 
   const generateContent = async () => {
+    // Check if user is authenticated before generating content
+    if (!isAuthenticated()) {
+      toast.error('Please login to generate content')
+      router.push('/login')
+      return
+    }
+
     if (!formData.direction || !formData.platform || !formData.source || !formData.topic || !formData.tone) {
       toast.error('Please fill in all required fields')
       return

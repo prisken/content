@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
-import { Search, Filter, Download, Copy, Edit, Trash2 } from 'lucide-react'
+import { Search, Filter, Download, Copy, Edit, Trash2, Share2 } from 'lucide-react'
+import { apiClient } from '../lib/api'
+import ContentCard from '../components/ContentCard'
+import ProtectedRoute from '../components/ProtectedRoute'
 
 export default function Library() {
   const [content, setContent] = useState([])
@@ -153,163 +156,165 @@ Generated on: ${new Date().toLocaleString()}
   }
 
   return (
-    <>
-      <Head>
-        <title>Content Library - Content Creator Pro</title>
-        <meta name="description" content="View and manage your generated content" />
-      </Head>
+    <ProtectedRoute>
+      <>
+        <Head>
+          <title>Content Library - Content Creator Pro</title>
+          <meta name="description" content="Browse and manage your generated content" />
+        </Head>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Content Library</h1>
-            <p className="text-gray-600">View and manage all your generated content</p>
-          </div>
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-7xl mx-auto">
+            {/* Header */}
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Content Library</h1>
+              <p className="text-gray-600">View and manage all your generated content</p>
+            </div>
 
-          {/* Filters and Search */}
-          <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              {/* Search */}
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="Search content..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
+            {/* Filters and Search */}
+            <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                {/* Search */}
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    type="text"
+                    placeholder="Search content..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
+                {/* Platform Filter */}
+                <select
+                  value={selectedPlatform}
+                  onChange={(e) => setSelectedPlatform(e.target.value)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  {platforms.map(platform => (
+                    <option key={platform} value={platform}>
+                      {platform === 'all' ? 'All Platforms' : platform}
+                    </option>
+                  ))}
+                </select>
+
+                {/* Direction Filter */}
+                <select
+                  value={selectedDirection}
+                  onChange={(e) => setSelectedDirection(e.target.value)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  {directions.map(direction => (
+                    <option key={direction} value={direction}>
+                      {direction === 'all' ? 'All Directions' : direction}
+                    </option>
+                  ))}
+                </select>
+
+                {/* Sort */}
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="newest">Newest First</option>
+                  <option value="oldest">Oldest First</option>
+                  <option value="most_engaged">Most Engaged</option>
+                  <option value="least_engaged">Least Engaged</option>
+                </select>
               </div>
-
-              {/* Platform Filter */}
-              <select
-                value={selectedPlatform}
-                onChange={(e) => setSelectedPlatform(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                {platforms.map(platform => (
-                  <option key={platform} value={platform}>
-                    {platform === 'all' ? 'All Platforms' : platform}
-                  </option>
-                ))}
-              </select>
-
-              {/* Direction Filter */}
-              <select
-                value={selectedDirection}
-                onChange={(e) => setSelectedDirection(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                {directions.map(direction => (
-                  <option key={direction} value={direction}>
-                    {direction === 'all' ? 'All Directions' : direction}
-                  </option>
-                ))}
-              </select>
-
-              {/* Sort */}
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="newest">Newest First</option>
-                <option value="oldest">Oldest First</option>
-                <option value="most_engaged">Most Engaged</option>
-                <option value="least_engaged">Least Engaged</option>
-              </select>
             </div>
-          </div>
 
-          {isLoading ? (
-            <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            </div>
-          ) : filteredContent.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="text-gray-400 mb-4">
-                <Search className="w-16 h-16 mx-auto" />
+            {isLoading ? (
+              <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No content found</h3>
-              <p className="text-gray-600">Try adjusting your filters or search terms</p>
-            </div>
-          ) : (
-            <div className="space-y-6">
-              {filteredContent.map((item) => (
-                <div key={item.id} className="bg-white rounded-lg shadow-lg p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex-1">
-                      <h3 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
-                      <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
-                        <span className="flex items-center">
-                          <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                          {item.platform}
-                        </span>
-                        <span>{item.direction}</span>
-                        <span>{item.created}</span>
-                        <span className="font-medium text-green-600">{item.engagement} engagement</span>
+            ) : filteredContent.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="text-gray-400 mb-4">
+                  <Search className="w-16 h-16 mx-auto" />
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No content found</h3>
+                <p className="text-gray-600">Try adjusting your filters or search terms</p>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {filteredContent.map((item) => (
+                  <div key={item.id} className="bg-white rounded-lg shadow-lg p-6">
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
+                        <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
+                          <span className="flex items-center">
+                            <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                            {item.platform}
+                          </span>
+                          <span>{item.direction}</span>
+                          <span>{item.created}</span>
+                          <span className="font-medium text-green-600">{item.engagement} engagement</span>
+                        </div>
+                      </div>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => copyToClipboard(item.content)}
+                          className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
+                          title="Copy content"
+                        >
+                          <Copy className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => downloadContent(item)}
+                          className="p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors duration-200"
+                          title="Download content"
+                        >
+                          <Download className="w-4 h-4" />
+                        </button>
+                        <button
+                          className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
+                          title="Edit content"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
+                          title="Delete content"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
                     </div>
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => copyToClipboard(item.content)}
-                        className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
-                        title="Copy content"
-                      >
-                        <Copy className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => downloadContent(item)}
-                        className="p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors duration-200"
-                        title="Download content"
-                      >
-                        <Download className="w-4 h-4" />
-                      </button>
-                      <button
-                        className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
-                        title="Edit content"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button
-                        className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
-                        title="Delete content"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+
+                    <div className="bg-gray-50 p-4 rounded-lg mb-4">
+                      <p className="text-gray-800 whitespace-pre-wrap">{item.content}</p>
                     </div>
+
+                    {item.hashtags && item.hashtags.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {item.hashtags.map((hashtag, index) => (
+                          <span
+                            key={index}
+                            className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                          >
+                            #{hashtag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
+                ))}
+              </div>
+            )}
 
-                  <div className="bg-gray-50 p-4 rounded-lg mb-4">
-                    <p className="text-gray-800 whitespace-pre-wrap">{item.content}</p>
-                  </div>
-
-                  {item.hashtags && item.hashtags.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {item.hashtags.map((hashtag, index) => (
-                        <span
-                          key={index}
-                          className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
-                        >
-                          #{hashtag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Results Summary */}
-          {filteredContent.length > 0 && (
-            <div className="mt-8 text-center text-gray-600">
-              Showing {filteredContent.length} of {content.length} content items
-            </div>
-          )}
+            {/* Results Summary */}
+            {filteredContent.length > 0 && (
+              <div className="mt-8 text-center text-gray-600">
+                Showing {filteredContent.length} of {content.length} content items
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </>
+      </>
+    </ProtectedRoute>
   )
 } 
