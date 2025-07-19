@@ -42,7 +42,11 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
 # Initialize extensions
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-CORS(app, origins=['https://your-frontend-domain.vercel.app'], supports_credentials=True)
+CORS(app, origins=[
+    'https://content-gray-nu.vercel.app',
+    'https://content-priskens-projects-61a29b86.vercel.app',
+    'http://localhost:3000'
+], supports_credentials=True)
 
 # Cloudinary configuration
 if CLOUDINARY_AVAILABLE:
