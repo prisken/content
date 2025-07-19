@@ -93,12 +93,15 @@ CONTENT_DIRECTIONS = {
 # Translation dictionary
 TRANSLATIONS = {
     'en': {
-        'welcome': 'Welcome to Content Creator Pro',
+        'welcome': 'Content Creator Pro',
+        'home': 'Home',
         'dashboard': 'Dashboard',
         'generator': 'Content Generator',
         'library': 'Content Library',
         'settings': 'Settings',
         'post_management': 'Post Management',
+        'setup': 'Setup',
+        'user_management': 'User Management',
         'login': 'Login',
         'logout': 'Logout',
         'register': 'Register',
@@ -161,15 +164,26 @@ TRANSLATIONS = {
         'art_creativity': 'Art & Creativity',
         'real_estate': 'Real Estate',
         'automotive': 'Automotive',
-        'pet_care': 'Pet Care'
+        'pet_care': 'Pet Care',
+        'footer_description': 'Generate professional social media posts, blog articles, and more with our AI-powered platform.',
+        'features': 'Features',
+        'ai_content_generation': 'AI Content Generation',
+        'multi_platform_support': 'Multi-Platform Support',
+        'regional_adaptation': 'Regional Adaptation',
+        'content_library': 'Content Library',
+        'platforms': 'Platforms',
+        'all_rights_reserved': 'All rights reserved'
     },
     'zh': {
-        'welcome': '欢迎使用内容创作专家',
+        'welcome': '内容创作专家',
+        'home': '首页',
         'dashboard': '仪表板',
         'generator': '内容生成器',
         'library': '内容库',
         'settings': '设置',
         'post_management': '帖子管理',
+        'setup': '设置',
+        'user_management': '用户管理',
         'login': '登录',
         'logout': '登出',
         'register': '注册',
@@ -232,7 +246,15 @@ TRANSLATIONS = {
         'art_creativity': '艺术与创意',
         'real_estate': '房地产',
         'automotive': '汽车',
-        'pet_care': '宠物护理'
+        'pet_care': '宠物护理',
+        'footer_description': '使用我们的AI驱动平台生成专业的社交媒体帖子、博客文章等。',
+        'features': '功能',
+        'ai_content_generation': 'AI内容生成',
+        'multi_platform_support': '多平台支持',
+        'regional_adaptation': '区域适配',
+        'content_library': '内容库',
+        'platforms': '平台',
+        'all_rights_reserved': '版权所有'
     }
 }
 
