@@ -46,7 +46,8 @@ export default function Login() {
       
       if (response.success) {
         toast.success('Login successful!')
-        login(response.data.user, response.data.token)
+        // The backend returns user directly, not in data.user
+        login(response.user, null) // No token in current implementation
         router.push('/dashboard')
       } else {
         toast.error(response.error || 'Login failed')
