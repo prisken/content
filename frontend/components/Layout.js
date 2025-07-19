@@ -25,7 +25,7 @@ export default function Layout({ children }) {
       ]
 
       // Add admin menu for admin users
-      if (user?.role === 'admin') {
+      if (user?.email === 'admin@contentcreator.com') {
         userNav.push({ name: 'User Management', href: '/admin/users', icon: Shield })
       }
 
@@ -72,7 +72,7 @@ export default function Layout({ children }) {
                   <div className="flex items-center space-x-2 text-sm text-gray-600">
                     <User className="w-4 h-4" />
                     <span>{user?.name || user?.email}</span>
-                    {user?.role === 'admin' && (
+                    {user?.email === 'admin@contentcreator.com' && (
                       <Shield className="w-4 h-4 text-red-500" title="Admin" />
                     )}
                   </div>
@@ -124,7 +124,7 @@ export default function Layout({ children }) {
                     <div className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-600">
                       <User className="w-4 h-4" />
                       <span>{user?.name || user?.email}</span>
-                      {user?.role === 'admin' && (
+                      {user?.email === 'admin@contentcreator.com' && (
                         <Shield className="w-4 h-4 text-red-500" title="Admin" />
                       )}
                     </div>

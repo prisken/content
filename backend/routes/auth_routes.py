@@ -77,7 +77,6 @@ def login():
                 'message': 'Login successful',
                 'user': {
                     'email': user.email,
-                    'role': user.role,
                     'subscription_tier': user.subscription_tier,
                     'content_limit': user.content_limit,
                     'image_limit': user.image_limit,
