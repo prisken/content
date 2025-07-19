@@ -1,7 +1,6 @@
 import os
 from datetime import datetime
 from flask import Flask, jsonify, request, session
-from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -39,8 +38,11 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
     'pool_recycle': 300,
 }
 
-# Initialize extensions
-db = SQLAlchemy(app)
+# Import models first to get the db instance
+from models import db, User, Content, Image
+
+# Initialize extensions with the db instance from models
+db.init_app(app)
 migrate = Migrate(app, db)
 CORS(app, origins=[
     'https://content-gray-nu.vercel.app',
@@ -66,8 +68,7 @@ else:
     celery = None
     print("Celery not configured - background jobs disabled")
 
-# Import models and routes
-from models import User, Content, Image
+# Import routes
 from routes import auth_routes, content_routes, image_routes, api_routes
 
 # Register blueprints
