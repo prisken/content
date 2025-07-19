@@ -27,11 +27,6 @@ const nextConfig = {
     domains: ['localhost', 'content-creator-pro.railway.app'],
     unoptimized: true,
   },
-
-  // Experimental features - removed optimizeCss to fix build issues
-  experimental: {
-    // optimizeCss: true, // Removed to fix build issues
-  },
 }
 
 module.exports = nextConfig 
