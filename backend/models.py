@@ -11,6 +11,9 @@ class User(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     is_active = db.Column(db.Boolean, default=True)
     
+    # User role and permissions
+    role = db.Column(db.String(20), default='user')  # user, admin
+    
     # User limits and subscription info
     subscription_tier = db.Column(db.String(20), default='free')  # free, pro, enterprise
     content_limit = db.Column(db.Integer, default=50)

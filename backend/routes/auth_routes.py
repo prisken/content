@@ -25,10 +25,14 @@ def register():
                 'error': 'Email already registered'
             }), 409
         
+        # Set role based on email
+        role = 'admin' if email == 'admin@contentcreator.com' else 'user'
+        
         # Create new user
         user = User(
             email=email,
             password_hash=generate_password_hash(password),
+            role=role,
             subscription_tier='free',
             content_limit=50,
             image_limit=10,
@@ -73,6 +77,7 @@ def login():
                 'message': 'Login successful',
                 'user': {
                     'email': user.email,
+                    'role': user.role,
                     'subscription_tier': user.subscription_tier,
                     'content_limit': user.content_limit,
                     'image_limit': user.image_limit,
