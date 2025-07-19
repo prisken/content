@@ -501,3 +501,31 @@ def get_translations():
         'success': True,
         'translations': TRANSLATIONS.get(language, TRANSLATIONS['en'])
     }) 
+
+@api_routes.route('/migrate', methods=['POST'])
+def migrate_database():
+    """Run database migrations"""
+    try:
+        # Add role column if it doesn't exist
+        db.engine.execute("""
+            ALTER TABLE users 
+            ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'user'
+        """)
+        
+        # Update admin user role
+        db.engine.execute("""
+            UPDATE users 
+            SET role = 'admin' 
+            WHERE email = 'admin@contentcreator.com'
+        """)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Database migration completed successfully'
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500 
