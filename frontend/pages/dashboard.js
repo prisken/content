@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
-import { BarChart3, FileText, TrendingUp, Users, Calendar, Target } from 'lucide-react'
+import { FileText, TrendingUp, Calendar, Target } from 'lucide-react'
 import { apiClient } from '../lib/api'
 import ProtectedRoute from '../components/ProtectedRoute'
 import { useLanguage } from '../contexts/LanguageContext'

@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
-import { Search, Filter, Download, Copy, Edit, Trash2, Share2 } from 'lucide-react'
+import { Search, Download, Copy, Edit, Trash2 } from 'lucide-react'
 import { apiClient } from '../lib/api'
-import ContentCard from '../components/ContentCard'
 import ProtectedRoute from '../components/ProtectedRoute'
 import { useLanguage } from '../contexts/LanguageContext'
+import toast from 'react-hot-toast'
 
 export default function Library() {
   const [content, setContent] = useState([])
@@ -122,10 +122,9 @@ export default function Library() {
   const copyToClipboard = async (text) => {
     try {
       await navigator.clipboard.writeText(text)
-      // You could add a toast notification here
-      console.log('Copied to clipboard')
+      toast.success(t('copied_to_clipboard'))
     } catch (error) {
-      console.error('Failed to copy to clipboard')
+      toast.error(t('copy_failed'))
     }
   }
 

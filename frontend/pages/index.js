@@ -1,11 +1,9 @@
 import Head from 'next/head'
-import { useState } from 'react'
 import { ArrowRight, Sparkles, Globe, Zap, Target } from 'lucide-react'
 import Link from 'next/link'
 import { useLanguage } from '../contexts/LanguageContext'
 
 export default function Home() {
-  const [isLoading, setIsLoading] = useState(false)
   const { t } = useLanguage()
 
   return (
@@ -36,7 +34,6 @@ export default function Home() {
                 <Link href="/generator">
                   <button 
                     className="bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold py-4 px-8 rounded-lg text-lg flex items-center justify-center gap-2 transition-all duration-200 transform hover:scale-105"
-                    onClick={() => setIsLoading(true)}
                   >
                     {t('start_creating')}
                     <ArrowRight className="w-5 h-5" />

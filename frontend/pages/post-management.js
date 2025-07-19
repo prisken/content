@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import toast from 'react-hot-toast'
-import { Calendar, Clock, Edit, Trash2, Share2, Eye, Filter, Search, Plus } from 'lucide-react'
+import { Calendar, Clock, Edit, Trash2, Share2, Eye, Search, Plus } from 'lucide-react'
 import { apiClient } from '../lib/api'
 import ProtectedRoute from '../components/ProtectedRoute'
 import { useLanguage } from '../contexts/LanguageContext'
