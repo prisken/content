@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, session
 from models import db, User, Content
 import uuid
 import random
+from sqlalchemy import text
 
 # Import AI service
 try:
@@ -508,17 +509,17 @@ def migrate_database():
     try:
         # Add role column if it doesn't exist
         with db.engine.connect() as connection:
-            connection.execute("""
+            connection.execute(text("""
                 ALTER TABLE users 
                 ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'user'
-            """)
+            """))
             
             # Update admin user role
-            connection.execute("""
+            connection.execute(text("""
                 UPDATE users 
                 SET role = 'admin' 
                 WHERE email = 'admin@contentcreator.com'
-            """)
+            """))
             
             connection.commit()
         
