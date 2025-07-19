@@ -3,6 +3,7 @@ import Head from 'next/head'
 import { BarChart3, FileText, TrendingUp, Users, Calendar, Target } from 'lucide-react'
 import { apiClient } from '../lib/api'
 import ProtectedRoute from '../components/ProtectedRoute'
+import { useLanguage } from '../contexts/LanguageContext'
 
 export default function Dashboard() {
   const [stats, setStats] = useState({
@@ -14,6 +15,7 @@ export default function Dashboard() {
 
   const [recentContent, setRecentContent] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const { t } = useLanguage()
 
   useEffect(() => {
     // Simulate loading dashboard data
@@ -31,25 +33,25 @@ export default function Dashboard() {
         setRecentContent([
           {
             id: 1,
-            title: 'AI in Business: The Future is Now',
+            title: t('sample_content_1'),
             platform: 'LinkedIn',
-            direction: 'Business & Finance',
+            direction: t('business_finance'),
             created: '2024-12-19',
             engagement: 156
           },
           {
             id: 2,
-            title: 'Digital Marketing Trends 2024',
+            title: t('sample_content_2'),
             platform: 'Twitter',
-            direction: 'Technology',
+            direction: t('technology'),
             created: '2024-12-18',
             engagement: 89
           },
           {
             id: 3,
-            title: 'Healthy Work-Life Balance Tips',
+            title: t('sample_content_3'),
             platform: 'Instagram',
-            direction: 'Health & Wellness',
+            direction: t('health_wellness'),
             created: '2024-12-17',
             engagement: 234
           }
@@ -62,7 +64,7 @@ export default function Dashboard() {
     }
 
     loadDashboardData()
-  }, [])
+  }, [t])
 
   const platformPerformance = [
     { platform: 'LinkedIn', posts: 12, engagement: 156 },
@@ -75,16 +77,16 @@ export default function Dashboard() {
     <ProtectedRoute>
       <>
         <Head>
-          <title>Dashboard - Content Creator Pro</title>
-          <meta name="description" content="Your content creation dashboard and analytics" />
+          <title>{t('dashboard')} - Content Creator Pro</title>
+          <meta name="description" content={t('dashboard_description')} />
         </Head>
 
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-7xl mx-auto">
             {/* Header */}
             <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
-              <p className="text-gray-600">Welcome back! Here's an overview of your content performance.</p>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('dashboard')}</h1>
+              <p className="text-gray-600">{t('dashboard_welcome')}</p>
             </div>
 
             {isLoading ? (
@@ -101,7 +103,7 @@ export default function Dashboard() {
                         <FileText className="w-6 h-6 text-blue-600" />
                       </div>
                       <div className="ml-4">
-                        <p className="text-sm font-medium text-gray-600">Total Content</p>
+                        <p className="text-sm font-medium text-gray-600">{t('total_content')}</p>
                         <p className="text-2xl font-bold text-gray-900">{stats.totalContent}</p>
                       </div>
                     </div>
@@ -113,7 +115,7 @@ export default function Dashboard() {
                         <Calendar className="w-6 h-6 text-green-600" />
                       </div>
                       <div className="ml-4">
-                        <p className="text-sm font-medium text-gray-600">This Month</p>
+                        <p className="text-sm font-medium text-gray-600">{t('this_month')}</p>
                         <p className="text-2xl font-bold text-gray-900">{stats.thisMonth}</p>
                       </div>
                     </div>
@@ -125,7 +127,7 @@ export default function Dashboard() {
                         <TrendingUp className="w-6 h-6 text-purple-600" />
                       </div>
                       <div className="ml-4">
-                        <p className="text-sm font-medium text-gray-600">Engagement Rate</p>
+                        <p className="text-sm font-medium text-gray-600">{t('engagement_rate')}</p>
                         <p className="text-2xl font-bold text-gray-900">{stats.engagementRate}%</p>
                       </div>
                     </div>
@@ -137,7 +139,7 @@ export default function Dashboard() {
                         <Target className="w-6 h-6 text-orange-600" />
                       </div>
                       <div className="ml-4">
-                        <p className="text-sm font-medium text-gray-600">Top Platform</p>
+                        <p className="text-sm font-medium text-gray-600">{t('top_platform')}</p>
                         <p className="text-2xl font-bold text-gray-900">{stats.topPlatform}</p>
                       </div>
                     </div>
@@ -150,9 +152,9 @@ export default function Dashboard() {
                   <div className="lg:col-span-2">
                     <div className="bg-white rounded-lg shadow-lg p-6">
                       <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-xl font-bold text-gray-900">Recent Content</h2>
+                        <h2 className="text-xl font-bold text-gray-900">{t('recent_content')}</h2>
                         <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                          View All
+                          {t('view_all')}
                         </button>
                       </div>
 
@@ -172,7 +174,7 @@ export default function Dashboard() {
                                 </div>
                               </div>
                               <div className="text-right">
-                                <p className="text-sm text-gray-600">Engagement</p>
+                                <p className="text-sm text-gray-600">{t('engagement')}</p>
                                 <p className="font-semibold text-gray-900">{content.engagement}</p>
                               </div>
                             </div>
@@ -185,7 +187,7 @@ export default function Dashboard() {
                   {/* Platform Performance */}
                   <div className="lg:col-span-1">
                     <div className="bg-white rounded-lg shadow-lg p-6">
-                      <h2 className="text-xl font-bold text-gray-900 mb-6">Platform Performance</h2>
+                      <h2 className="text-xl font-bold text-gray-900 mb-6">{t('platform_performance')}</h2>
                       
                       <div className="space-y-4">
                         {platformPerformance.map((platform) => (
@@ -195,51 +197,12 @@ export default function Dashboard() {
                               <span className="font-medium text-gray-900">{platform.platform}</span>
                             </div>
                             <div className="text-right">
-                              <p className="text-sm text-gray-600">{platform.posts} posts</p>
-                              <p className="font-semibold text-gray-900">{platform.engagement} engagement</p>
+                              <p className="text-sm text-gray-600">{platform.posts} {t('posts')}</p>
+                              <p className="font-semibold text-gray-900">{platform.engagement} {t('engagement')}</p>
                             </div>
                           </div>
                         ))}
                       </div>
-
-                      <div className="mt-6 pt-6 border-t border-gray-200">
-                        <h3 className="font-semibold text-gray-900 mb-4">Quick Actions</h3>
-                        <div className="space-y-2">
-                          <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm">
-                            Create New Content
-                          </button>
-                          <button className="w-full bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors duration-200 text-sm">
-                            View Analytics
-                          </button>
-                          <button className="w-full bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors duration-200 text-sm">
-                            Export Report
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Content Directions Performance */}
-                <div className="mt-8">
-                  <div className="bg-white rounded-lg shadow-lg p-6">
-                    <h2 className="text-xl font-bold text-gray-900 mb-6">Content Directions Performance</h2>
-                    
-                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                      {[
-                        { name: 'Business & Finance', posts: 8, engagement: 234 },
-                        { name: 'Technology', posts: 6, engagement: 189 },
-                        { name: 'Health & Wellness', posts: 4, engagement: 156 },
-                        { name: 'Education', posts: 3, engagement: 98 },
-                        { name: 'Entertainment', posts: 2, engagement: 145 },
-                        { name: 'Travel & Tourism', posts: 1, engagement: 67 },
-                      ].map((direction) => (
-                        <div key={direction.name} className="text-center p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow duration-200">
-                          <h3 className="font-semibold text-gray-900 text-sm mb-2">{direction.name}</h3>
-                          <p className="text-2xl font-bold text-blue-600">{direction.posts}</p>
-                          <p className="text-xs text-gray-600">{direction.engagement} engagement</p>
-                        </div>
-                      ))}
                     </div>
                   </div>
                 </div>
