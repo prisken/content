@@ -507,17 +507,20 @@ def migrate_database():
     """Run database migrations"""
     try:
         # Add role column if it doesn't exist
-        db.engine.execute("""
-            ALTER TABLE users 
-            ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'user'
-        """)
-        
-        # Update admin user role
-        db.engine.execute("""
-            UPDATE users 
-            SET role = 'admin' 
-            WHERE email = 'admin@contentcreator.com'
-        """)
+        with db.engine.connect() as connection:
+            connection.execute("""
+                ALTER TABLE users 
+                ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'user'
+            """)
+            
+            # Update admin user role
+            connection.execute("""
+                UPDATE users 
+                SET role = 'admin' 
+                WHERE email = 'admin@contentcreator.com'
+            """)
+            
+            connection.commit()
         
         return jsonify({
             'success': True,
