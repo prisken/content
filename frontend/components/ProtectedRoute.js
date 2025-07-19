@@ -24,7 +24,7 @@ export default function ProtectedRoute({ children, redirectTo = '/login', adminO
   }
 
   // Check admin access if required
-  if (adminOnly && user?.role !== 'admin') {
+  if (adminOnly && user?.email !== 'admin@contentcreator.com') {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
