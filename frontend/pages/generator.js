@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Head from 'next/head'
 import toast from 'react-hot-toast'
 import { ChevronRight, Sparkles, Copy, Download, RefreshCw } from 'lucide-react'
-import { apiClient, contentDirections, platforms } from '../lib/api'
+import { apiClient, contentDirections, platforms, sources, tones } from '../lib/api'
 import { useAuth } from '../contexts/AuthContext'
 import { useLanguage } from '../contexts/LanguageContext'
 import { useRouter } from 'next/router'
@@ -202,8 +202,8 @@ ${t('generated_on')}: ${new Date().toLocaleString()}
 
             {currentStep === 3 && (
               <div>
-                <h2 className="text-2xl font-bold mb-6">What Inspires You?</h2>
-                <p className="text-gray-600 mb-6">Tell us what's driving your content creation</p>
+                <h2 className="text-2xl font-bold mb-6">{t('what_inspires_you')}</h2>
+                <p className="text-gray-600 mb-6">{t('inspiration_description')}</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {sources.map((source) => (
                     <button
@@ -224,26 +224,26 @@ ${t('generated_on')}: ${new Date().toLocaleString()}
 
             {currentStep === 4 && (
               <div>
-                <h2 className="text-2xl font-bold mb-6">Select Topics & Tone</h2>
-                <p className="text-gray-600 mb-6">Choose specific topics and tone for your content</p>
+                <h2 className="text-2xl font-bold mb-6">{t('select_topics_tone')}</h2>
+                <p className="text-gray-600 mb-6">{t('topics_tone_description')}</p>
                 
                 <div className="space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Topic *
+                      {t('topic_label')}
                     </label>
                     <input
                       type="text"
                       value={formData.topic}
                       onChange={(e) => handleInputChange('topic', e.target.value)}
-                      placeholder="e.g., AI in Business, Digital Marketing Trends..."
+                      placeholder={t('topic_placeholder')}
                       className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Tone *
+                      {t('tone_label')}
                     </label>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                       {tones.map((tone) => (
@@ -264,15 +264,15 @@ ${t('generated_on')}: ${new Date().toLocaleString()}
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Language
+                      {t('language_label')}
                     </label>
                     <select
                       value={formData.language}
                       onChange={(e) => handleInputChange('language', e.target.value)}
                       className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
-                      <option value="en">English</option>
-                      <option value="zh">中文 (Chinese)</option>
+                      <option value="en">{t('english')}</option>
+                      <option value="zh">{t('chinese')}</option>
                     </select>
                   </div>
                 </div>
@@ -281,18 +281,18 @@ ${t('generated_on')}: ${new Date().toLocaleString()}
 
             {currentStep === 5 && (
               <div>
-                <h2 className="text-2xl font-bold mb-6">Generate Content</h2>
-                <p className="text-gray-600 mb-6">Review your settings and generate your content</p>
+                <h2 className="text-2xl font-bold mb-6">{t('generate_content')}</h2>
+                <p className="text-gray-600 mb-6">{t('review_settings')}</p>
                 
                 <div className="bg-gray-50 p-6 rounded-lg mb-6">
-                  <h3 className="font-semibold mb-4">Your Settings:</h3>
+                  <h3 className="font-semibold mb-4">{t('your_settings')}</h3>
                   <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div><strong>Direction:</strong> {contentDirections.find(d => d.key === formData.direction)?.name}</div>
-                    <div><strong>Platform:</strong> {platforms.find(p => p.key === formData.platform)?.name}</div>
-                    <div><strong>Source:</strong> {sources.find(s => s.key === formData.source)?.name}</div>
-                    <div><strong>Tone:</strong> {tones.find(t => t.key === formData.tone)?.name}</div>
-                    <div><strong>Topic:</strong> {formData.topic}</div>
-                    <div><strong>Language:</strong> {formData.language === 'en' ? 'English' : '中文'}</div>
+                    <div><strong>{t('direction_label')}</strong> {contentDirections.find(d => d.key === formData.direction)?.name}</div>
+                    <div><strong>{t('platform_label')}</strong> {platforms.find(p => p.key === formData.platform)?.name}</div>
+                    <div><strong>{t('source_label')}</strong> {sources.find(s => s.key === formData.source)?.name}</div>
+                    <div><strong>{t('tone_label_settings')}</strong> {tones.find(t => t.key === formData.tone)?.name}</div>
+                    <div><strong>{t('topic_label_settings')}</strong> {formData.topic}</div>
+                    <div><strong>{t('language_label_settings')}</strong> {formData.language === 'en' ? t('english') : t('chinese')}</div>
                   </div>
                 </div>
 
@@ -304,12 +304,12 @@ ${t('generated_on')}: ${new Date().toLocaleString()}
                   {isGenerating ? (
                     <>
                       <RefreshCw className="w-5 h-5 animate-spin" />
-                      Generating...
+                      {t('generating')}
                     </>
                   ) : (
                     <>
                       <Sparkles className="w-5 h-5" />
-                      Generate Content
+                      {t('generate_content_button')}
                     </>
                   )}
                 </button>
@@ -323,7 +323,7 @@ ${t('generated_on')}: ${new Date().toLocaleString()}
                 disabled={currentStep === 1}
                 className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
               >
-                Previous
+                {t('previous')}
               </button>
               
               {currentStep < 5 && (
@@ -331,7 +331,7 @@ ${t('generated_on')}: ${new Date().toLocaleString()}
                   onClick={nextStep}
                   className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200"
                 >
-                  Next
+                  {t('next')}
                 </button>
               )}
             </div>
@@ -341,40 +341,40 @@ ${t('generated_on')}: ${new Date().toLocaleString()}
           {generatedContent && (
             <div className="bg-white rounded-lg shadow-lg p-8">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold">Generated Content</h2>
+                <h2 className="text-2xl font-bold">{t('generated_content_title')}</h2>
                 <div className="flex gap-2">
                   <button
                     onClick={() => copyToClipboard(generatedContent.content)}
                     className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 flex items-center gap-2 transition-all duration-200"
                   >
                     <Copy className="w-4 h-4" />
-                    Copy
+                    {t('copy')}
                   </button>
                   <button
                     onClick={downloadContent}
                     className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2 transition-all duration-200"
                   >
                     <Download className="w-4 h-4" />
-                    Download
+                    {t('download')}
                   </button>
                   <button
                     onClick={regenerateContent}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 transition-all duration-200"
                   >
                     <RefreshCw className="w-4 h-4" />
-                    Regenerate
+                    {t('regenerate')}
                   </button>
                 </div>
               </div>
 
               <div className="bg-gray-50 p-6 rounded-lg mb-6">
-                <h3 className="font-semibold mb-4">Content:</h3>
+                <h3 className="font-semibold mb-4">{t('content_label')}</h3>
                 <p className="text-gray-800 whitespace-pre-wrap">{generatedContent.content}</p>
               </div>
 
               {generatedContent.hashtags && generatedContent.hashtags.length > 0 && (
                 <div>
-                  <h3 className="font-semibold mb-4">Hashtags:</h3>
+                  <h3 className="font-semibold mb-4">{t('hashtags_label')}</h3>
                   <div className="flex flex-wrap gap-2">
                     {generatedContent.hashtags.map((hashtag, index) => (
                       <span
