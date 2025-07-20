@@ -93,8 +93,8 @@ export default function Generator() {
     'Lifestyle': [],
     'Professional': []
   })
-  const [generatedVideoLink, setGeneratedVideoLink] = useState('')
-  const [generatedPodcastLink, setGeneratedPodcastLink] = useState('')
+  const [generatedVideos, setGeneratedVideos] = useState([])
+  const [generatedPodcasts, setGeneratedPodcasts] = useState([])
   const [isGeneratingLink, setIsGeneratingLink] = useState(false)
   const { isAuthenticated } = useAuth()
   const { t } = useLanguage()
@@ -856,13 +856,13 @@ export default function Generator() {
       })
       
       if (response.success && response.data) {
-        setGeneratedVideoLink(response.data.videoLink || '')
-        toast.success('Video link generated successfully!')
+        setGeneratedVideos(response.data.videos || [])
+        toast.success(`Found ${response.data.videos?.length || 0} popular videos!`)
       } else {
-        toast.error(response.error || 'Failed to generate video link')
+        toast.error(response.error || 'Failed to generate video links')
       }
     } catch (error) {
-      toast.error('Failed to generate video link')
+      toast.error('Failed to generate video links')
       console.error('Video link generation error:', error)
     } finally {
       setIsGeneratingLink(false)
@@ -884,13 +884,13 @@ export default function Generator() {
       })
       
       if (response.success && response.data) {
-        setGeneratedPodcastLink(response.data.podcastLink || '')
-        toast.success('Podcast link generated successfully!')
+        setGeneratedPodcasts(response.data.podcasts || [])
+        toast.success(`Found ${response.data.podcasts?.length || 0} popular podcasts!`)
       } else {
-        toast.error(response.error || 'Failed to generate podcast link')
+        toast.error(response.error || 'Failed to generate podcast links')
       }
     } catch (error) {
-      toast.error('Failed to generate podcast link')
+      toast.error('Failed to generate podcast links')
       console.error('Podcast link generation error:', error)
     } finally {
       setIsGeneratingLink(false)
@@ -1245,17 +1245,49 @@ Generated on: ${new Date().toLocaleString()}
                                       </>
                                     )}
                                   </button>
-                                  {generatedVideoLink && (
-                                    <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-                                      <p className="text-sm text-green-800 font-medium mb-1">Generated Video Link:</p>
-                                      <a 
-                                        href={generatedVideoLink} 
-                                        target="_blank" 
-                                        rel="noopener noreferrer"
-                                        className="text-sm text-blue-600 hover:underline break-all"
-                                      >
-                                        {generatedVideoLink}
-                                      </a>
+                                  {generatedVideos.length > 0 && (
+                                    <div className="space-y-3">
+                                      <div className="flex items-center justify-between">
+                                        <p className="text-sm text-green-800 font-medium">Found {generatedVideos.length} Popular Videos:</p>
+                                        <button
+                                          onClick={generateVideoLink}
+                                          disabled={isGeneratingLink}
+                                          className="text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 px-2 py-1 rounded flex items-center gap-1 transition-colors"
+                                        >
+                                          <RefreshCw className="w-3 h-3" />
+                                          Refresh
+                                        </button>
+                                      </div>
+                                      <div className="grid grid-cols-1 gap-3">
+                                        {generatedVideos.map((video, index) => (
+                                          <div key={index} className="p-3 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+                                            <div className="flex gap-3">
+                                              <img 
+                                                src={video.thumbnail} 
+                                                alt={video.title}
+                                                className="w-20 h-16 object-cover rounded-lg flex-shrink-0"
+                                              />
+                                              <div className="flex-1 min-w-0">
+                                                <h4 className="font-medium text-sm mb-1 line-clamp-2">{video.title}</h4>
+                                                <p className="text-xs text-gray-600 mb-1">{video.channel}</p>
+                                                <div className="flex items-center gap-2 text-xs text-gray-500">
+                                                  <span>{video.duration}</span>
+                                                  <span>•</span>
+                                                  <span>{video.views} views</span>
+                                                </div>
+                                                <a 
+                                                  href={video.url} 
+                                                  target="_blank" 
+                                                  rel="noopener noreferrer"
+                                                  className="inline-block mt-2 text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded transition-colors"
+                                                >
+                                                  Watch on YouTube
+                                                </a>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
                                     </div>
                                   )}
                                 </div>
@@ -1280,17 +1312,50 @@ Generated on: ${new Date().toLocaleString()}
                                       </>
                                     )}
                                   </button>
-                                  {generatedPodcastLink && (
-                                    <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-                                      <p className="text-sm text-green-800 font-medium mb-1">Generated Podcast Link:</p>
-                                      <a 
-                                        href={generatedPodcastLink} 
-                                        target="_blank" 
-                                        rel="noopener noreferrer"
-                                        className="text-sm text-blue-600 hover:underline break-all"
-                                      >
-                                        {generatedPodcastLink}
-                                      </a>
+                                  {generatedPodcasts.length > 0 && (
+                                    <div className="space-y-3">
+                                      <div className="flex items-center justify-between">
+                                        <p className="text-sm text-green-800 font-medium">Found {generatedPodcasts.length} Popular Podcasts:</p>
+                                        <button
+                                          onClick={generatePodcastLink}
+                                          disabled={isGeneratingLink}
+                                          className="text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 px-2 py-1 rounded flex items-center gap-1 transition-colors"
+                                        >
+                                          <RefreshCw className="w-3 h-3" />
+                                          Refresh
+                                        </button>
+                                      </div>
+                                      <div className="grid grid-cols-1 gap-3">
+                                        {generatedPodcasts.map((podcast, index) => (
+                                          <div key={index} className="p-3 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+                                            <div className="flex gap-3">
+                                              <img 
+                                                src={podcast.cover} 
+                                                alt={podcast.title}
+                                                className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
+                                              />
+                                              <div className="flex-1 min-w-0">
+                                                <h4 className="font-medium text-sm mb-1 line-clamp-2">{podcast.title}</h4>
+                                                <p className="text-xs text-gray-600 mb-1">{podcast.host}</p>
+                                                <p className="text-xs text-gray-500 mb-1 line-clamp-2">{podcast.description}</p>
+                                                <div className="flex items-center gap-2 text-xs text-gray-500">
+                                                  <span>{podcast.duration}</span>
+                                                  <span>•</span>
+                                                  <span>{podcast.episodes} episodes</span>
+                                                </div>
+                                                <a 
+                                                  href={podcast.url} 
+                                                  target="_blank" 
+                                                  rel="noopener noreferrer"
+                                                  className="inline-block mt-2 text-xs bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded transition-colors"
+                                                >
+                                                  Listen on Apple Podcasts
+                                                </a>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
                                     </div>
                                   )}
                                 </div>

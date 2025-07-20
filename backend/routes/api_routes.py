@@ -2109,38 +2109,102 @@ def generate_video_link():
         
         search_query = ' '.join(search_terms)
         
-        # Mock popular video links based on search
+        # Mock popular video links with thumbnails and details
         popular_videos = {
             'business_finance': [
-                'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-                'https://www.youtube.com/watch?v=9bZkp7q19f0',
-                'https://www.youtube.com/watch?v=kJQP7kiw5Fk'
+                {
+                    'title': 'How to Build a Successful Business from Scratch',
+                    'url': 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+                    'thumbnail': 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=300&h=200&fit=crop',
+                    'duration': '12:34',
+                    'views': '2.1M',
+                    'channel': 'Business Insights'
+                },
+                {
+                    'title': 'Financial Freedom: 10 Steps to Wealth',
+                    'url': 'https://www.youtube.com/watch?v=9bZkp7q19f0',
+                    'thumbnail': 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=300&h=200&fit=crop',
+                    'duration': '18:45',
+                    'views': '1.8M',
+                    'channel': 'Finance Mastery'
+                },
+                {
+                    'title': 'Entrepreneurship Secrets Revealed',
+                    'url': 'https://www.youtube.com/watch?v=kJQP7kiw5Fk',
+                    'thumbnail': 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=300&h=200&fit=crop',
+                    'duration': '15:22',
+                    'views': '3.2M',
+                    'channel': 'Startup Success'
+                }
             ],
             'technology': [
-                'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-                'https://www.youtube.com/watch?v=9bZkp7q19f0',
-                'https://www.youtube.com/watch?v=kJQP7kiw5Fk'
+                {
+                    'title': 'AI Revolution: What\'s Next in Tech',
+                    'url': 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+                    'thumbnail': 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=300&h=200&fit=crop',
+                    'duration': '14:18',
+                    'views': '1.5M',
+                    'channel': 'Tech Trends'
+                },
+                {
+                    'title': 'Coding for Beginners: Start Your Journey',
+                    'url': 'https://www.youtube.com/watch?v=9bZkp7q19f0',
+                    'thumbnail': 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=300&h=200&fit=crop',
+                    'duration': '22:33',
+                    'views': '2.8M',
+                    'channel': 'Code Academy'
+                },
+                {
+                    'title': 'Future of Web Development',
+                    'url': 'https://www.youtube.com/watch?v=kJQP7kiw5Fk',
+                    'thumbnail': 'https://images.unsplash.com/photo-1547658719-da2b51169166?w=300&h=200&fit=crop',
+                    'duration': '16:47',
+                    'views': '1.9M',
+                    'channel': 'Web Dev Pro'
+                }
             ],
             'health_wellness': [
-                'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-                'https://www.youtube.com/watch?v=9bZkp7q19f0',
-                'https://www.youtube.com/watch?v=kJQP7kiw5Fk'
+                {
+                    'title': 'Complete Morning Routine for Success',
+                    'url': 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+                    'thumbnail': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop',
+                    'duration': '11:25',
+                    'views': '4.1M',
+                    'channel': 'Wellness Daily'
+                },
+                {
+                    'title': 'Nutrition Myths Debunked',
+                    'url': 'https://www.youtube.com/watch?v=9bZkp7q19f0',
+                    'thumbnail': 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=300&h=200&fit=crop',
+                    'duration': '19:12',
+                    'views': '2.3M',
+                    'channel': 'Health Facts'
+                },
+                {
+                    'title': 'Meditation for Beginners',
+                    'url': 'https://www.youtube.com/watch?v=kJQP7kiw5Fk',
+                    'thumbnail': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop',
+                    'duration': '13:56',
+                    'views': '3.7M',
+                    'channel': 'Mindful Living'
+                }
             ]
         }
         
         # Get videos for the direction, or use default
         video_links = popular_videos.get(direction, popular_videos['business_finance'])
-        selected_video = video_links[0]  # Return the first popular video
+        # Return all 3 videos
+        selected_videos = video_links
         
         return jsonify({
             'success': True,
             'data': {
-                'videoLink': selected_video,
+                'videos': selected_videos,
                 'searchQuery': search_query,
                 'direction': direction,
                 'categories': category_keywords,
                 'country': country,
-                'message': f'Found popular video for {direction.replace("_", " ")}'
+                'message': f'Found {len(selected_videos)} popular videos for {direction.replace("_", " ")}'
             }
         })
     except Exception as e:
@@ -2171,38 +2235,111 @@ def generate_podcast_link():
         
         search_query = ' '.join(search_terms)
         
-        # Mock popular podcast links based on search
+        # Mock popular podcast links with covers and details
         popular_podcasts = {
             'business_finance': [
-                'https://podcasts.apple.com/us/podcast/the-tim-ferriss-show/id863897795',
-                'https://podcasts.apple.com/us/podcast/how-i-built-this/id1150510297',
-                'https://podcasts.apple.com/us/podcast/masters-of-scale/id1227971746'
+                {
+                    'title': 'The Tim Ferriss Show',
+                    'url': 'https://podcasts.apple.com/us/podcast/the-tim-ferriss-show/id863897795',
+                    'cover': 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=300&h=300&fit=crop',
+                    'duration': '1-2 hours',
+                    'episodes': '700+',
+                    'host': 'Tim Ferriss',
+                    'description': 'Interviews with world-class performers'
+                },
+                {
+                    'title': 'How I Built This',
+                    'url': 'https://podcasts.apple.com/us/podcast/how-i-built-this/id1150510297',
+                    'cover': 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=300&h=300&fit=crop',
+                    'duration': '45-60 min',
+                    'episodes': '400+',
+                    'host': 'Guy Raz',
+                    'description': 'Stories behind successful companies'
+                },
+                {
+                    'title': 'Masters of Scale',
+                    'url': 'https://podcasts.apple.com/us/podcast/masters-of-scale/id1227971746',
+                    'cover': 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=300&h=300&fit=crop',
+                    'duration': '30-45 min',
+                    'episodes': '200+',
+                    'host': 'Reid Hoffman',
+                    'description': 'How companies grow from zero to a gazillion'
+                }
             ],
             'technology': [
-                'https://podcasts.apple.com/us/podcast/lex-fridman-podcast/id1434243584',
-                'https://podcasts.apple.com/us/podcast/the-vergecast/id430333725',
-                'https://podcasts.apple.com/us/podcast/recode-decode/id1011668648'
+                {
+                    'title': 'Lex Fridman Podcast',
+                    'url': 'https://podcasts.apple.com/us/podcast/lex-fridman-podcast/id1434243584',
+                    'cover': 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=300&h=300&fit=crop',
+                    'duration': '2-3 hours',
+                    'episodes': '400+',
+                    'host': 'Lex Fridman',
+                    'description': 'Conversations about AI, science, and technology'
+                },
+                {
+                    'title': 'The Vergecast',
+                    'url': 'https://podcasts.apple.com/us/podcast/the-vergecast/id430333725',
+                    'cover': 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=300&h=300&fit=crop',
+                    'duration': '1-2 hours',
+                    'episodes': '600+',
+                    'host': 'The Verge Team',
+                    'description': 'Tech news and analysis'
+                },
+                {
+                    'title': 'Recode Decode',
+                    'url': 'https://podcasts.apple.com/us/podcast/recode-decode/id1011668648',
+                    'cover': 'https://images.unsplash.com/photo-1547658719-da2b51169166?w=300&h=300&fit=crop',
+                    'duration': '45-60 min',
+                    'episodes': '500+',
+                    'host': 'Kara Swisher',
+                    'description': 'Tech industry insights and interviews'
+                }
             ],
             'health_wellness': [
-                'https://podcasts.apple.com/us/podcast/the-joe-rogan-experience/id360084272',
-                'https://podcasts.apple.com/us/podcast/on-purpose-with-jay-shetty/id1437448722',
-                'https://podcasts.apple.com/us/podcast/the-wellness-mama-podcast/id1070840096'
+                {
+                    'title': 'The Joe Rogan Experience',
+                    'url': 'https://podcasts.apple.com/us/podcast/the-joe-rogan-experience/id360084272',
+                    'cover': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=300&fit=crop',
+                    'duration': '2-3 hours',
+                    'episodes': '2000+',
+                    'host': 'Joe Rogan',
+                    'description': 'Long-form conversations with interesting people'
+                },
+                {
+                    'title': 'On Purpose with Jay Shetty',
+                    'url': 'https://podcasts.apple.com/us/podcast/on-purpose-with-jay-shetty/id1437448722',
+                    'cover': 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=300&h=300&fit=crop',
+                    'duration': '30-45 min',
+                    'episodes': '300+',
+                    'host': 'Jay Shetty',
+                    'description': 'Wisdom for modern life'
+                },
+                {
+                    'title': 'The Wellness Mama Podcast',
+                    'url': 'https://podcasts.apple.com/us/podcast/the-wellness-mama-podcast/id1070840096',
+                    'cover': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=300&fit=crop',
+                    'duration': '20-30 min',
+                    'episodes': '400+',
+                    'host': 'Katie Wells',
+                    'description': 'Natural health and wellness tips'
+                }
             ]
         }
         
         # Get podcasts for the direction, or use default
         podcast_links = popular_podcasts.get(direction, popular_podcasts['business_finance'])
-        selected_podcast = podcast_links[0]  # Return the first popular podcast
+        # Return all 3 podcasts
+        selected_podcasts = podcast_links
         
         return jsonify({
             'success': True,
             'data': {
-                'podcastLink': selected_podcast,
+                'podcasts': selected_podcasts,
                 'searchQuery': search_query,
                 'direction': direction,
                 'categories': category_keywords,
                 'country': country,
-                'message': f'Found popular podcast for {direction.replace("_", " ")}'
+                'message': f'Found {len(selected_podcasts)} popular podcasts for {direction.replace("_", " ")}'
             }
         })
     except Exception as e:
