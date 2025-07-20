@@ -116,6 +116,118 @@ class GoogleSearchService:
                 {'title': 'Entrepreneur Success Story', 'description': 'Local business owner shares journey to success', 'trending_score': 82},
                 {'title': 'Economic Recovery Indicators', 'description': 'Positive signs for economic growth and stability', 'trending_score': 79},
                 {'title': 'Digital Payment Trends', 'description': 'Shift towards cashless transactions accelerates', 'trending_score': 75}
+            ],
+            'health_wellness': [
+                {'title': 'Breakthrough in Mental Health Treatment', 'description': 'New therapy approach shows promising results for anxiety and depression', 'trending_score': 91},
+                {'title': 'Fitness Trends for 2024', 'description': 'Popular workout routines and wellness practices gaining traction', 'trending_score': 87},
+                {'title': 'Nutrition Science Update', 'description': 'Latest research on diet and its impact on health', 'trending_score': 84},
+                {'title': 'Mental Health Awareness Campaign', 'description': 'Organizations promote mental wellness in the workplace', 'trending_score': 81},
+                {'title': 'Wellness Technology Innovations', 'description': 'New apps and devices for health monitoring', 'trending_score': 78}
+            ],
+            'education': [
+                {'title': 'Online Learning Platform Growth', 'description': 'Digital education continues to expand globally', 'trending_score': 89},
+                {'title': 'New Teaching Methods Introduced', 'description': 'Innovative approaches to student engagement and learning', 'trending_score': 86},
+                {'title': 'Education Technology Investment', 'description': 'Major funding for educational software and tools', 'trending_score': 83},
+                {'title': 'Student Mental Health Support', 'description': 'Universities implement new wellness programs', 'trending_score': 80},
+                {'title': 'Skills Gap Analysis Report', 'description': 'Study reveals changing demands in job market', 'trending_score': 77}
+            ],
+            'entertainment': [
+                {'title': 'Streaming Service Competition Heats Up', 'description': 'New platforms enter the entertainment market', 'trending_score': 90},
+                {'title': 'Blockbuster Movie Release', 'description': 'Highly anticipated film breaks box office records', 'trending_score': 87},
+                {'title': 'Music Industry Digital Transformation', 'description': 'Artists adapt to new distribution methods', 'trending_score': 84},
+                {'title': 'Gaming Industry Growth', 'description': 'Video game market continues expansion', 'trending_score': 81},
+                {'title': 'Celebrity Social Media Impact', 'description': 'Influencers shape entertainment consumption', 'trending_score': 78}
+            ],
+            'lifestyle': [
+                {'title': 'Sustainable Living Movement', 'description': 'More people adopt eco-friendly lifestyle choices', 'trending_score': 88},
+                {'title': 'Minimalism Trend Continues', 'description': 'Decluttering and simple living gain popularity', 'trending_score': 85},
+                {'title': 'Remote Work Lifestyle Changes', 'description': 'People adapt to work-from-home culture', 'trending_score': 82},
+                {'title': 'Digital Detox Movement', 'description': 'People seek balance with technology use', 'trending_score': 79},
+                {'title': 'Wellness Tourism Growth', 'description': 'Travel focused on health and relaxation', 'trending_score': 76}
+            ],
+            'sports': [
+                {'title': 'Major Sports League Expansion', 'description': 'Professional leagues announce new teams and markets', 'trending_score': 92},
+                {'title': 'Olympic Preparation Updates', 'description': 'Athletes and countries prepare for upcoming games', 'trending_score': 89},
+                {'title': 'Sports Technology Innovation', 'description': 'New equipment and training methods emerge', 'trending_score': 86},
+                {'title': 'Women in Sports Recognition', 'description': 'Increased visibility and support for female athletes', 'trending_score': 83},
+                {'title': 'Youth Sports Development', 'description': 'Programs to encourage young athlete participation', 'trending_score': 80}
+            ],
+            'food_cooking': [
+                {'title': 'Plant-Based Diet Revolution', 'description': 'More people embrace vegetarian and vegan lifestyles', 'trending_score': 88},
+                {'title': 'Home Cooking Renaissance', 'description': 'People rediscover joy of cooking at home', 'trending_score': 85},
+                {'title': 'Food Delivery Service Growth', 'description': 'Online ordering continues to expand', 'trending_score': 82},
+                {'title': 'Sustainable Food Practices', 'description': 'Farm-to-table and organic movements grow', 'trending_score': 79},
+                {'title': 'International Cuisine Popularity', 'description': 'Global flavors gain mainstream acceptance', 'trending_score': 76}
+            ],
+            'travel': [
+                {'title': 'Post-Pandemic Travel Boom', 'description': 'Tourism industry sees strong recovery', 'trending_score': 90},
+                {'title': 'Sustainable Tourism Growth', 'description': 'Eco-friendly travel options gain popularity', 'trending_score': 87},
+                {'title': 'Digital Nomad Lifestyle', 'description': 'Remote workers embrace location independence', 'trending_score': 84},
+                {'title': 'Adventure Travel Trends', 'description': 'Experiential and outdoor tourism grows', 'trending_score': 81},
+                {'title': 'Local Tourism Promotion', 'description': 'Communities focus on domestic visitors', 'trending_score': 78}
+            ],
+            'fashion_beauty': [
+                {'title': 'Sustainable Fashion Movement', 'description': 'Eco-friendly clothing and accessories gain traction', 'trending_score': 89},
+                {'title': 'Digital Fashion Innovation', 'description': 'Virtual clothing and AR try-on technology', 'trending_score': 86},
+                {'title': 'Inclusive Beauty Standards', 'description': 'Diversity and representation in beauty industry', 'trending_score': 83},
+                {'title': 'Vintage Fashion Revival', 'description': 'Retro styles make comeback in modern wardrobes', 'trending_score': 80},
+                {'title': 'Beauty Technology Advances', 'description': 'Smart skincare devices and apps', 'trending_score': 77}
+            ],
+            'parenting': [
+                {'title': 'Digital Parenting Challenges', 'description': 'Managing children\'s screen time and online safety', 'trending_score': 88},
+                {'title': 'Mental Health Support for Parents', 'description': 'Resources for parental stress and anxiety', 'trending_score': 85},
+                {'title': 'Educational Technology for Kids', 'description': 'Learning apps and digital tools for children', 'trending_score': 82},
+                {'title': 'Work-Life Balance for Parents', 'description': 'Strategies for managing career and family', 'trending_score': 79},
+                {'title': 'Parenting Styles Research', 'description': 'Studies on effective child-rearing approaches', 'trending_score': 76}
+            ],
+            'pets_animals': [
+                {'title': 'Pet Adoption Surge', 'description': 'More people welcome pets into their homes', 'trending_score': 87},
+                {'title': 'Pet Technology Innovation', 'description': 'Smart devices and apps for pet care', 'trending_score': 84},
+                {'title': 'Animal Welfare Awareness', 'description': 'Increased focus on ethical treatment of animals', 'trending_score': 81},
+                {'title': 'Pet Health and Nutrition', 'description': 'Advances in veterinary care and pet food', 'trending_score': 78},
+                {'title': 'Wildlife Conservation Efforts', 'description': 'Protection of endangered species and habitats', 'trending_score': 75}
+            ],
+            'automotive': [
+                {'title': 'Electric Vehicle Market Growth', 'description': 'EV adoption accelerates globally', 'trending_score': 91},
+                {'title': 'Autonomous Driving Technology', 'description': 'Self-driving cars advance toward mainstream', 'trending_score': 88},
+                {'title': 'Car Sharing Services Expansion', 'description': 'Alternative transportation options grow', 'trending_score': 85},
+                {'title': 'Automotive Safety Innovations', 'description': 'New technologies improve road safety', 'trending_score': 82},
+                {'title': 'Sustainable Transportation', 'description': 'Green alternatives to traditional vehicles', 'trending_score': 79}
+            ],
+            'real_estate': [
+                {'title': 'Housing Market Trends', 'description': 'Analysis of current real estate conditions', 'trending_score': 89},
+                {'title': 'Remote Work Impact on Housing', 'description': 'How work-from-home changes housing preferences', 'trending_score': 86},
+                {'title': 'Sustainable Building Practices', 'description': 'Green construction and energy efficiency', 'trending_score': 83},
+                {'title': 'Real Estate Technology', 'description': 'Digital tools for buying and selling property', 'trending_score': 80},
+                {'title': 'Urban Development Projects', 'description': 'City planning and infrastructure improvements', 'trending_score': 77}
+            ],
+            'marketing_advertising': [
+                {'title': 'Digital Marketing Evolution', 'description': 'New strategies and platforms emerge', 'trending_score': 88},
+                {'title': 'Influencer Marketing Growth', 'description': 'Social media personalities drive brand awareness', 'trending_score': 85},
+                {'title': 'Data Privacy in Advertising', 'description': 'Balancing personalization with privacy', 'trending_score': 82},
+                {'title': 'Content Marketing Strategies', 'description': 'Value-driven content creation approaches', 'trending_score': 79},
+                {'title': 'Marketing Technology Stack', 'description': 'Tools and platforms for modern marketers', 'trending_score': 76}
+            ],
+            'science_research': [
+                {'title': 'Breakthrough Scientific Discovery', 'description': 'Major advancement in research field', 'trending_score': 92},
+                {'title': 'Climate Change Research Update', 'description': 'Latest findings on environmental impact', 'trending_score': 89},
+                {'title': 'Medical Research Innovation', 'description': 'New treatments and therapies developed', 'trending_score': 86},
+                {'title': 'Space Exploration Progress', 'description': 'Advances in astronomy and space technology', 'trending_score': 83},
+                {'title': 'Renewable Energy Research', 'description': 'Sustainable energy solutions development', 'trending_score': 80}
+            ],
+            'politics_society': [
+                {'title': 'Election Season Analysis', 'description': 'Political landscape and voter engagement', 'trending_score': 90},
+                {'title': 'Social Justice Movements', 'description': 'Activism and advocacy for equality', 'trending_score': 87},
+                {'title': 'Policy Changes Impact', 'description': 'How new laws affect communities', 'trending_score': 84},
+                {'title': 'Civic Engagement Trends', 'description': 'Public participation in democracy', 'trending_score': 81},
+                {'title': 'International Relations', 'description': 'Global diplomacy and cooperation', 'trending_score': 78}
+            ],
+            'environment_sustainability': [
+                {'title': 'Climate Action Initiatives', 'description': 'Global efforts to address climate change', 'trending_score': 91},
+                {'title': 'Renewable Energy Adoption', 'description': 'Transition to sustainable power sources', 'trending_score': 88},
+                {'title': 'Plastic Pollution Solutions', 'description': 'Innovations in waste reduction', 'trending_score': 85},
+                {'title': 'Biodiversity Conservation', 'description': 'Protection of ecosystems and species', 'trending_score': 82},
+                {'title': 'Sustainable Agriculture', 'description': 'Eco-friendly farming practices', 'trending_score': 79}
             ]
         }
         
@@ -138,6 +250,118 @@ class GoogleSearchService:
                 {'title': 'Sustainable Investing', 'description': 'ESG investment strategies gaining traction', 'trending_score': 86},
                 {'title': 'Small Business Recovery', 'description': 'Support programs for local businesses', 'trending_score': 83},
                 {'title': 'Digital Banking', 'description': 'Fintech innovations in banking', 'trending_score': 80}
+            ],
+            'health_wellness': [
+                {'title': 'Mental Health Awareness', 'description': 'Growing focus on psychological well-being', 'trending_score': 94},
+                {'title': 'Fitness Technology', 'description': 'Wearables and apps for health tracking', 'trending_score': 90},
+                {'title': 'Plant-Based Nutrition', 'description': 'Vegan and vegetarian lifestyle trends', 'trending_score': 87},
+                {'title': 'Sleep Optimization', 'description': 'Better sleep habits and technology', 'trending_score': 84},
+                {'title': 'Mindfulness Practices', 'description': 'Meditation and stress reduction techniques', 'trending_score': 81}
+            ],
+            'education': [
+                {'title': 'Online Learning Platforms', 'description': 'Digital education tools and courses', 'trending_score': 92},
+                {'title': 'Coding Bootcamps', 'description': 'Programming education for career changers', 'trending_score': 89},
+                {'title': 'Microlearning', 'description': 'Short-form educational content', 'trending_score': 86},
+                {'title': 'STEM Education', 'description': 'Science, technology, engineering, and math focus', 'trending_score': 83},
+                {'title': 'Lifelong Learning', 'description': 'Continuous education for adults', 'trending_score': 80}
+            ],
+            'entertainment': [
+                {'title': 'Streaming Wars', 'description': 'Competition between entertainment platforms', 'trending_score': 93},
+                {'title': 'Social Media Content', 'description': 'Viral videos and trending posts', 'trending_score': 90},
+                {'title': 'Gaming Industry', 'description': 'Video games and esports growth', 'trending_score': 87},
+                {'title': 'Podcast Popularity', 'description': 'Audio content consumption trends', 'trending_score': 84},
+                {'title': 'Celebrity Culture', 'description': 'Influencer and celebrity impact', 'trending_score': 81}
+            ],
+            'lifestyle': [
+                {'title': 'Minimalism Movement', 'description': 'Decluttering and simple living', 'trending_score': 91},
+                {'title': 'Digital Detox', 'description': 'Reducing screen time and tech dependence', 'trending_score': 88},
+                {'title': 'Sustainable Living', 'description': 'Eco-friendly lifestyle choices', 'trending_score': 85},
+                {'title': 'Work-Life Balance', 'description': 'Managing career and personal life', 'trending_score': 82},
+                {'title': 'Wellness Tourism', 'description': 'Health-focused travel experiences', 'trending_score': 79}
+            ],
+            'sports': [
+                {'title': 'Esports Growth', 'description': 'Competitive gaming popularity', 'trending_score': 94},
+                {'title': 'Fitness Technology', 'description': 'Smart equipment and tracking devices', 'trending_score': 90},
+                {'title': 'Women in Sports', 'description': 'Female athlete recognition and support', 'trending_score': 87},
+                {'title': 'Sports Analytics', 'description': 'Data-driven performance optimization', 'trending_score': 84},
+                {'title': 'Youth Sports', 'description': 'Children\'s athletic development', 'trending_score': 81}
+            ],
+            'food_cooking': [
+                {'title': 'Plant-Based Diets', 'description': 'Vegan and vegetarian lifestyle trends', 'trending_score': 92},
+                {'title': 'Home Cooking Revival', 'description': 'DIY meal preparation popularity', 'trending_score': 89},
+                {'title': 'Food Delivery Apps', 'description': 'Online ordering and delivery services', 'trending_score': 86},
+                {'title': 'Sustainable Food', 'description': 'Organic and locally sourced ingredients', 'trending_score': 83},
+                {'title': 'International Cuisine', 'description': 'Global flavors and fusion cooking', 'trending_score': 80}
+            ],
+            'travel': [
+                {'title': 'Post-Pandemic Travel', 'description': 'Tourism recovery and new trends', 'trending_score': 93},
+                {'title': 'Sustainable Tourism', 'description': 'Eco-friendly travel options', 'trending_score': 90},
+                {'title': 'Digital Nomad Lifestyle', 'description': 'Remote work and travel combination', 'trending_score': 87},
+                {'title': 'Adventure Travel', 'description': 'Experiential and outdoor tourism', 'trending_score': 84},
+                {'title': 'Local Tourism', 'description': 'Domestic and community-focused travel', 'trending_score': 81}
+            ],
+            'fashion_beauty': [
+                {'title': 'Sustainable Fashion', 'description': 'Eco-friendly clothing and accessories', 'trending_score': 91},
+                {'title': 'Digital Fashion', 'description': 'Virtual clothing and AR try-on', 'trending_score': 88},
+                {'title': 'Inclusive Beauty', 'description': 'Diversity in beauty standards', 'trending_score': 85},
+                {'title': 'Vintage Revival', 'description': 'Retro and nostalgic fashion trends', 'trending_score': 82},
+                {'title': 'Beauty Technology', 'description': 'Smart skincare and beauty devices', 'trending_score': 79}
+            ],
+            'parenting': [
+                {'title': 'Digital Parenting', 'description': 'Managing children\'s screen time', 'trending_score': 90},
+                {'title': 'Mental Health Support', 'description': 'Parental stress and anxiety resources', 'trending_score': 87},
+                {'title': 'Educational Technology', 'description': 'Learning apps and digital tools for kids', 'trending_score': 84},
+                {'title': 'Work-Life Balance', 'description': 'Managing career and family responsibilities', 'trending_score': 81},
+                {'title': 'Parenting Styles', 'description': 'Different approaches to child-rearing', 'trending_score': 78}
+            ],
+            'pets_animals': [
+                {'title': 'Pet Adoption', 'description': 'Animal adoption and rescue trends', 'trending_score': 89},
+                {'title': 'Pet Technology', 'description': 'Smart devices and apps for pets', 'trending_score': 86},
+                {'title': 'Animal Welfare', 'description': 'Ethical treatment and protection of animals', 'trending_score': 83},
+                {'title': 'Pet Health', 'description': 'Veterinary care and pet nutrition', 'trending_score': 80},
+                {'title': 'Wildlife Conservation', 'description': 'Protection of endangered species', 'trending_score': 77}
+            ],
+            'automotive': [
+                {'title': 'Electric Vehicles', 'description': 'EV adoption and charging infrastructure', 'trending_score': 94},
+                {'title': 'Autonomous Driving', 'description': 'Self-driving car technology', 'trending_score': 91},
+                {'title': 'Car Sharing', 'description': 'Alternative transportation services', 'trending_score': 88},
+                {'title': 'Automotive Safety', 'description': 'Advanced safety features and technology', 'trending_score': 85},
+                {'title': 'Sustainable Transportation', 'description': 'Green alternatives to traditional vehicles', 'trending_score': 82}
+            ],
+            'real_estate': [
+                {'title': 'Housing Market', 'description': 'Real estate trends and analysis', 'trending_score': 92},
+                {'title': 'Remote Work Impact', 'description': 'How work-from-home affects housing', 'trending_score': 89},
+                {'title': 'Sustainable Building', 'description': 'Green construction and energy efficiency', 'trending_score': 86},
+                {'title': 'Real Estate Technology', 'description': 'Digital tools for property transactions', 'trending_score': 83},
+                {'title': 'Urban Development', 'description': 'City planning and infrastructure', 'trending_score': 80}
+            ],
+            'marketing_advertising': [
+                {'title': 'Digital Marketing', 'description': 'Online advertising and promotion strategies', 'trending_score': 93},
+                {'title': 'Influencer Marketing', 'description': 'Social media personality partnerships', 'trending_score': 90},
+                {'title': 'Data Privacy', 'description': 'Consumer data protection in advertising', 'trending_score': 87},
+                {'title': 'Content Marketing', 'description': 'Value-driven content creation', 'trending_score': 84},
+                {'title': 'Marketing Technology', 'description': 'Tools and platforms for marketers', 'trending_score': 81}
+            ],
+            'science_research': [
+                {'title': 'Scientific Breakthroughs', 'description': 'Latest discoveries and innovations', 'trending_score': 95},
+                {'title': 'Climate Change Research', 'description': 'Environmental impact studies', 'trending_score': 92},
+                {'title': 'Medical Research', 'description': 'Healthcare and treatment developments', 'trending_score': 89},
+                {'title': 'Space Exploration', 'description': 'Astronomy and space technology', 'trending_score': 86},
+                {'title': 'Renewable Energy', 'description': 'Sustainable energy solutions', 'trending_score': 83}
+            ],
+            'politics_society': [
+                {'title': 'Election Analysis', 'description': 'Political landscape and voter behavior', 'trending_score': 93},
+                {'title': 'Social Justice', 'description': 'Equality and civil rights movements', 'trending_score': 90},
+                {'title': 'Policy Impact', 'description': 'How laws affect communities', 'trending_score': 87},
+                {'title': 'Civic Engagement', 'description': 'Public participation in democracy', 'trending_score': 84},
+                {'title': 'International Relations', 'description': 'Global diplomacy and cooperation', 'trending_score': 81}
+            ],
+            'environment_sustainability': [
+                {'title': 'Climate Action', 'description': 'Global efforts to address climate change', 'trending_score': 94},
+                {'title': 'Renewable Energy', 'description': 'Sustainable power sources', 'trending_score': 91},
+                {'title': 'Plastic Pollution', 'description': 'Waste reduction and recycling', 'trending_score': 88},
+                {'title': 'Biodiversity Conservation', 'description': 'Protection of ecosystems', 'trending_score': 85},
+                {'title': 'Sustainable Agriculture', 'description': 'Eco-friendly farming practices', 'trending_score': 82}
             ]
         }
         
@@ -200,6 +424,118 @@ class GoogleSearchService:
                 {'title': 'Personal Finance Management', 'description': 'Budgeting and saving strategies', 'trending_score': 84},
                 {'title': 'Stock Market Analysis', 'description': 'Understanding market trends', 'trending_score': 81},
                 {'title': 'Business Growth Strategies', 'description': 'Scaling your business effectively', 'trending_score': 78}
+            ],
+            'health_wellness': [
+                {'title': 'Mental Health Tips and Tricks', 'description': 'Practical advice for mental wellness', 'trending_score': 89},
+                {'title': 'Fitness Workout Routines', 'description': 'Effective exercise programs for all levels', 'trending_score': 86},
+                {'title': 'Nutrition and Diet Guide', 'description': 'Healthy eating habits and meal planning', 'trending_score': 83},
+                {'title': 'Sleep Improvement Techniques', 'description': 'Better sleep habits and routines', 'trending_score': 80},
+                {'title': 'Mindfulness and Meditation', 'description': 'Stress reduction and mental clarity', 'trending_score': 77}
+            ],
+            'education': [
+                {'title': 'Online Learning Tips', 'description': 'How to succeed in digital education', 'trending_score': 88},
+                {'title': 'Study Techniques and Methods', 'description': 'Effective learning strategies', 'trending_score': 85},
+                {'title': 'Career Development Advice', 'description': 'Professional growth and advancement', 'trending_score': 82},
+                {'title': 'Skill Building Tutorials', 'description': 'Learn new abilities and competencies', 'trending_score': 79},
+                {'title': 'Educational Technology Reviews', 'description': 'Best tools for learning', 'trending_score': 76}
+            ],
+            'entertainment': [
+                {'title': 'Movie Reviews and Analysis', 'description': 'In-depth film discussions and critiques', 'trending_score': 91},
+                {'title': 'Music Industry Insights', 'description': 'Behind-the-scenes of the music world', 'trending_score': 88},
+                {'title': 'Gaming Content and Reviews', 'description': 'Video game analysis and gameplay', 'trending_score': 85},
+                {'title': 'Celebrity News and Gossip', 'description': 'Latest updates from the entertainment world', 'trending_score': 82},
+                {'title': 'Comedy and Entertainment', 'description': 'Funny and engaging content', 'trending_score': 79}
+            ],
+            'lifestyle': [
+                {'title': 'Minimalism and Decluttering', 'description': 'Simple living and organization tips', 'trending_score': 87},
+                {'title': 'Digital Detox Challenges', 'description': 'Reducing screen time and tech dependence', 'trending_score': 84},
+                {'title': 'Sustainable Living Tips', 'description': 'Eco-friendly lifestyle choices', 'trending_score': 81},
+                {'title': 'Work-Life Balance Strategies', 'description': 'Managing career and personal life', 'trending_score': 78},
+                {'title': 'Wellness and Self-Care', 'description': 'Taking care of yourself', 'trending_score': 75}
+            ],
+            'sports': [
+                {'title': 'Sports Analysis and Commentary', 'description': 'Expert insights on games and players', 'trending_score': 90},
+                {'title': 'Fitness and Training Tips', 'description': 'Athletic performance improvement', 'trending_score': 87},
+                {'title': 'Sports News and Updates', 'description': 'Latest developments in sports world', 'trending_score': 84},
+                {'title': 'Athlete Interviews and Stories', 'description': 'Personal stories from sports stars', 'trending_score': 81},
+                {'title': 'Sports Technology Reviews', 'description': 'Latest equipment and gear', 'trending_score': 78}
+            ],
+            'food_cooking': [
+                {'title': 'Cooking Tutorials and Recipes', 'description': 'Step-by-step cooking instructions', 'trending_score': 89},
+                {'title': 'Food Reviews and Tastings', 'description': 'Restaurant and food product reviews', 'trending_score': 86},
+                {'title': 'Healthy Eating Guides', 'description': 'Nutrition and meal planning advice', 'trending_score': 83},
+                {'title': 'International Cuisine Exploration', 'description': 'Global flavors and cooking techniques', 'trending_score': 80},
+                {'title': 'Food Science and History', 'description': 'Interesting facts about food', 'trending_score': 77}
+            ],
+            'travel': [
+                {'title': 'Travel Vlogs and Adventures', 'description': 'Real travel experiences and destinations', 'trending_score': 92},
+                {'title': 'Travel Tips and Planning', 'description': 'How to plan the perfect trip', 'trending_score': 89},
+                {'title': 'Budget Travel Guides', 'description': 'Affordable travel options and tips', 'trending_score': 86},
+                {'title': 'Cultural Exploration', 'description': 'Learning about different cultures', 'trending_score': 83},
+                {'title': 'Travel Photography Tips', 'description': 'Capturing amazing travel moments', 'trending_score': 80}
+            ],
+            'fashion_beauty': [
+                {'title': 'Fashion Trends and Style Tips', 'description': 'Latest fashion advice and trends', 'trending_score': 88},
+                {'title': 'Beauty Tutorials and Reviews', 'description': 'Makeup and skincare guides', 'trending_score': 85},
+                {'title': 'Sustainable Fashion Guide', 'description': 'Eco-friendly clothing choices', 'trending_score': 82},
+                {'title': 'Body Positivity and Confidence', 'description': 'Self-love and acceptance', 'trending_score': 79},
+                {'title': 'Fashion History and Culture', 'description': 'Understanding fashion evolution', 'trending_score': 76}
+            ],
+            'parenting': [
+                {'title': 'Parenting Tips and Advice', 'description': 'Practical advice for parents', 'trending_score': 87},
+                {'title': 'Child Development Insights', 'description': 'Understanding child growth and behavior', 'trending_score': 84},
+                {'title': 'Family Activities and Crafts', 'description': 'Fun things to do with kids', 'trending_score': 81},
+                {'title': 'Parenting Challenges and Solutions', 'description': 'Dealing with common parenting issues', 'trending_score': 78},
+                {'title': 'Educational Content for Kids', 'description': 'Learning videos for children', 'trending_score': 75}
+            ],
+            'pets_animals': [
+                {'title': 'Pet Care Tips and Advice', 'description': 'How to take care of your pets', 'trending_score': 86},
+                {'title': 'Animal Training Techniques', 'description': 'Training pets effectively', 'trending_score': 83},
+                {'title': 'Pet Health and Nutrition', 'description': 'Keeping pets healthy and happy', 'trending_score': 80},
+                {'title': 'Wildlife and Nature Content', 'description': 'Amazing animal videos and facts', 'trending_score': 77},
+                {'title': 'Pet Adoption Stories', 'description': 'Heartwarming rescue and adoption tales', 'trending_score': 74}
+            ],
+            'automotive': [
+                {'title': 'Car Reviews and Comparisons', 'description': 'Detailed vehicle analysis', 'trending_score': 91},
+                {'title': 'Automotive Technology Updates', 'description': 'Latest car innovations and features', 'trending_score': 88},
+                {'title': 'Car Maintenance Tips', 'description': 'How to maintain your vehicle', 'trending_score': 85},
+                {'title': 'Electric Vehicle Guide', 'description': 'Everything about EVs', 'trending_score': 82},
+                {'title': 'Driving Tips and Safety', 'description': 'Safe driving practices', 'trending_score': 79}
+            ],
+            'real_estate': [
+                {'title': 'Real Estate Market Analysis', 'description': 'Understanding property markets', 'trending_score': 88},
+                {'title': 'Home Buying and Selling Tips', 'description': 'Real estate transaction advice', 'trending_score': 85},
+                {'title': 'Home Improvement Projects', 'description': 'DIY and renovation ideas', 'trending_score': 82},
+                {'title': 'Property Investment Strategies', 'description': 'Real estate investment advice', 'trending_score': 79},
+                {'title': 'Interior Design Inspiration', 'description': 'Home decoration and design', 'trending_score': 76}
+            ],
+            'marketing_advertising': [
+                {'title': 'Digital Marketing Strategies', 'description': 'Online marketing techniques', 'trending_score': 89},
+                {'title': 'Social Media Marketing Tips', 'description': 'Effective social media strategies', 'trending_score': 86},
+                {'title': 'Content Marketing Guide', 'description': 'Creating valuable content', 'trending_score': 83},
+                {'title': 'Brand Building Strategies', 'description': 'Building strong brands', 'trending_score': 80},
+                {'title': 'Marketing Analytics and Data', 'description': 'Understanding marketing metrics', 'trending_score': 77}
+            ],
+            'science_research': [
+                {'title': 'Scientific Discoveries Explained', 'description': 'Understanding complex scientific concepts', 'trending_score': 92},
+                {'title': 'Research Methodology Guide', 'description': 'How scientific research works', 'trending_score': 89},
+                {'title': 'Science News and Updates', 'description': 'Latest scientific developments', 'trending_score': 86},
+                {'title': 'Educational Science Content', 'description': 'Learning about science', 'trending_score': 83},
+                {'title': 'Science Experiments and Demonstrations', 'description': 'Hands-on science learning', 'trending_score': 80}
+            ],
+            'politics_society': [
+                {'title': 'Political Analysis and Commentary', 'description': 'Understanding political events', 'trending_score': 90},
+                {'title': 'Social Issues Discussion', 'description': 'Important societal topics', 'trending_score': 87},
+                {'title': 'Civic Engagement Guide', 'description': 'How to participate in democracy', 'trending_score': 84},
+                {'title': 'Policy Impact Analysis', 'description': 'How laws affect society', 'trending_score': 81},
+                {'title': 'International Relations Updates', 'description': 'Global political developments', 'trending_score': 78}
+            ],
+            'environment_sustainability': [
+                {'title': 'Environmental Science Explained', 'description': 'Understanding environmental issues', 'trending_score': 91},
+                {'title': 'Sustainable Living Practices', 'description': 'Eco-friendly lifestyle tips', 'trending_score': 88},
+                {'title': 'Climate Change Updates', 'description': 'Latest climate science and news', 'trending_score': 85},
+                {'title': 'Conservation Efforts', 'description': 'Protecting the environment', 'trending_score': 82},
+                {'title': 'Green Technology Innovations', 'description': 'Sustainable technology solutions', 'trending_score': 79}
             ]
         }
         
@@ -221,6 +557,118 @@ class GoogleSearchService:
                 {'title': 'Investment Strategies', 'description': 'Expert advice on building wealth', 'trending_score': 83},
                 {'title': 'Business Growth Tactics', 'description': 'Practical strategies for scaling', 'trending_score': 80},
                 {'title': 'Economic Trends', 'description': 'Understanding the current economy', 'trending_score': 77}
+            ],
+            'health_wellness': [
+                {'title': 'Mental Health Conversations', 'description': 'Open discussions about psychological well-being', 'trending_score': 88},
+                {'title': 'Fitness and Nutrition Science', 'description': 'Evidence-based health and wellness advice', 'trending_score': 85},
+                {'title': 'Mindfulness and Meditation', 'description': 'Stress reduction and mental clarity techniques', 'trending_score': 82},
+                {'title': 'Sleep Science and Optimization', 'description': 'Understanding and improving sleep quality', 'trending_score': 79},
+                {'title': 'Holistic Health Approaches', 'description': 'Integrative wellness and natural healing', 'trending_score': 76}
+            ],
+            'education': [
+                {'title': 'Learning Science and Methods', 'description': 'Evidence-based approaches to education', 'trending_score': 87},
+                {'title': 'Career Development Insights', 'description': 'Professional growth and advancement strategies', 'trending_score': 84},
+                {'title': 'Educational Technology Trends', 'description': 'How technology is transforming learning', 'trending_score': 81},
+                {'title': 'Student Success Stories', 'description': 'Inspiring educational journeys and achievements', 'trending_score': 78},
+                {'title': 'Lifelong Learning Strategies', 'description': 'Continuous education for adults', 'trending_score': 75}
+            ],
+            'entertainment': [
+                {'title': 'Behind the Scenes Stories', 'description': 'Insider perspectives from entertainment industry', 'trending_score': 90},
+                {'title': 'Movie and TV Analysis', 'description': 'Deep dives into film and television content', 'trending_score': 87},
+                {'title': 'Music Industry Insights', 'description': 'Behind-the-scenes of the music world', 'trending_score': 84},
+                {'title': 'Gaming Culture and Trends', 'description': 'Video game industry and community discussions', 'trending_score': 81},
+                {'title': 'Celebrity Interviews and Stories', 'description': 'Personal stories from entertainment figures', 'trending_score': 78}
+            ],
+            'lifestyle': [
+                {'title': 'Minimalism and Simple Living', 'description': 'Decluttering and intentional lifestyle choices', 'trending_score': 86},
+                {'title': 'Digital Wellness and Balance', 'description': 'Managing technology use and screen time', 'trending_score': 83},
+                {'title': 'Sustainable Living Practices', 'description': 'Eco-friendly lifestyle choices and tips', 'trending_score': 80},
+                {'title': 'Work-Life Integration', 'description': 'Balancing career and personal life', 'trending_score': 77},
+                {'title': 'Personal Development Journey', 'description': 'Self-improvement and growth strategies', 'trending_score': 74}
+            ],
+            'sports': [
+                {'title': 'Sports Analysis and Commentary', 'description': 'Expert insights on games and athletes', 'trending_score': 89},
+                {'title': 'Athlete Stories and Interviews', 'description': 'Personal journeys from sports stars', 'trending_score': 86},
+                {'title': 'Sports Psychology and Performance', 'description': 'Mental aspects of athletic achievement', 'trending_score': 83},
+                {'title': 'Sports History and Culture', 'description': 'Historical perspectives on sports', 'trending_score': 80},
+                {'title': 'Youth Sports Development', 'description': 'Supporting young athletes and programs', 'trending_score': 77}
+            ],
+            'food_cooking': [
+                {'title': 'Culinary Stories and Traditions', 'description': 'Food culture and cooking heritage', 'trending_score': 87},
+                {'title': 'Chef Interviews and Techniques', 'description': 'Professional cooking insights and tips', 'trending_score': 84},
+                {'title': 'Food Science and Nutrition', 'description': 'Understanding the science behind food', 'trending_score': 81},
+                {'title': 'Restaurant Industry Insights', 'description': 'Behind-the-scenes of the food business', 'trending_score': 78},
+                {'title': 'Sustainable Food Practices', 'description': 'Eco-friendly cooking and eating', 'trending_score': 75}
+            ],
+            'travel': [
+                {'title': 'Travel Stories and Adventures', 'description': 'Personal travel experiences and tales', 'trending_score': 90},
+                {'title': 'Cultural Immersion Stories', 'description': 'Deep cultural experiences and learning', 'trending_score': 87},
+                {'title': 'Budget Travel Strategies', 'description': 'Affordable travel tips and planning', 'trending_score': 84},
+                {'title': 'Sustainable Tourism Practices', 'description': 'Responsible and eco-friendly travel', 'trending_score': 81},
+                {'title': 'Digital Nomad Lifestyle', 'description': 'Working remotely while traveling', 'trending_score': 78}
+            ],
+            'fashion_beauty': [
+                {'title': 'Fashion Industry Insights', 'description': 'Behind-the-scenes of the fashion world', 'trending_score': 88},
+                {'title': 'Sustainable Fashion Movement', 'description': 'Eco-friendly fashion choices and trends', 'trending_score': 85},
+                {'title': 'Beauty Science and Trends', 'description': 'Understanding beauty products and practices', 'trending_score': 82},
+                {'title': 'Body Positivity and Confidence', 'description': 'Self-love and acceptance discussions', 'trending_score': 79},
+                {'title': 'Fashion History and Culture', 'description': 'Evolution of fashion and style', 'trending_score': 76}
+            ],
+            'parenting': [
+                {'title': 'Parenting Challenges and Solutions', 'description': 'Practical advice for modern parents', 'trending_score': 87},
+                {'title': 'Child Development Science', 'description': 'Understanding how children grow and learn', 'trending_score': 84},
+                {'title': 'Digital Parenting Strategies', 'description': 'Managing children\'s technology use', 'trending_score': 81},
+                {'title': 'Parent Mental Health Support', 'description': 'Wellness resources for parents', 'trending_score': 78},
+                {'title': 'Family Relationship Building', 'description': 'Strengthening family bonds and communication', 'trending_score': 75}
+            ],
+            'pets_animals': [
+                {'title': 'Pet Care and Training Tips', 'description': 'Expert advice on pet ownership', 'trending_score': 86},
+                {'title': 'Animal Welfare and Rescue', 'description': 'Protecting and helping animals in need', 'trending_score': 83},
+                {'title': 'Veterinary Science Insights', 'description': 'Understanding pet health and medicine', 'trending_score': 80},
+                {'title': 'Wildlife Conservation Stories', 'description': 'Protecting endangered species and habitats', 'trending_score': 77},
+                {'title': 'Pet Adoption Success Stories', 'description': 'Heartwarming rescue and adoption tales', 'trending_score': 74}
+            ],
+            'automotive': [
+                {'title': 'Car Industry Analysis', 'description': 'Understanding automotive trends and technology', 'trending_score': 89},
+                {'title': 'Electric Vehicle Revolution', 'description': 'The future of transportation and EVs', 'trending_score': 86},
+                {'title': 'Car Maintenance and Care', 'description': 'Keeping vehicles in top condition', 'trending_score': 83},
+                {'title': 'Automotive Safety Technology', 'description': 'Latest safety features and innovations', 'trending_score': 80},
+                {'title': 'Classic Car Stories', 'description': 'Vintage vehicles and automotive history', 'trending_score': 77}
+            ],
+            'real_estate': [
+                {'title': 'Real Estate Market Analysis', 'description': 'Understanding property trends and markets', 'trending_score': 88},
+                {'title': 'Investment Property Strategies', 'description': 'Real estate investment advice and tips', 'trending_score': 85},
+                {'title': 'Home Improvement Projects', 'description': 'DIY and renovation ideas and tips', 'trending_score': 82},
+                {'title': 'Sustainable Building Practices', 'description': 'Green construction and energy efficiency', 'trending_score': 79},
+                {'title': 'Real Estate Technology Trends', 'description': 'Digital tools and innovations in real estate', 'trending_score': 76}
+            ],
+            'marketing_advertising': [
+                {'title': 'Digital Marketing Strategies', 'description': 'Online marketing techniques and trends', 'trending_score': 89},
+                {'title': 'Brand Building Insights', 'description': 'Creating and maintaining strong brands', 'trending_score': 86},
+                {'title': 'Content Marketing Excellence', 'description': 'Creating valuable and engaging content', 'trending_score': 83},
+                {'title': 'Social Media Marketing Trends', 'description': 'Effective social media strategies', 'trending_score': 80},
+                {'title': 'Marketing Analytics and Data', 'description': 'Understanding marketing metrics and ROI', 'trending_score': 77}
+            ],
+            'science_research': [
+                {'title': 'Scientific Discoveries Explained', 'description': 'Understanding complex scientific concepts', 'trending_score': 92},
+                {'title': 'Research Methodology Insights', 'description': 'How scientific research works', 'trending_score': 89},
+                {'title': 'Climate Science Updates', 'description': 'Latest findings on environmental impact', 'trending_score': 86},
+                {'title': 'Medical Research Breakthroughs', 'description': 'Healthcare and treatment developments', 'trending_score': 83},
+                {'title': 'Space Exploration Updates', 'description': 'Latest developments in astronomy and space', 'trending_score': 80}
+            ],
+            'politics_society': [
+                {'title': 'Political Analysis and Commentary', 'description': 'Understanding political events and trends', 'trending_score': 91},
+                {'title': 'Social Justice Discussions', 'description': 'Important societal issues and equality', 'trending_score': 88},
+                {'title': 'Civic Engagement Guide', 'description': 'How to participate in democracy effectively', 'trending_score': 85},
+                {'title': 'Policy Impact Analysis', 'description': 'How laws and policies affect communities', 'trending_score': 82},
+                {'title': 'International Relations Updates', 'description': 'Global political developments and diplomacy', 'trending_score': 79}
+            ],
+            'environment_sustainability': [
+                {'title': 'Climate Action', 'description': 'Global efforts to address climate change', 'trending_score': 94},
+                {'title': 'Renewable Energy', 'description': 'Sustainable power sources', 'trending_score': 91},
+                {'title': 'Plastic Pollution', 'description': 'Waste reduction and recycling', 'trending_score': 88},
+                {'title': 'Biodiversity Conservation', 'description': 'Protection of ecosystems', 'trending_score': 85},
+                {'title': 'Sustainable Agriculture', 'description': 'Eco-friendly farming practices', 'trending_score': 82}
             ]
         }
         
@@ -356,6 +804,118 @@ class GoogleSearchService:
                 {'title': 'Book: "Personal Finance"', 'description': 'Managing your money effectively', 'trending_score': 79},
                 {'title': 'Book: "Business Growth"', 'description': 'Scaling your business for success', 'trending_score': 76},
                 {'title': 'Book: "Market Analysis"', 'description': 'Understanding financial markets and trends', 'trending_score': 73}
+            ],
+            'health_wellness': [
+                {'title': 'Book: "Mental Health Guide"', 'description': 'Understanding and improving psychological well-being', 'trending_score': 84},
+                {'title': 'Book: "Fitness Fundamentals"', 'description': 'Building a sustainable exercise routine', 'trending_score': 81},
+                {'title': 'Book: "Nutrition Science"', 'description': 'Evidence-based nutrition and diet advice', 'trending_score': 78},
+                {'title': 'Book: "Sleep Optimization"', 'description': 'Improving sleep quality and habits', 'trending_score': 75},
+                {'title': 'Book: "Mindfulness Practice"', 'description': 'Meditation and stress reduction techniques', 'trending_score': 72}
+            ],
+            'education': [
+                {'title': 'Book: "Learning Science"', 'description': 'Evidence-based approaches to effective learning', 'trending_score': 83},
+                {'title': 'Book: "Career Development"', 'description': 'Professional growth and advancement strategies', 'trending_score': 80},
+                {'title': 'Book: "Educational Technology"', 'description': 'How technology is transforming education', 'trending_score': 77},
+                {'title': 'Book: "Study Methods"', 'description': 'Effective study techniques and strategies', 'trending_score': 74},
+                {'title': 'Book: "Lifelong Learning"', 'description': 'Continuous education for adults', 'trending_score': 71}
+            ],
+            'entertainment': [
+                {'title': 'Book: "Film Analysis"', 'description': 'Understanding cinema and storytelling', 'trending_score': 86},
+                {'title': 'Book: "Music Industry"', 'description': 'Behind-the-scenes of the music business', 'trending_score': 83},
+                {'title': 'Book: "Gaming Culture"', 'description': 'Video games and their impact on society', 'trending_score': 80},
+                {'title': 'Book: "Celebrity Culture"', 'description': 'Understanding fame and media influence', 'trending_score': 77},
+                {'title': 'Book: "Entertainment History"', 'description': 'Evolution of entertainment media', 'trending_score': 74}
+            ],
+            'lifestyle': [
+                {'title': 'Book: "Minimalism Guide"', 'description': 'Simple living and intentional lifestyle choices', 'trending_score': 82},
+                {'title': 'Book: "Digital Wellness"', 'description': 'Balancing technology use and well-being', 'trending_score': 79},
+                {'title': 'Book: "Sustainable Living"', 'description': 'Eco-friendly lifestyle practices', 'trending_score': 76},
+                {'title': 'Book: "Work-Life Balance"', 'description': 'Managing career and personal life', 'trending_score': 73},
+                {'title': 'Book: "Personal Development"', 'description': 'Self-improvement and growth strategies', 'trending_score': 70}
+            ],
+            'sports': [
+                {'title': 'Book: "Sports Psychology"', 'description': 'Mental aspects of athletic performance', 'trending_score': 85},
+                {'title': 'Book: "Training Methods"', 'description': 'Effective athletic training techniques', 'trending_score': 82},
+                {'title': 'Book: "Sports History"', 'description': 'Evolution of sports and athletics', 'trending_score': 79},
+                {'title': 'Book: "Team Dynamics"', 'description': 'Building effective sports teams', 'trending_score': 76},
+                {'title': 'Book: "Sports Nutrition"', 'description': 'Fueling athletic performance', 'trending_score': 73}
+            ],
+            'food_cooking': [
+                {'title': 'Book: "Culinary Techniques"', 'description': 'Professional cooking methods and skills', 'trending_score': 84},
+                {'title': 'Book: "Food Science"', 'description': 'Understanding the science behind cooking', 'trending_score': 81},
+                {'title': 'Book: "Nutrition Guide"', 'description': 'Healthy eating and meal planning', 'trending_score': 78},
+                {'title': 'Book: "International Cuisine"', 'description': 'Global cooking traditions and recipes', 'trending_score': 75},
+                {'title': 'Book: "Sustainable Cooking"', 'description': 'Eco-friendly food practices', 'trending_score': 72}
+            ],
+            'travel': [
+                {'title': 'Book: "Travel Planning"', 'description': 'How to plan the perfect trip', 'trending_score': 87},
+                {'title': 'Book: "Cultural Immersion"', 'description': 'Deep travel experiences and learning', 'trending_score': 84},
+                {'title': 'Book: "Budget Travel"', 'description': 'Affordable travel strategies', 'trending_score': 81},
+                {'title': 'Book: "Sustainable Tourism"', 'description': 'Responsible travel practices', 'trending_score': 78},
+                {'title': 'Book: "Travel Photography"', 'description': 'Capturing amazing travel moments', 'trending_score': 75}
+            ],
+            'fashion_beauty': [
+                {'title': 'Book: "Fashion History"', 'description': 'Evolution of fashion and style', 'trending_score': 83},
+                {'title': 'Book: "Sustainable Fashion"', 'description': 'Eco-friendly clothing choices', 'trending_score': 80},
+                {'title': 'Book: "Beauty Science"', 'description': 'Understanding beauty products and practices', 'trending_score': 77},
+                {'title': 'Book: "Style Guide"', 'description': 'Building a personal fashion style', 'trending_score': 74},
+                {'title': 'Book: "Body Positivity"', 'description': 'Self-love and confidence building', 'trending_score': 71}
+            ],
+            'parenting': [
+                {'title': 'Book: "Child Development"', 'description': 'Understanding how children grow and learn', 'trending_score': 84},
+                {'title': 'Book: "Parenting Strategies"', 'description': 'Effective parenting techniques', 'trending_score': 81},
+                {'title': 'Book: "Digital Parenting"', 'description': 'Managing children\'s technology use', 'trending_score': 78},
+                {'title': 'Book: "Family Communication"', 'description': 'Building strong family relationships', 'trending_score': 75},
+                {'title': 'Book: "Parent Wellness"', 'description': 'Taking care of yourself as a parent', 'trending_score': 72}
+            ],
+            'pets_animals': [
+                {'title': 'Book: "Pet Care Guide"', 'description': 'Comprehensive pet care and training', 'trending_score': 83},
+                {'title': 'Book: "Animal Behavior"', 'description': 'Understanding pet psychology', 'trending_score': 80},
+                {'title': 'Book: "Veterinary Care"', 'description': 'Pet health and medical information', 'trending_score': 77},
+                {'title': 'Book: "Wildlife Conservation"', 'description': 'Protecting animals and habitats', 'trending_score': 74},
+                {'title': 'Book: "Pet Training"', 'description': 'Effective training methods for pets', 'trending_score': 71}
+            ],
+            'automotive': [
+                {'title': 'Book: "Car Maintenance"', 'description': 'Keeping your vehicle in top condition', 'trending_score': 86},
+                {'title': 'Book: "Electric Vehicles"', 'description': 'Understanding EV technology and adoption', 'trending_score': 83},
+                {'title': 'Book: "Automotive Technology"', 'description': 'Latest innovations in cars', 'trending_score': 80},
+                {'title': 'Book: "Driving Safety"', 'description': 'Safe driving practices and techniques', 'trending_score': 77},
+                {'title': 'Book: "Car History"', 'description': 'Evolution of automotive industry', 'trending_score': 74}
+            ],
+            'real_estate': [
+                {'title': 'Book: "Real Estate Investment"', 'description': 'Property investment strategies', 'trending_score': 85},
+                {'title': 'Book: "Home Buying Guide"', 'description': 'Complete guide to purchasing property', 'trending_score': 82},
+                {'title': 'Book: "Property Management"', 'description': 'Managing rental properties effectively', 'trending_score': 79},
+                {'title': 'Book: "Real Estate Market"', 'description': 'Understanding property markets', 'trending_score': 76},
+                {'title': 'Book: "Home Improvement"', 'description': 'DIY and renovation projects', 'trending_score': 73}
+            ],
+            'marketing_advertising': [
+                {'title': 'Book: "Digital Marketing"', 'description': 'Online marketing strategies and techniques', 'trending_score': 84},
+                {'title': 'Book: "Brand Building"', 'description': 'Creating and maintaining strong brands', 'trending_score': 81},
+                {'title': 'Book: "Content Marketing"', 'description': 'Creating valuable content for marketing', 'trending_score': 78},
+                {'title': 'Book: "Social Media Marketing"', 'description': 'Effective social media strategies', 'trending_score': 75},
+                {'title': 'Book: "Marketing Analytics"', 'description': 'Understanding marketing metrics', 'trending_score': 72}
+            ],
+            'science_research': [
+                {'title': 'Book: "Scientific Method"', 'description': 'Understanding how science works', 'trending_score': 87},
+                {'title': 'Book: "Research Methods"', 'description': 'Conducting effective research', 'trending_score': 84},
+                {'title': 'Book: "Climate Science"', 'description': 'Understanding environmental science', 'trending_score': 81},
+                {'title': 'Book: "Medical Research"', 'description': 'Healthcare and medical discoveries', 'trending_score': 78},
+                {'title': 'Book: "Space Science"', 'description': 'Astronomy and space exploration', 'trending_score': 75}
+            ],
+            'politics_society': [
+                {'title': 'Book: "Political Science"', 'description': 'Understanding political systems', 'trending_score': 86},
+                {'title': 'Book: "Social Justice"', 'description': 'Equality and civil rights movements', 'trending_score': 83},
+                {'title': 'Book: "Civic Engagement"', 'description': 'Participating in democracy', 'trending_score': 80},
+                {'title': 'Book: "Policy Analysis"', 'description': 'Understanding how policies work', 'trending_score': 77},
+                {'title': 'Book: "International Relations"', 'description': 'Global politics and diplomacy', 'trending_score': 74}
+            ],
+            'environment_sustainability': [
+                {'title': 'Book: "Climate Action"', 'description': 'Addressing climate change challenges', 'trending_score': 89},
+                {'title': 'Book: "Sustainable Living"', 'description': 'Eco-friendly lifestyle practices', 'trending_score': 86},
+                {'title': 'Book: "Renewable Energy"', 'description': 'Sustainable energy solutions', 'trending_score': 83},
+                {'title': 'Book: "Conservation Biology"', 'description': 'Protecting biodiversity and ecosystems', 'trending_score': 80},
+                {'title': 'Book: "Environmental Policy"', 'description': 'Environmental protection and regulation', 'trending_score': 77}
             ]
         }
         
