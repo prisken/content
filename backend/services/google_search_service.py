@@ -914,8 +914,36 @@ class GoogleSearchService:
         durations = ['30-45 min', '45-60 min', '60-90 min', '20-30 min']
         episode_counts = ['50+', '100+', '200+', '300+', '500+']
         
+        # Generate different cover images based on podcast content
+        cover_images = [
+            'https://images.unsplash.com/photo-1552664730-d307ca884978?w=300&h=300&fit=crop',  # Business
+            'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=300&h=300&fit=crop',  # Technology
+            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=300&fit=crop',  # Health
+            'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=300&h=300&fit=crop',  # Food
+            'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=300&h=300&fit=crop',  # Education
+            'https://images.unsplash.com/photo-1547658719-da2b51169166?w=300&h=300&fit=crop',  # Creative
+            'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=300&h=300&fit=crop',  # Finance
+            'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=300&h=300&fit=crop',  # Entrepreneurship
+        ]
+        
+        # Select cover based on podcast title/content
+        cover = random.choice(cover_images)
+        
+        # Try to match cover to content
+        title_lower = title.lower()
+        if any(word in title_lower for word in ['business', 'finance', 'money', 'entrepreneur']):
+            cover = 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=300&h=300&fit=crop'
+        elif any(word in title_lower for word in ['tech', 'ai', 'programming', 'coding']):
+            cover = 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=300&h=300&fit=crop'
+        elif any(word in title_lower for word in ['health', 'fitness', 'wellness', 'nutrition']):
+            cover = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=300&fit=crop'
+        elif any(word in title_lower for word in ['food', 'cooking', 'recipe', 'kitchen']):
+            cover = 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=300&h=300&fit=crop'
+        elif any(word in title_lower for word in ['education', 'learning', 'school', 'study']):
+            cover = 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=300&h=300&fit=crop'
+        
         return {
-            'cover': 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=300&h=300&fit=crop',
+            'cover': cover,
             'duration': random.choice(durations),
             'episodes': random.choice(episode_counts),
             'host': host
