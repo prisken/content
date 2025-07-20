@@ -10,6 +10,7 @@ try:
     CLOUDINARY_AVAILABLE = True
 except ImportError:
     CLOUDINARY_AVAILABLE = False
+    print("Info: Cloudinary not available - using Stable Diffusion for image generation")
 
 try:
     from PIL import Image as PILImage, ImageDraw, ImageFont
@@ -66,8 +67,31 @@ def generate_image():
         except ImportError:
             image_prompt = generate_image_prompt(content_text, image_style, platform, direction)
         
-        # Create mock image (replace with actual AI generation)
-        image_url = create_mock_image(image_prompt, image_style, user_email)
+        # Generate image using Stable Diffusion
+        try:
+            from services.stable_diffusion import StableDiffusionService
+            stable_diffusion = StableDiffusionService()
+            
+            # Generate image using Stable Diffusion
+            image_result = stable_diffusion.generate_image_with_prompt(
+                platform=platform,
+                prompt=image_prompt,
+                content_direction=direction,
+                topic=content_text[:50],  # Use first 50 chars as topic
+                tone='professional',  # Default tone
+                language='en'
+            )
+            
+            if 'error' in image_result:
+                # Fallback to mock image if Stable Diffusion fails
+                image_url = create_mock_image(image_prompt, image_style, user_email)
+            else:
+                # Use the generated image data
+                image_url = f"data:image/jpeg;base64,{image_result.get('image_data', '')}"
+                
+        except Exception as e:
+            # Fallback to mock image if Stable Diffusion service fails
+            image_url = create_mock_image(image_prompt, image_style, user_email)
         
         return jsonify({
             'success': True,

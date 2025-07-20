@@ -13,14 +13,14 @@ try:
     CLOUDINARY_AVAILABLE = True
 except ImportError:
     CLOUDINARY_AVAILABLE = False
-    print("Warning: Cloudinary not available. Image features will be limited.")
+    print("Info: Cloudinary not available. Using Stable Diffusion for image generation.")
 
 try:
     from celery import Celery
     CELERY_AVAILABLE = True
 except ImportError:
     CELERY_AVAILABLE = False
-    print("Warning: Celery not available. Background jobs will be disabled.")
+    print("Info: Celery not available. Background jobs will be disabled.")
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -53,15 +53,16 @@ CORS(app, origins=[
     'http://localhost:5000'
 ], supports_credentials=True, methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'])
 
-# Cloudinary configuration
+# Cloudinary configuration (optional - using Stable Diffusion as primary)
 if CLOUDINARY_AVAILABLE:
     cloudinary.config(
         cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME'),
         api_key=os.environ.get('CLOUDINARY_API_KEY'),
         api_secret=os.environ.get('CLOUDINARY_API_SECRET')
     )
+    print("Info: Cloudinary configured as backup image service")
 else:
-    print("Cloudinary not configured - image features disabled")
+    print("Info: Cloudinary not configured - using Stable Diffusion for image generation")
 
 # Celery configuration
 if CELERY_AVAILABLE:
@@ -69,7 +70,7 @@ if CELERY_AVAILABLE:
     celery.conf.update(app.config)
 else:
     celery = None
-    print("Celery not configured - background jobs disabled")
+    print("Info: Celery not configured - background jobs disabled")
 
 # Import routes
 from routes import auth_routes, content_routes, image_routes, api_routes, admin_routes
