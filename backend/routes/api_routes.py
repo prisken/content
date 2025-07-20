@@ -1065,81 +1065,48 @@ def generate_content():
         image_style = data.get('imageStyle', 'professional')
         generate_images = data.get('generate_images', True)
         
-        # Step 1: Generate content using DeepSeek AI
-        if AI_SERVICE_AVAILABLE:
-            content_text = ai_service.generate_content(
-                direction, platform, source, selected_topic, tone, language, generate_images
-            )
-        else:
-            content_text = generate_content_text(direction, platform, source, selected_topic, tone, language)
+        # Step 1: Generate content using fallback (simpler and faster)
+        content_text = generate_content_text(direction, platform, source, selected_topic, tone, language)
         
-        # Step 2: AI-powered content analysis and optimization
-        if AI_SERVICE_AVAILABLE:
-            # Analyze content for SEO and engagement optimization
-            content_analysis = ai_service.analyze_content_quality(content_text, platform, direction)
-            
-            # Generate AI-powered hashtags and optimization suggestions
-            ai_hashtags = ai_service.generate_hashtags(content_text, direction, platform)
-            optimization_suggestions = ai_service.generate_optimization_suggestions(content_text, platform)
-            
-            # AI-powered content enhancement
-            enhanced_content = ai_service.enhance_content(content_text, platform, tone, direction)
-            if enhanced_content:
-                content_text = enhanced_content
-        else:
-            # Fallback analysis
-            content_analysis = {
-                'readability_score': calculate_readability_score(content_text),
-                'engagement_potential': 'medium',
-                'seo_score': 'basic'
-            }
-            ai_hashtags = extract_hashtags(content_text)
-            optimization_suggestions = generate_optimization_suggestions(content_text, platform)
+        # Step 2: Basic content analysis (no AI service to avoid timeouts)
+        content_analysis = {
+            'readability_score': calculate_readability_score(content_text),
+            'engagement_potential': 'medium',
+            'seo_score': 'basic'
+        }
+        ai_hashtags = extract_hashtags(content_text)
+        optimization_suggestions = generate_optimization_suggestions(content_text, platform)
         
-        # Step 3: Analyze the generated content to create image prompts
-        image_prompts = analyze_content_for_image_generation(content_text, direction, platform, tone, image_style)
+        # Step 3: Simple image prompts (no complex analysis)
+        image_prompts = {
+            'primary': f"Professional {direction} related image for {platform}",
+            'variations': [
+                f"Creative {direction} visual for {platform}",
+                f"Modern {direction} design for {platform}"
+            ]
+        }
         
-        # Step 4: Generate images using Stable Diffusion with content-based prompts
-        generated_images = {'primary': None, 'variations': [], 'total_count': 0}
-        if generate_images and image_prompts:
-            try:
-                # Temporarily disable image generation to fix timeout issues
-                print("Image generation temporarily disabled to prevent timeouts")
-                generated_images = {
-                    'primary': None,
-                    'variations': [],
-                    'total_count': 0,
-                    'note': 'Image generation temporarily disabled',
-                    'prompts_used': image_prompts
-                }
-                
-                # TODO: Re-enable Stable Diffusion after fixing timeout issues
-                # from services.stable_diffusion import StableDiffusionService
-                # stable_diffusion = StableDiffusionService()
-                # ... rest of image generation code
-                
-            except Exception as e:
-                print(f"Error generating images: {str(e)}")
-                generated_images = {
-                    'primary': None,
-                    'variations': [],
-                    'total_count': 0,
-                    'error': str(e),
-                    'prompts_used': image_prompts
-                }
+        # Step 4: No image generation (temporarily disabled)
+        generated_images = {
+            'primary': None,
+            'variations': [],
+            'total_count': 0,
+            'note': 'Image generation temporarily disabled to prevent timeouts',
+            'prompts_used': image_prompts
+        }
         
-        # Create enhanced response with analytics
+        # Create simplified response
         response = {
             'content': {
                 'text': content_text,
                 'length': len(content_text),
-                'max_length': 1300,  # Will be updated based on platform
-                'hashtags': ai_hashtags if AI_SERVICE_AVAILABLE else extract_hashtags(content_text),
+                'max_length': 1300,
+                'hashtags': ai_hashtags,
                 'call_to_action': extract_call_to_action(content_text),
                 'word_count': len(content_text.split()),
-                'readability_score': content_analysis.get('readability_score', calculate_readability_score(content_text)) if AI_SERVICE_AVAILABLE else calculate_readability_score(content_text)
+                'readability_score': content_analysis.get('readability_score', 70)
             },
-            'variations': [],  # Could be generated if needed
+            'variations': [],
             'images': generated_images,
             'media_suggestions': {
                 'images': [f"Professional {direction} related image"],
@@ -1161,7 +1128,7 @@ def generate_content():
                 'generated_at': datetime.utcnow().isoformat() + 'Z',
                 'platform': platform.upper(),
                 'content_category': direction,
-                'ai_enhanced': AI_SERVICE_AVAILABLE
+                'ai_enhanced': False
             },
             'cultural_context': {
                 'region': 'global',
@@ -1174,15 +1141,15 @@ def generate_content():
             'analytics': generate_analytics_data(platform, direction, tone, content_text),
             'validation': {
                 'compliance_check': validate_content(content_text, platform),
-                'quality_score': content_analysis.get('quality_score', calculate_content_quality_score(content_text, platform)) if AI_SERVICE_AVAILABLE else calculate_content_quality_score(content_text, platform),
-                'optimization_suggestions': optimization_suggestions if AI_SERVICE_AVAILABLE else generate_optimization_suggestions(content_text, platform),
+                'quality_score': calculate_content_quality_score(content_text, platform),
+                'optimization_suggestions': optimization_suggestions,
                 'performance_insights': generate_performance_insights(platform),
-                'ai_analysis': content_analysis if AI_SERVICE_AVAILABLE else None
+                'ai_analysis': None
             },
             'export_formats': {
                 'social_media_ready': True,
                 'copy_paste_text': content_text,
-                'hashtag_list': ai_hashtags if AI_SERVICE_AVAILABLE else extract_hashtags(content_text),
+                'hashtag_list': ai_hashtags,
                 'image_specifications': get_platform_specifications(platform).get('image_format', {}),
                 'scheduling_recommendations': {
                     'optimal_time': get_optimal_posting_time(platform),
@@ -1198,6 +1165,7 @@ def generate_content():
         })
         
     except Exception as e:
+        print(f"Error in generate_content: {str(e)}")
         return jsonify({
             'success': False,
             'error': str(e)
