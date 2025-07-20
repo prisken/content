@@ -1607,45 +1607,30 @@ Generated on: ${new Date().toLocaleString()}
                       </div>
                     )}
 
-                    <div className="space-y-3">
-                      <button
-                        onClick={generateTopics}
-                        disabled={isLoadingTopics}
-                        className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-all duration-200"
-                      >
-                        {isLoadingTopics ? (
-                          <>
-                            <RefreshCw className="w-5 h-5 animate-spin" />
-                            Generating Topics...
-                          </>
-                        ) : (
-                          <>
-                            <Sparkles className="w-5 h-5" />
-                            Generate Topics
-                          </>
-                        )}
-                      </button>
-                      
-                      {(selectedVideo || selectedPodcast) && (
-                        <button
-                          onClick={generateTopicsFromSelectedContent}
-                          disabled={isLoadingTopics}
-                          className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-all duration-200"
-                        >
-                          {isLoadingTopics ? (
-                            <>
-                              <RefreshCw className="w-5 h-5 animate-spin" />
-                              Generating Topics from Content...
-                            </>
-                          ) : (
-                            <>
-                              <Sparkles className="w-5 h-5" />
-                              Generate Topics from Selected {selectedVideo ? 'Video' : 'Podcast'}
-                            </>
-                          )}
-                        </button>
+                    <button
+                      onClick={(selectedVideo || selectedPodcast) ? generateTopicsFromSelectedContent : generateTopics}
+                      disabled={isLoadingTopics}
+                      className={`w-full font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-all duration-200 ${
+                        (selectedVideo || selectedPodcast) 
+                          ? 'bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white'
+                          : 'bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white'
+                      }`}
+                    >
+                      {isLoadingTopics ? (
+                        <>
+                          <RefreshCw className="w-5 h-5 animate-spin" />
+                          Generating Topics...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-5 h-5" />
+                          {(selectedVideo || selectedPodcast) 
+                            ? `Generate Topics from Selected ${selectedVideo ? 'Video' : 'Podcast'}`
+                            : 'Generate Topics'
+                          }
+                        </>
                       )}
-                    </div>
+                    </button>
                   </div>
                 )}
 
