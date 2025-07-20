@@ -7,6 +7,76 @@ import { useAuth } from '../contexts/AuthContext'
 import { useLanguage } from '../contexts/LanguageContext'
 import { useRouter } from 'next/router'
 
+// GeneratedImage component to handle image fetching
+function GeneratedImage({ imageHash }) {
+  const [imageData, setImageData] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      if (!imageHash || imageHash === 'generated') {
+        setLoading(false)
+        return
+      }
+
+      try {
+        setLoading(true)
+        setError(false)
+        
+        // Fetch image data from the backend
+        const response = await fetch(`${process.env.BACKEND_URL || 'https://content-contentmaker.up.railway.app'}/api/image/${imageHash}`)
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch image')
+        }
+        
+        const data = await response.json()
+        
+        if (data.success && data.data?.image_data) {
+          setImageData(data.data.image_data)
+        } else {
+          throw new Error('No image data received')
+        }
+      } catch (err) {
+        console.error('Error fetching image:', err)
+        setError(true)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchImage()
+  }, [imageHash])
+
+  if (loading) {
+    return (
+      <div className="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center">
+        <RefreshCw className="w-6 h-6 animate-spin text-gray-500" />
+      </div>
+    )
+  }
+
+  if (error || !imageData) {
+    return (
+      <div className="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500">
+        <div className="text-center">
+          <div className="text-2xl mb-2">🖼️</div>
+          <div className="text-sm">Image not available</div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <img 
+      src={`data:image/jpeg;base64,${imageData}`} 
+      alt="Generated image"
+      className="w-full h-48 object-cover rounded-lg"
+    />
+  )
+}
+
 export default function Generator() {
   const [currentStep, setCurrentStep] = useState(1)
   const [isGenerating, setIsGenerating] = useState(false)
@@ -1207,21 +1277,13 @@ Generated on: ${new Date().toLocaleString()}
                     {generatedContent.images.primary && (
                       <div className="border rounded-lg p-4">
                         <h4 className="font-medium mb-2">Primary Image</h4>
-                        <img 
-                          src={`data:image/jpeg;base64,${generatedContent.images.primary}`} 
-                          alt="Primary generated image"
-                          className="w-full h-48 object-cover rounded-lg"
-                        />
+                        <GeneratedImage imageHash={generatedContent.images.primary} />
                       </div>
                     )}
                     {generatedContent.images.variations && generatedContent.images.variations.map((image, index) => (
                       <div key={index} className="border rounded-lg p-4">
                         <h4 className="font-medium mb-2">Variation {index + 1}</h4>
-                        <img 
-                          src={`data:image/jpeg;base64,${image}`} 
-                          alt={`Generated image variation ${index + 1}`}
-                          className="w-full h-48 object-cover rounded-lg"
-                        />
+                        <GeneratedImage imageHash={image} />
                       </div>
                     ))}
                   </div>
