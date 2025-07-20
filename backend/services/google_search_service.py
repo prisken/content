@@ -878,8 +878,11 @@ class GoogleSearchService:
     def get_youtube_video_details(self, video_id: str) -> Dict[str, Any]:
         """Get YouTube video details by video ID"""
         try:
+            print(f"🔍 DEBUG: Starting YouTube video details fetch for video ID: {video_id}")
+            
             # Try to get real data first
             if self.api_key:
+                print(f"🔍 DEBUG: API key available, trying YouTube Data API")
                 # Use YouTube Data API v3
                 import requests
                 
@@ -890,10 +893,13 @@ class GoogleSearchService:
                     'id': video_id
                 }
                 
+                print(f"🔍 DEBUG: Making YouTube Data API request to: {url}")
                 response = requests.get(url, params=params)
+                print(f"🔍 DEBUG: YouTube Data API response status: {response.status_code}")
                 
                 if response.status_code == 200:
                     data = response.json()
+                    print(f"🔍 DEBUG: YouTube Data API response: {data}")
                     if data.get('items'):
                         item = data['items'][0]
                         snippet = item.get('snippet', {})
@@ -908,7 +914,7 @@ class GoogleSearchService:
                         view_count = statistics.get('viewCount', '0')
                         formatted_views = self._format_view_count(int(view_count))
                         
-                        return {
+                        result = {
                             'title': snippet.get('title', 'Unknown Title'),
                             'channel': snippet.get('channelTitle', 'Unknown Channel'),
                             'description': snippet.get('description', 'No description available'),
@@ -918,12 +924,21 @@ class GoogleSearchService:
                             'published_at': snippet.get('publishedAt', ''),
                             'tags': snippet.get('tags', [])
                         }
+                        print(f"✅ DEBUG: Successfully got video details from YouTube Data API: {result}")
+                        return result
+                    else:
+                        print("⚠️ DEBUG: No items found in YouTube Data API response")
+                else:
+                    print(f"❌ DEBUG: YouTube Data API error: {response.status_code} - {response.text}")
+            else:
+                print("⚠️ DEBUG: No API key available, skipping YouTube Data API")
             
             # Fallback to web scraping or mock data
+            print("🔍 DEBUG: Falling back to web scraping method")
             return self._get_youtube_video_details_fallback(video_id)
             
         except Exception as e:
-            print(f"Error fetching YouTube video details: {e}")
+            print(f"❌ DEBUG: Error fetching YouTube video details: {e}")
             return self._get_youtube_video_details_fallback(video_id)
     
     def _get_youtube_video_details_fallback(self, video_id: str) -> Dict[str, Any]:
@@ -932,27 +947,89 @@ class GoogleSearchService:
             # Try web scraping as fallback
             import requests
             from bs4 import BeautifulSoup
+            import re
+            import json
             
             url = f'https://www.youtube.com/watch?v={video_id}'
             headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                'Accept-Language': 'en-US,en;q=0.5',
+                'Accept-Encoding': 'gzip, deflate',
+                'DNT': '1',
+                'Connection': 'keep-alive',
+                'Upgrade-Insecure-Requests': '1',
             }
             
-            response = requests.get(url, headers=headers)
+            response = requests.get(url, headers=headers, timeout=10)
             if response.status_code == 200:
-                soup = BeautifulSoup(response.content, 'html.parser')
+                content = response.text
                 
-                # Try to extract title
-                title_tag = soup.find('meta', property='og:title')
-                title = title_tag.get('content', 'Unknown Title') if title_tag else 'Unknown Title'
+                # Try to extract data from YouTube's initial data
+                try:
+                    # Look for ytInitialData
+                    yt_initial_data_match = re.search(r'var ytInitialData = ({.*?});', content)
+                    if yt_initial_data_match:
+                        yt_data = json.loads(yt_initial_data_match.group(1))
+                        
+                        # Navigate through the data structure to find video info
+                        video_details = self._extract_video_details_from_yt_data(yt_data, video_id)
+                        if video_details:
+                            return video_details
+                except Exception as e:
+                    print(f"Error parsing ytInitialData: {e}")
                 
-                # Try to extract channel
-                channel_tag = soup.find('link', itemprop='name')
-                channel = channel_tag.get('content', 'Unknown Channel') if channel_tag else 'Unknown Channel'
+                # Fallback to meta tags
+                soup = BeautifulSoup(content, 'html.parser')
+                
+                # Try to extract title from multiple sources
+                title = 'Unknown Title'
+                title_sources = [
+                    soup.find('meta', property='og:title'),
+                    soup.find('meta', {'name': 'title'}),
+                    soup.find('title')
+                ]
+                
+                for title_source in title_sources:
+                    if title_source:
+                        if title_source.name == 'title':
+                            title = title_source.get_text().replace(' - YouTube', '').strip()
+                        else:
+                            title = title_source.get('content', '').strip()
+                        if title and title != 'Unknown Title':
+                            break
+                
+                # Try to extract channel from multiple sources
+                channel = 'Unknown Channel'
+                channel_sources = [
+                    soup.find('link', {'itemprop': 'name'}),
+                    soup.find('meta', {'name': 'author'}),
+                    soup.find('a', {'class': 'yt-simple-endpoint'})
+                ]
+                
+                for channel_source in channel_sources:
+                    if channel_source:
+                        if channel_source.name == 'a':
+                            channel = channel_source.get_text().strip()
+                        else:
+                            channel = channel_source.get('content', '').strip()
+                        if channel and channel != 'Unknown Channel':
+                            break
                 
                 # Try to extract description
-                desc_tag = soup.find('meta', property='og:description')
-                description = desc_tag.get('content', 'No description available') if desc_tag else 'No description available'
+                description = 'No description available'
+                desc_sources = [
+                    soup.find('meta', property='og:description'),
+                    soup.find('meta', {'name': 'description'}),
+                    soup.find('meta', {'itemprop': 'description'})
+                ]
+                
+                for desc_source in desc_sources:
+                    if desc_source:
+                        desc = desc_source.get('content', '').strip()
+                        if desc and desc != 'No description available':
+                            description = desc
+                            break
                 
                 return {
                     'title': title,
@@ -978,6 +1055,45 @@ class GoogleSearchService:
             'published_at': '',
             'tags': []
         }
+    
+    def _extract_video_details_from_yt_data(self, yt_data: Dict[str, Any], video_id: str) -> Optional[Dict[str, Any]]:
+        """Extract video details from YouTube's initial data"""
+        try:
+            # Navigate through the complex YouTube data structure
+            if 'contents' in yt_data:
+                contents = yt_data['contents']
+                if 'twoColumnWatchNextResults' in contents:
+                    watch_next = contents['twoColumnWatchNextResults']
+                    if 'results' in watch_next:
+                        results = watch_next['results']
+                        if 'results' in results:
+                            for result in results['results']:
+                                if 'videoPrimaryInfoRenderer' in result:
+                                    video_info = result['videoPrimaryInfoRenderer']
+                                    title = video_info.get('title', {}).get('runs', [{}])[0].get('text', 'Unknown Title')
+                                    
+                                    # Try to get channel info
+                                    channel = 'Unknown Channel'
+                                    if 'owner' in video_info:
+                                        owner = video_info['owner']
+                                        if 'videoOwnerRenderer' in owner:
+                                            channel_renderer = owner['videoOwnerRenderer']
+                                            channel = channel_renderer.get('title', {}).get('runs', [{}])[0].get('text', 'Unknown Channel')
+                                    
+                                    return {
+                                        'title': title,
+                                        'channel': channel,
+                                        'description': 'Description extracted from video data',
+                                        'thumbnail': f'https://img.youtube.com/vi/{video_id}/maxresdefault.jpg',
+                                        'duration': 'Unknown',
+                                        'views': 'Unknown',
+                                        'published_at': '',
+                                        'tags': []
+                                    }
+        except Exception as e:
+            print(f"Error extracting from ytInitialData: {e}")
+        
+        return None
     
     def _format_duration(self, duration: str) -> str:
         """Format ISO 8601 duration to readable format"""

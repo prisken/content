@@ -2128,6 +2128,8 @@ def get_youtube_video_info():
         data = request.get_json()
         video_id = data.get('videoId')
         
+        print(f"🔍 DEBUG: YouTube video info request for video ID: {video_id}")
+        
         if not video_id:
             return jsonify({
                 'success': False,
@@ -2136,19 +2138,23 @@ def get_youtube_video_info():
         
         if GOOGLE_SERVICE_AVAILABLE:
             google_service = GoogleSearchService()
+            print(f"🔍 DEBUG: Calling get_youtube_video_details for video ID: {video_id}")
             video_info = google_service.get_youtube_video_details(video_id)
+            print(f"🔍 DEBUG: Received video info: {video_info}")
             
             return jsonify({
                 'success': True,
                 'data': video_info
             })
         else:
+            print("⚠️ DEBUG: Google service not available")
             return jsonify({
                 'success': False,
                 'error': 'YouTube service not available'
             }), 503
             
     except Exception as e:
+        print(f"❌ DEBUG: Error in get_youtube_video_info: {str(e)}")
         return jsonify({
             'success': False,
             'error': str(e)
