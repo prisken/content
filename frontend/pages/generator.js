@@ -904,7 +904,7 @@ export default function Generator() {
     toast.success('Podcast selected for topic generation!')
   }
 
-  const addCustomVideoLink = () => {
+  const addCustomVideoLink = async () => {
     if (!customVideoLink.trim()) {
       toast.error('Please enter a video link')
       return
@@ -916,20 +916,59 @@ export default function Generator() {
       return
     }
     
-    const customVideo = {
-      title: 'Custom Video Link',
-      url: customVideoLink,
-      channel: 'Custom',
-      duration: 'Unknown',
-      views: 'Custom',
-      thumbnail: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=300&h=300&fit=crop',
-      description: 'Custom video link provided by user'
+    try {
+      // Extract video ID from URL
+      let videoId = ''
+      if (customVideoLink.includes('youtube.com/watch?v=')) {
+        videoId = customVideoLink.split('v=')[1].split('&')[0]
+      } else if (customVideoLink.includes('youtu.be/')) {
+        videoId = customVideoLink.split('youtu.be/')[1].split('?')[0]
+      }
+      
+      if (!videoId) {
+        throw new Error('Could not extract video ID')
+      }
+      
+      // Get video metadata from backend
+      const response = await apiClient.getYouTubeVideoInfo(videoId)
+      
+      if (response.success && response.data) {
+        const videoData = response.data
+        const customVideo = {
+          title: videoData.title || 'Unknown Title',
+          url: customVideoLink,
+          channel: videoData.channel || 'Unknown Channel',
+          duration: videoData.duration || 'Unknown',
+          views: videoData.views || 'Unknown',
+          thumbnail: videoData.thumbnail || 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=300&h=300&fit=crop',
+          description: videoData.description || 'No description available'
+        }
+        
+        setSelectedVideo(customVideo)
+        setSelectedPodcast(null)
+        setCustomVideoLink('')
+        toast.success('Video added for topic generation!')
+      } else {
+        throw new Error('Failed to get video information')
+      }
+    } catch (error) {
+      console.error('Error fetching video info:', error)
+      // Fallback to basic info
+      const customVideo = {
+        title: 'Custom Video Link',
+        url: customVideoLink,
+        channel: 'Custom',
+        duration: 'Unknown',
+        views: 'Custom',
+        thumbnail: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=300&h=300&fit=crop',
+        description: 'Custom video link provided by user'
+      }
+      
+      setSelectedVideo(customVideo)
+      setSelectedPodcast(null)
+      setCustomVideoLink('')
+      toast.success('Custom video link added for topic generation!')
     }
-    
-    setSelectedVideo(customVideo)
-    setSelectedPodcast(null)
-    setCustomVideoLink('')
-    toast.success('Custom video link added for topic generation!')
   }
 
   const addCustomPodcastLink = () => {

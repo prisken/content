@@ -875,6 +875,138 @@ class GoogleSearchService:
         
         return None
     
+    def get_youtube_video_details(self, video_id: str) -> Dict[str, Any]:
+        """Get YouTube video details by video ID"""
+        try:
+            # Try to get real data first
+            if self.api_key:
+                # Use YouTube Data API v3
+                import requests
+                
+                url = 'https://www.googleapis.com/youtube/v3/videos'
+                params = {
+                    'key': self.api_key,
+                    'part': 'snippet,statistics,contentDetails',
+                    'id': video_id
+                }
+                
+                response = requests.get(url, params=params)
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    if data.get('items'):
+                        item = data['items'][0]
+                        snippet = item.get('snippet', {})
+                        statistics = item.get('statistics', {})
+                        content_details = item.get('contentDetails', {})
+                        
+                        # Format duration
+                        duration = content_details.get('duration', 'PT0S')
+                        formatted_duration = self._format_duration(duration)
+                        
+                        # Format view count
+                        view_count = statistics.get('viewCount', '0')
+                        formatted_views = self._format_view_count(int(view_count))
+                        
+                        return {
+                            'title': snippet.get('title', 'Unknown Title'),
+                            'channel': snippet.get('channelTitle', 'Unknown Channel'),
+                            'description': snippet.get('description', 'No description available'),
+                            'thumbnail': snippet.get('thumbnails', {}).get('high', {}).get('url', f'https://img.youtube.com/vi/{video_id}/maxresdefault.jpg'),
+                            'duration': formatted_duration,
+                            'views': formatted_views,
+                            'published_at': snippet.get('publishedAt', ''),
+                            'tags': snippet.get('tags', [])
+                        }
+            
+            # Fallback to web scraping or mock data
+            return self._get_youtube_video_details_fallback(video_id)
+            
+        except Exception as e:
+            print(f"Error fetching YouTube video details: {e}")
+            return self._get_youtube_video_details_fallback(video_id)
+    
+    def _get_youtube_video_details_fallback(self, video_id: str) -> Dict[str, Any]:
+        """Fallback method for getting YouTube video details"""
+        try:
+            # Try web scraping as fallback
+            import requests
+            from bs4 import BeautifulSoup
+            
+            url = f'https://www.youtube.com/watch?v={video_id}'
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
+            
+            response = requests.get(url, headers=headers)
+            if response.status_code == 200:
+                soup = BeautifulSoup(response.content, 'html.parser')
+                
+                # Try to extract title
+                title_tag = soup.find('meta', property='og:title')
+                title = title_tag.get('content', 'Unknown Title') if title_tag else 'Unknown Title'
+                
+                # Try to extract channel
+                channel_tag = soup.find('link', itemprop='name')
+                channel = channel_tag.get('content', 'Unknown Channel') if channel_tag else 'Unknown Channel'
+                
+                # Try to extract description
+                desc_tag = soup.find('meta', property='og:description')
+                description = desc_tag.get('content', 'No description available') if desc_tag else 'No description available'
+                
+                return {
+                    'title': title,
+                    'channel': channel,
+                    'description': description,
+                    'thumbnail': f'https://img.youtube.com/vi/{video_id}/maxresdefault.jpg',
+                    'duration': 'Unknown',
+                    'views': 'Unknown',
+                    'published_at': '',
+                    'tags': []
+                }
+        except Exception as e:
+            print(f"Error in fallback method: {e}")
+        
+        # Final fallback to mock data
+        return {
+            'title': 'Unknown Title',
+            'channel': 'Unknown Channel',
+            'description': 'No description available',
+            'thumbnail': f'https://img.youtube.com/vi/{video_id}/maxresdefault.jpg',
+            'duration': 'Unknown',
+            'views': 'Unknown',
+            'published_at': '',
+            'tags': []
+        }
+    
+    def _format_duration(self, duration: str) -> str:
+        """Format ISO 8601 duration to readable format"""
+        import re
+        
+        # Parse ISO 8601 duration (PT1H2M3S)
+        match = re.match(r'PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?', duration)
+        if match:
+            hours, minutes, seconds = match.groups()
+            hours = int(hours) if hours else 0
+            minutes = int(minutes) if minutes else 0
+            seconds = int(seconds) if seconds else 0
+            
+            if hours > 0:
+                return f"{hours}:{minutes:02d}:{seconds:02d}"
+            else:
+                return f"{minutes}:{seconds:02d}"
+        
+        return 'Unknown'
+    
+    def _format_view_count(self, view_count: int) -> str:
+        """Format view count to readable format"""
+        if view_count >= 1000000:
+            return f"{view_count / 1000000:.1f}M"
+        elif view_count >= 1000:
+            return f"{view_count / 1000:.1f}K"
+        else:
+            return str(view_count)
+    
     def _get_youtube_video_details(self, video_id: str) -> Dict[str, Any]:
         """Get additional YouTube video details (mock implementation)"""
         # In production, this would use YouTube Data API

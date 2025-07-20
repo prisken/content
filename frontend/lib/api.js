@@ -112,6 +112,14 @@ export const apiClient = {
     });
   },
 
+  // Get YouTube Video Info
+  async getYouTubeVideoInfo(videoId) {
+    return this.request('/api/youtube/video-info', {
+      method: 'POST',
+      body: { videoId },
+    });
+  },
+
   // Google Search Integration
   async googleSearch(query, country = 'US') {
     return this.request('/api/google/search', {

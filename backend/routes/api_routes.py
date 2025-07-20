@@ -2147,6 +2147,39 @@ def google_trends():
             'error': str(e)
         }), 500
 
+@api_routes.route('/youtube/video-info', methods=['POST'])
+def get_youtube_video_info():
+    """Get YouTube video metadata by video ID"""
+    try:
+        data = request.get_json()
+        video_id = data.get('videoId')
+        
+        if not video_id:
+            return jsonify({
+                'success': False,
+                'error': 'Video ID is required'
+            }), 400
+        
+        if GOOGLE_SERVICE_AVAILABLE:
+            google_service = GoogleSearchService()
+            video_info = google_service.get_youtube_video_details(video_id)
+            
+            return jsonify({
+                'success': True,
+                'data': video_info
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': 'YouTube service not available'
+            }), 503
+            
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 @api_routes.route('/google/books', methods=['POST'])
 def google_books():
     """Google Books API endpoint"""
