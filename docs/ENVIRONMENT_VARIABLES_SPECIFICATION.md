@@ -55,11 +55,11 @@ GOOGLE_NEWS_RSS_ENABLED=true
 
 ### **Infrastructure Configuration**
 
-#### **Redis & Celery** ❌ (Need to Set Up)
+#### **Redis & Celery** ✅ (Local Setup Complete)
 ```bash
-# Redis Configuration (for Celery) - Get from Railway Dashboard
-REDIS_URL=redis://username:password@host:port/database_number
-CELERY_BROKER_URL=redis://username:password@host:port/database_number
+# Redis Configuration (for Celery) - Local Development
+REDIS_URL=redis://localhost:6379/0
+CELERY_BROKER_URL=redis://localhost:6379/0
 ```
 
 #### **Cloudinary (Image Storage)** ✅ (Already Configured)
@@ -195,6 +195,7 @@ NEXT_PUBLIC_SENTRY_DSN=your_sentry_dsn
 - **Stability AI**: `sk-4LYzKcgv6IQ5qVtXBNTZD6j8oeo3NVToOWAar2ykfD8Ux5IW`
 - **Cloudinary**: API Key and Secret provided
 - **Secret Keys**: Generated and ready to use
+- **Redis**: Local setup complete (`redis://localhost:6379/0`)
 
 ### **❌ Need to Obtain**
 
@@ -303,7 +304,7 @@ NEXT_PUBLIC_SENTRY_DSN=your_sentry_dsn
 - [x] **DeepSeek AI**: DEEPSEEK_API_KEY, DEEPSEEK_API_URL, DEEPSEEK_MODEL, DEEPSEEK_MAX_TOKENS, DEEPSEEK_TEMPERATURE
 - [x] **Stable Diffusion**: STABILITY_API_KEY, STABILITY_API_URL, SD_MODEL, SD_STEPS, SD_CFG_SCALE
 - [ ] **Google APIs**: GOOGLE_CUSTOM_SEARCH_API_KEY, GOOGLE_CUSTOM_SEARCH_ENGINE_ID, GOOGLE_TRENDS_API_KEY, GOOGLE_BOOKS_API_KEY, GOOGLE_NEWS_RSS_ENABLED - Get from Google Cloud Console
-- [ ] **Redis**: REDIS_URL, CELERY_BROKER_URL - Get from Railway
+- [x] **Redis**: REDIS_URL, CELERY_BROKER_URL - Local setup complete
 - [x] **Cloudinary**: CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET
 - [x] **Security**: JWT_SECRET_KEY, JWT_ACCESS_TOKEN_EXPIRES, CORS_ORIGINS, ALLOWED_HOSTS, CSRF_TRUSTED_ORIGINS
 - [x] **Rate Limiting**: RATE_LIMIT_CONTENT_GENERATION, RATE_LIMIT_GOOGLE_SEARCH, RATE_LIMIT_IMAGE_GENERATION, RATE_LIMIT_WINDOW
@@ -348,8 +349,7 @@ curl "https://www.googleapis.com/customsearch/v1?key=YOUR_API_KEY&cx=YOUR_SEARCH
 ### **Priority Order for Setup**
 1. **Google Custom Search API** (for topic generation)
 2. **Database URL** (PostgreSQL from Railway)
-3. **Redis URL** (from Railway)
-4. **Domain Configuration** (from Vercel/Railway dashboards)
+3. **Domain Configuration** (from Vercel/Railway dashboards)
 
 ---
 
