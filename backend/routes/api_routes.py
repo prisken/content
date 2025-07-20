@@ -23,7 +23,7 @@ except ImportError:
 
 api_routes = Blueprint('api', __name__)
 
-# Content directions mapping
+# Content directions mapping - Updated to match design document exactly
 CONTENT_DIRECTIONS = {
     'business_finance': {
         'name': 'Business & Finance',
@@ -45,7 +45,7 @@ CONTENT_DIRECTIONS = {
         'name': 'Entertainment',
         'topics': ['Movies & TV', 'Music', 'Gaming', 'Celebrity News', 'Streaming Services', 'Pop Culture', 'Arts & Culture', 'Entertainment Industry']
     },
-    'travel_tourism': {
+    'travel': {
         'name': 'Travel & Tourism',
         'topics': ['Travel Destinations', 'Travel Tips', 'Adventure Travel', 'Cultural Experiences', 'Budget Travel', 'Luxury Travel', 'Travel Planning', 'Tourism Industry']
     },
@@ -57,7 +57,7 @@ CONTENT_DIRECTIONS = {
         'name': 'Fashion & Beauty',
         'topics': ['Fashion Trends', 'Beauty Tips', 'Style Advice', 'Skincare', 'Makeup Tutorials', 'Sustainable Fashion', 'Fashion Industry', 'Personal Style']
     },
-    'sports_fitness': {
+    'sports': {
         'name': 'Sports & Fitness',
         'topics': ['Sports News', 'Fitness Tips', 'Athletic Performance', 'Sports Analysis', 'Workout Routines', 'Sports Industry', 'Athlete Profiles', 'Sports Technology']
     },
@@ -65,19 +65,19 @@ CONTENT_DIRECTIONS = {
         'name': 'Science & Research',
         'topics': ['Scientific Discoveries', 'Research Findings', 'Space Exploration', 'Climate Science', 'Medical Research', 'Technology Innovation', 'Scientific Breakthroughs', 'Research Methods']
     },
-    'politics_news': {
-        'name': 'Politics & News',
+    'politics_society': {
+        'name': 'Politics & Current Events',
         'topics': ['Current Events', 'Political Analysis', 'Policy Issues', 'International Relations', 'Election Coverage', 'Government News', 'Social Issues', 'Political Commentary']
     },
-    'environment': {
-        'name': 'Environment',
+    'environment_sustainability': {
+        'name': 'Environment & Sustainability',
         'topics': ['Climate Change', 'Sustainability', 'Environmental Protection', 'Green Technology', 'Conservation', 'Renewable Energy', 'Environmental Policy', 'Eco-friendly Living']
     },
-    'personal_dev': {
+    'lifestyle': {
         'name': 'Personal Development',
         'topics': ['Self-Improvement', 'Goal Setting', 'Productivity Tips', 'Leadership Skills', 'Communication', 'Time Management', 'Motivation', 'Success Stories']
     },
-    'parenting_family': {
+    'parenting': {
         'name': 'Parenting & Family',
         'topics': ['Parenting Tips', 'Child Development', 'Family Activities', 'Education', 'Health & Safety', 'Family Relationships', 'Work-Life Balance', 'Parenting Challenges']
     },
@@ -93,7 +93,7 @@ CONTENT_DIRECTIONS = {
         'name': 'Automotive',
         'topics': ['Car Reviews', 'Automotive Technology', 'Electric Vehicles', 'Car Maintenance', 'Auto Industry', 'Driving Tips', 'Vehicle Safety', 'Car Culture']
     },
-    'pet_care': {
+    'pets_animals': {
         'name': 'Pet Care',
         'topics': ['Pet Health', 'Training Tips', 'Pet Nutrition', 'Pet Behavior', 'Veterinary Care', 'Pet Products', 'Pet Adoption', 'Pet Lifestyle']
     }
@@ -1073,10 +1073,33 @@ def generate_content():
         else:
             content_text = generate_content_text(direction, platform, source, selected_topic, tone, language)
         
-        # Step 2: Analyze the generated content to create image prompts
+        # Step 2: AI-powered content analysis and optimization
+        if AI_SERVICE_AVAILABLE:
+            # Analyze content for SEO and engagement optimization
+            content_analysis = ai_service.analyze_content_quality(content_text, platform, direction)
+            
+            # Generate AI-powered hashtags and optimization suggestions
+            ai_hashtags = ai_service.generate_hashtags(content_text, direction, platform)
+            optimization_suggestions = ai_service.generate_optimization_suggestions(content_text, platform)
+            
+            # AI-powered content enhancement
+            enhanced_content = ai_service.enhance_content(content_text, platform, tone, direction)
+            if enhanced_content:
+                content_text = enhanced_content
+        else:
+            # Fallback analysis
+            content_analysis = {
+                'readability_score': calculate_readability_score(content_text),
+                'engagement_potential': 'medium',
+                'seo_score': 'basic'
+            }
+            ai_hashtags = extract_hashtags(content_text)
+            optimization_suggestions = generate_optimization_suggestions(content_text, platform)
+        
+        # Step 3: Analyze the generated content to create image prompts
         image_prompts = analyze_content_for_image_generation(content_text, direction, platform, tone, image_style)
         
-        # Step 3: Generate images using Stable Diffusion with content-based prompts
+        # Step 4: Generate images using Stable Diffusion with content-based prompts
         generated_images = {'primary': None, 'variations': [], 'total_count': 0}
         if generate_images and image_prompts:
             try:
@@ -1129,10 +1152,10 @@ def generate_content():
                 'text': content_text,
                 'length': len(content_text),
                 'max_length': 1300,  # Will be updated based on platform
-                'hashtags': extract_hashtags(content_text),
+                'hashtags': ai_hashtags if AI_SERVICE_AVAILABLE else extract_hashtags(content_text),
                 'call_to_action': extract_call_to_action(content_text),
                 'word_count': len(content_text.split()),
-                'readability_score': calculate_readability_score(content_text)
+                'readability_score': content_analysis.get('readability_score', calculate_readability_score(content_text)) if AI_SERVICE_AVAILABLE else calculate_readability_score(content_text)
             },
             'variations': [],  # Could be generated if needed
             'images': generated_images,
@@ -1155,7 +1178,8 @@ def generate_content():
                 'image_style': image_style,
                 'generated_at': datetime.utcnow().isoformat() + 'Z',
                 'platform': platform.upper(),
-                'content_category': direction
+                'content_category': direction,
+                'ai_enhanced': AI_SERVICE_AVAILABLE
             },
             'cultural_context': {
                 'region': 'global',
@@ -1168,14 +1192,15 @@ def generate_content():
             'analytics': generate_analytics_data(platform, direction, tone, content_text),
             'validation': {
                 'compliance_check': validate_content(content_text, platform),
-                'quality_score': calculate_content_quality_score(content_text, platform),
-                'optimization_suggestions': generate_optimization_suggestions(content_text, platform),
-                'performance_insights': generate_performance_insights(platform)
+                'quality_score': content_analysis.get('quality_score', calculate_content_quality_score(content_text, platform)) if AI_SERVICE_AVAILABLE else calculate_content_quality_score(content_text, platform),
+                'optimization_suggestions': optimization_suggestions if AI_SERVICE_AVAILABLE else generate_optimization_suggestions(content_text, platform),
+                'performance_insights': generate_performance_insights(platform),
+                'ai_analysis': content_analysis if AI_SERVICE_AVAILABLE else None
             },
             'export_formats': {
                 'social_media_ready': True,
                 'copy_paste_text': content_text,
-                'hashtag_list': extract_hashtags(content_text),
+                'hashtag_list': ai_hashtags if AI_SERVICE_AVAILABLE else extract_hashtags(content_text),
                 'image_specifications': get_platform_specifications(platform).get('image_format', {}),
                 'scheduling_recommendations': {
                     'optimal_time': get_optimal_posting_time(platform),
@@ -1809,35 +1834,40 @@ def generate_topics():
         # Generate topics based on source type
         topics = []
         
-        if source == 'google_search':
-            query = source_details.get('query', direction)
-            country = source_details.get('country', 'US')
-            topics = google_service.search_topics(direction, country, query)
-            
-        elif source == 'google_news':
+        if source == 'news':
             country = source_details.get('country', 'US')
             topics = google_service.get_news_topics(direction, country)
-            
-        elif source == 'google_trends':
-            country = source_details.get('country', 'US')
-            topics = google_service.get_trending_topics(direction, country)
             
         elif source == 'books':
             query = source_details.get('query', direction)
             country = source_details.get('country', 'US')
             topics = google_service.get_book_topics(direction, country, query)
             
-        elif source == 'youtube':
+        elif source == 'popular_threads':
             country = source_details.get('country', 'US')
-            topics = google_service.get_youtube_topics(direction, country)
+            topics = google_service.get_trending_topics(direction, country)
             
         elif source == 'podcasts':
             country = source_details.get('country', 'US')
             topics = google_service.get_podcast_topics(direction, country)
             
-        elif source == 'ai_discovery':
+        elif source == 'youtube':
             country = source_details.get('country', 'US')
-            topics = google_service.get_ai_discovery_topics(direction, country)
+            topics = google_service.get_youtube_topics(direction, country)
+            
+        elif source == 'research_papers':
+            query = source_details.get('query', direction)
+            country = source_details.get('country', 'US')
+            topics = google_service.search_topics(direction, country, query)
+            
+        elif source == 'case_studies':
+            query = source_details.get('query', direction)
+            country = source_details.get('country', 'US')
+            topics = google_service.search_topics(direction, country, query)
+            
+        elif source == 'trending_topics':
+            country = source_details.get('country', 'US')
+            topics = google_service.get_trending_topics(direction, country)
         
         # Limit to 5 topics
         topics = topics[:5]

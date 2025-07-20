@@ -258,5 +258,331 @@ Format: Describe the image in detail, including style, colors, composition, and 
         
         return f"{platform_style} {base_prompt}, high quality, trending on artstation, 4k resolution"
 
+    def analyze_content_quality(self, content: str, platform: str, direction: str) -> Dict[str, any]:
+        """Analyze content quality using AI"""
+        
+        if not self.api_key:
+            return {
+                'readability_score': 75,
+                'engagement_potential': 'medium',
+                'seo_score': 'basic',
+                'quality_score': 70
+            }
+        
+        try:
+            prompt = f"""
+Analyze this content for {platform} in the {direction.replace('_', ' ')} category:
+
+"{content}"
+
+Provide a JSON response with:
+- readability_score (0-100)
+- engagement_potential (low/medium/high)
+- seo_score (basic/good/excellent)
+- quality_score (0-100)
+- improvement_suggestions (array of strings)
+"""
+            
+            payload = {
+                "model": "deepseek-chat",
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": "You are a content quality analyst. Provide detailed analysis in JSON format."
+                    },
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ],
+                "max_tokens": 500,
+                "temperature": 0.3
+            }
+            
+            response = requests.post(
+                f"{self.base_url}/chat/completions",
+                headers=self.headers,
+                json=payload,
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                analysis_text = result['choices'][0]['message']['content'].strip()
+                
+                # Try to parse JSON response
+                try:
+                    import json
+                    analysis = json.loads(analysis_text)
+                    return analysis
+                except:
+                    # Fallback if JSON parsing fails
+                    return {
+                        'readability_score': 75,
+                        'engagement_potential': 'medium',
+                        'seo_score': 'basic',
+                        'quality_score': 70,
+                        'improvement_suggestions': ['Consider adding more specific examples', 'Include a call-to-action']
+                    }
+            else:
+                return self._fallback_content_analysis()
+                
+        except Exception as e:
+            print(f"Error analyzing content: {str(e)}")
+            return self._fallback_content_analysis()
+    
+    def generate_hashtags(self, content: str, direction: str, platform: str) -> List[str]:
+        """Generate relevant hashtags using AI"""
+        
+        if not self.api_key:
+            return self._fallback_hashtags(direction, platform)
+        
+        try:
+            prompt = f"""
+Generate 5-8 relevant hashtags for this {platform} content in the {direction.replace('_', ' ')} category:
+
+"{content[:300]}..."
+
+Requirements:
+- Relevant to the content and direction
+- Platform-appropriate
+- Mix of popular and niche hashtags
+- No spaces, use camelCase or underscores
+- Include the main direction hashtag
+
+Return as a JSON array of strings.
+"""
+            
+            payload = {
+                "model": "deepseek-chat",
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": "You are a hashtag expert. Generate relevant, platform-appropriate hashtags in JSON array format."
+                    },
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ],
+                "max_tokens": 200,
+                "temperature": 0.5
+            }
+            
+            response = requests.post(
+                f"{self.base_url}/chat/completions",
+                headers=self.headers,
+                json=payload,
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                hashtags_text = result['choices'][0]['message']['content'].strip()
+                
+                try:
+                    import json
+                    hashtags = json.loads(hashtags_text)
+                    return hashtags if isinstance(hashtags, list) else self._fallback_hashtags(direction, platform)
+                except:
+                    return self._fallback_hashtags(direction, platform)
+            else:
+                return self._fallback_hashtags(direction, platform)
+                
+        except Exception as e:
+            print(f"Error generating hashtags: {str(e)}")
+            return self._fallback_hashtags(direction, platform)
+    
+    def generate_optimization_suggestions(self, content: str, platform: str) -> List[str]:
+        """Generate optimization suggestions using AI"""
+        
+        if not self.api_key:
+            return self._fallback_optimization_suggestions(platform)
+        
+        try:
+            prompt = f"""
+Analyze this {platform} content and provide 3-5 optimization suggestions:
+
+"{content}"
+
+Focus on:
+- Engagement improvement
+- Platform-specific optimization
+- Content structure
+- Call-to-action effectiveness
+
+Return as a JSON array of suggestion strings.
+"""
+            
+            payload = {
+                "model": "deepseek-chat",
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": "You are a social media optimization expert. Provide actionable suggestions in JSON array format."
+                    },
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ],
+                "max_tokens": 300,
+                "temperature": 0.4
+            }
+            
+            response = requests.post(
+                f"{self.base_url}/chat/completions",
+                headers=self.headers,
+                json=payload,
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                suggestions_text = result['choices'][0]['message']['content'].strip()
+                
+                try:
+                    import json
+                    suggestions = json.loads(suggestions_text)
+                    return suggestions if isinstance(suggestions, list) else self._fallback_optimization_suggestions(platform)
+                except:
+                    return self._fallback_optimization_suggestions(platform)
+            else:
+                return self._fallback_optimization_suggestions(platform)
+                
+        except Exception as e:
+            print(f"Error generating optimization suggestions: {str(e)}")
+            return self._fallback_optimization_suggestions(platform)
+    
+    def enhance_content(self, content: str, platform: str, tone: str, direction: str) -> Optional[str]:
+        """Enhance content using AI"""
+        
+        if not self.api_key:
+            return None
+        
+        try:
+            prompt = f"""
+Enhance this {platform} content for {tone} tone in the {direction.replace('_', ' ')} category:
+
+"{content}"
+
+Improvements to make:
+- Better engagement
+- Platform optimization
+- Tone consistency
+- Clear call-to-action
+- Better structure
+
+Return the enhanced content only, no explanations.
+"""
+            
+            payload = {
+                "model": "deepseek-chat",
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": "You are a content enhancement expert. Improve content for better engagement and platform optimization."
+                    },
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ],
+                "max_tokens": 800,
+                "temperature": 0.6
+            }
+            
+            response = requests.post(
+                f"{self.base_url}/chat/completions",
+                headers=self.headers,
+                json=payload,
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                enhanced_content = result['choices'][0]['message']['content'].strip()
+                return enhanced_content if enhanced_content else None
+            else:
+                return None
+                
+        except Exception as e:
+            print(f"Error enhancing content: {str(e)}")
+            return None
+    
+    def _fallback_content_analysis(self) -> Dict[str, any]:
+        """Fallback content analysis"""
+        return {
+            'readability_score': 75,
+            'engagement_potential': 'medium',
+            'seo_score': 'basic',
+            'quality_score': 70,
+            'improvement_suggestions': ['Consider adding more specific examples', 'Include a call-to-action']
+        }
+    
+    def _fallback_hashtags(self, direction: str, platform: str) -> List[str]:
+        """Fallback hashtag generation"""
+        base_hashtags = [f"#{direction.replace('_', '')}", f"#{platform}"]
+        
+        direction_hashtags = {
+            'business_finance': ['#Business', '#Finance', '#Entrepreneurship'],
+            'technology': ['#Tech', '#Innovation', '#DigitalTransformation'],
+            'health_wellness': ['#Health', '#Wellness', '#Fitness'],
+            'education': ['#Education', '#Learning', '#Skills'],
+            'entertainment': ['#Entertainment', '#Culture', '#Media'],
+            'travel': ['#Travel', '#Adventure', '#Tourism'],
+            'food_cooking': ['#Food', '#Cooking', '#Culinary'],
+            'fashion_beauty': ['#Fashion', '#Beauty', '#Style'],
+            'sports': ['#Sports', '#Fitness', '#Athletics'],
+            'science_research': ['#Science', '#Research', '#Innovation'],
+            'politics_society': ['#Politics', '#Society', '#News'],
+            'environment_sustainability': ['#Environment', '#Sustainability', '#Green'],
+            'lifestyle': ['#Lifestyle', '#PersonalDevelopment', '#Growth'],
+            'parenting': ['#Parenting', '#Family', '#Kids'],
+            'art_creativity': ['#Art', '#Creativity', '#Design'],
+            'real_estate': ['#RealEstate', '#Property', '#Investment'],
+            'automotive': ['#Automotive', '#Cars', '#Transportation'],
+            'pets_animals': ['#Pets', '#Animals', '#PetCare']
+        }
+        
+        return base_hashtags + direction_hashtags.get(direction, ['#Content', '#SocialMedia'])
+    
+    def _fallback_optimization_suggestions(self, platform: str) -> List[str]:
+        """Fallback optimization suggestions"""
+        suggestions = {
+            'linkedin': [
+                'Add a professional call-to-action',
+                'Include industry-specific hashtags',
+                'Share personal insights or experiences'
+            ],
+            'facebook': [
+                'Ask a question to encourage engagement',
+                'Include relevant images or videos',
+                'Use conversational language'
+            ],
+            'twitter': [
+                'Keep it concise and impactful',
+                'Use trending hashtags strategically',
+                'Include a clear takeaway'
+            ],
+            'instagram': [
+                'Add visual elements',
+                'Use aesthetic hashtags',
+                'Include a story or personal touch'
+            ],
+            'youtube': [
+                'Create engaging thumbnails',
+                'Add timestamps for longer content',
+                'Include a clear value proposition'
+            ],
+            'blog': [
+                'Add subheadings for better structure',
+                'Include relevant images',
+                'Add internal and external links'
+            ]
+        }
+        
+        return suggestions.get(platform, ['Optimize for your target audience', 'Include relevant hashtags', 'Add a clear call-to-action'])
+
 # Global instance
 ai_service = DeepSeekAIService() 
