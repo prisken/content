@@ -88,6 +88,14 @@ export const apiClient = {
     });
   },
 
+  // Topic Generation from specific content (videos/podcasts)
+  async generateTopicsFromContent(data) {
+    return this.request('/api/topics/generate-from-content', {
+      method: 'POST',
+      body: data,
+    });
+  },
+
   // Video Link Generation
   async generateVideoLink(data) {
     return this.request('/api/videos/generate-link', {

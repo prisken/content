@@ -1925,7 +1925,7 @@ def generate_topics():
             country = source_details.get('country', 'US')
             topics = google_service.get_podcast_topics(direction, country)
             
-        elif source == 'youtube':
+        elif source == 'youtube' or source == 'videos':
             country = source_details.get('country', 'US')
             topics = google_service.get_youtube_topics(direction, country)
             
@@ -1945,6 +1945,100 @@ def generate_topics():
         
         # Limit to 5 topics
         topics = topics[:5]
+        
+        return jsonify({
+            'success': True,
+            'topics': topics
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@api_routes.route('/topics/generate-from-content', methods=['POST'])
+def generate_topics_from_content():
+    """Generate topics from specific videos or podcasts"""
+    try:
+        data = request.get_json()
+        
+        content_type = data.get('contentType')  # 'video' or 'podcast'
+        content_data = data.get('contentData', {})
+        direction = data.get('direction')
+        
+        if not content_type or not content_data or not direction:
+            return jsonify({
+                'success': False,
+                'error': 'Content type, content data, and direction are required'
+            }), 400
+        
+        # Extract relevant information from the content
+        title = content_data.get('title', '')
+        description = content_data.get('description', '')
+        host = content_data.get('host', '')
+        
+        # Generate topics based on the content
+        topics = []
+        
+        if content_type == 'video':
+            # Generate topics from video content
+            topics = [
+                {
+                    'title': f'Analysis of "{title[:50]}..."',
+                    'description': f'Deep dive into the concepts and ideas presented in this video',
+                    'trending_score': 85
+                },
+                {
+                    'title': f'Key Takeaways from {host}\'s Content',
+                    'description': f'Extract and expand on the main points from this video',
+                    'trending_score': 82
+                },
+                {
+                    'title': f'Related {direction.replace("_", " ").title()} Topics',
+                    'description': f'Explore similar themes and subjects in {direction.replace("_", " ")}',
+                    'trending_score': 80
+                },
+                {
+                    'title': f'Discussion Points from "{title[:30]}..."',
+                    'description': f'Create engaging discussion topics based on this video content',
+                    'trending_score': 78
+                },
+                {
+                    'title': f'Expert Insights on {direction.replace("_", " ").title()}',
+                    'description': f'Professional perspective and analysis of the video content',
+                    'trending_score': 75
+                }
+            ]
+        elif content_type == 'podcast':
+            # Generate topics from podcast content
+            topics = [
+                {
+                    'title': f'Podcast Insights: "{title[:50]}..."',
+                    'description': f'Extract valuable insights and lessons from this podcast episode',
+                    'trending_score': 87
+                },
+                {
+                    'title': f'Expert Discussion with {host}',
+                    'description': f'Expand on the expertise and knowledge shared in this episode',
+                    'trending_score': 84
+                },
+                {
+                    'title': f'Key Learnings from {direction.replace("_", " ").title()} Podcast',
+                    'description': f'Summarize and elaborate on the main learning points',
+                    'trending_score': 81
+                },
+                {
+                    'title': f'Follow-up Questions and Analysis',
+                    'description': f'Generate thought-provoking questions and deeper analysis',
+                    'trending_score': 79
+                },
+                {
+                    'title': f'Actionable Insights from Podcast Content',
+                    'description': f'Practical takeaways and implementation strategies',
+                    'trending_score': 76
+                }
+            ]
         
         return jsonify({
             'success': True,

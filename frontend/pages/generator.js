@@ -95,6 +95,8 @@ export default function Generator() {
   })
   const [generatedVideos, setGeneratedVideos] = useState([])
   const [generatedPodcasts, setGeneratedPodcasts] = useState([])
+  const [selectedVideo, setSelectedVideo] = useState(null)
+  const [selectedPodcast, setSelectedPodcast] = useState(null)
   
   // Debug effect to monitor podcast state changes
   useEffect(() => {
@@ -849,6 +851,57 @@ export default function Generator() {
     }
   }
 
+  const generateTopicsFromSelectedContent = async () => {
+    if (!formData.direction) {
+      toast.error('Please select direction first')
+      return
+    }
+
+    if (!selectedVideo && !selectedPodcast) {
+      toast.error('Please select a video or podcast first')
+      return
+    }
+
+    setIsLoadingTopics(true)
+    try {
+      let contentType, contentData
+      
+      if (selectedVideo) {
+        contentType = 'video'
+        contentData = selectedVideo
+      } else {
+        contentType = 'podcast'
+        contentData = selectedPodcast
+      }
+
+      const response = await apiClient.generateTopicsFromContent({
+        direction: formData.direction,
+        contentType: contentType,
+        contentData: contentData
+      })
+      
+      setSelectedTopics(response.topics || [])
+      toast.success('Topics generated from selected content!')
+    } catch (error) {
+      toast.error('Failed to generate topics from content')
+      console.error('Topic generation from content error:', error)
+    } finally {
+      setIsLoadingTopics(false)
+    }
+  }
+
+  const selectVideo = (video) => {
+    setSelectedVideo(video)
+    setSelectedPodcast(null) // Clear podcast selection
+    toast.success('Video selected for topic generation!')
+  }
+
+  const selectPodcast = (podcast) => {
+    setSelectedPodcast(podcast)
+    setSelectedVideo(null) // Clear video selection
+    toast.success('Podcast selected for topic generation!')
+  }
+
   const generateVideoLink = async () => {
     if (!formData.direction) {
       toast.error('Please select direction first')
@@ -1304,14 +1357,26 @@ Generated on: ${new Date().toLocaleString()}
                                                   <span>•</span>
                                                   <span>{video.views} views</span>
                                                 </div>
-                                                <a 
-                                                  href={video.url} 
-                                                  target="_blank" 
-                                                  rel="noopener noreferrer"
-                                                  className="inline-block mt-2 text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded transition-colors"
-                                                >
-                                                  Watch on YouTube
-                                                </a>
+                                                <div className="flex gap-2 mt-2">
+                                                  <a 
+                                                    href={video.url} 
+                                                    target="_blank" 
+                                                    rel="noopener noreferrer"
+                                                    className="inline-block text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded transition-colors"
+                                                  >
+                                                    Watch on YouTube
+                                                  </a>
+                                                  <button
+                                                    onClick={() => selectVideo(video)}
+                                                    className={`text-xs px-3 py-1 rounded transition-colors ${
+                                                      selectedVideo?.url === video.url
+                                                        ? 'bg-green-600 text-white'
+                                                        : 'bg-blue-100 hover:bg-blue-200 text-blue-700'
+                                                    }`}
+                                                  >
+                                                    {selectedVideo?.url === video.url ? 'Selected' : 'Select for Topics'}
+                                                  </button>
+                                                </div>
                                               </div>
                                             </div>
                                           </div>
@@ -1372,14 +1437,26 @@ Generated on: ${new Date().toLocaleString()}
                                                   <span>•</span>
                                                   <span>{podcast.episodes} episodes</span>
                                                 </div>
-                                                <a 
-                                                  href={podcast.url} 
-                                                  target="_blank" 
-                                                  rel="noopener noreferrer"
-                                                  className="inline-block mt-2 text-xs bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded transition-colors"
-                                                >
-                                                  Listen on Apple Podcasts
-                                                </a>
+                                                <div className="flex gap-2 mt-2">
+                                                  <a 
+                                                    href={podcast.url} 
+                                                    target="_blank" 
+                                                    rel="noopener noreferrer"
+                                                    className="inline-block text-xs bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded transition-colors"
+                                                  >
+                                                    Listen on Apple Podcasts
+                                                  </a>
+                                                  <button
+                                                    onClick={() => selectPodcast(podcast)}
+                                                    className={`text-xs px-3 py-1 rounded transition-colors ${
+                                                      selectedPodcast?.url === podcast.url
+                                                        ? 'bg-green-600 text-white'
+                                                        : 'bg-blue-100 hover:bg-blue-200 text-blue-700'
+                                                    }`}
+                                                  >
+                                                    {selectedPodcast?.url === podcast.url ? 'Selected' : 'Select for Topics'}
+                                                  </button>
+                                                </div>
                                               </div>
                                             </div>
                                           </div>
@@ -1395,23 +1472,45 @@ Generated on: ${new Date().toLocaleString()}
                       )
                     })()}
 
-                    <button
-                      onClick={generateTopics}
-                      disabled={isLoadingTopics}
-                      className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-all duration-200"
-                    >
-                      {isLoadingTopics ? (
-                        <>
-                          <RefreshCw className="w-5 h-5 animate-spin" />
-                          Generating Topics...
-                        </>
-                      ) : (
-                        <>
-                          <Sparkles className="w-5 h-5" />
-                          Generate Topics
-                        </>
+                    <div className="space-y-3">
+                      <button
+                        onClick={generateTopics}
+                        disabled={isLoadingTopics}
+                        className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-all duration-200"
+                      >
+                        {isLoadingTopics ? (
+                          <>
+                            <RefreshCw className="w-5 h-5 animate-spin" />
+                            Generating Topics...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-5 h-5" />
+                            Generate Topics
+                          </>
+                        )}
+                      </button>
+                      
+                      {(selectedVideo || selectedPodcast) && (
+                        <button
+                          onClick={generateTopicsFromSelectedContent}
+                          disabled={isLoadingTopics}
+                          className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-all duration-200"
+                        >
+                          {isLoadingTopics ? (
+                            <>
+                              <RefreshCw className="w-5 h-5 animate-spin" />
+                              Generating Topics from Content...
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="w-5 h-5" />
+                              Generate Topics from Selected {selectedVideo ? 'Video' : 'Podcast'}
+                            </>
+                          )}
+                        </button>
                       )}
-                    </button>
+                    </div>
                   </div>
                 )}
 
