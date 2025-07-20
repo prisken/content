@@ -2343,6 +2343,9 @@ def generate_podcast_link():
 def debug_google_search():
     """Debug endpoint to check Google Search API configuration"""
     try:
+        # Check all possible Google API environment variables
+        all_env_vars = {k: v for k, v in os.environ.items() if 'GOOGLE' in k.upper()}
+        
         api_key = os.environ.get('GOOGLE_CUSTOM_SEARCH_API_KEY')
         search_engine_id = os.environ.get('GOOGLE_CUSTOM_SEARCH_ENGINE_ID')
         
@@ -2352,7 +2355,9 @@ def debug_google_search():
             'api_key_length': len(api_key) if api_key else 0,
             'search_engine_id_configured': bool(search_engine_id),
             'search_engine_id_length': len(search_engine_id) if search_engine_id else 0,
-            'all_configured': bool(api_key and search_engine_id)
+            'all_configured': bool(api_key and search_engine_id),
+            'all_google_env_vars': list(all_env_vars.keys()),
+            'total_google_vars': len(all_env_vars)
         })
     except Exception as e:
         return jsonify({

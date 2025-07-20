@@ -7,8 +7,17 @@ import random
 
 class GoogleSearchService:
     def __init__(self):
-        self.api_key = os.environ.get('GOOGLE_CUSTOM_SEARCH_API_KEY')
-        self.search_engine_id = os.environ.get('GOOGLE_CUSTOM_SEARCH_ENGINE_ID')
+        # Try multiple possible environment variable names
+        self.api_key = (
+            os.environ.get('GOOGLE_CUSTOM_SEARCH_API_KEY') or 
+            os.environ.get('GOOGLE_SEARCH_API_KEY') or
+            os.environ.get('GOOGLE_API_KEY')
+        )
+        self.search_engine_id = (
+            os.environ.get('GOOGLE_CUSTOM_SEARCH_ENGINE_ID') or
+            os.environ.get('GOOGLE_SEARCH_ENGINE_ID') or
+            os.environ.get('SEARCH_ENGINE_ID')
+        )
         self.trends_api_key = os.environ.get('GOOGLE_TRENDS_API_KEY')
         self.books_api_key = os.environ.get('GOOGLE_BOOKS_API_KEY')
         
