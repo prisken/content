@@ -1946,6 +1946,42 @@ def generate_topics():
         # Limit to 5 topics
         topics = topics[:5]
         
+        # If we have topics, enhance them with AI analysis
+        if topics and GOOGLE_SERVICE_AVAILABLE:
+            try:
+                from backend.services.ai_service import ai_service
+                
+                # Create a content summary for AI analysis
+                content_summary = {
+                    'title': f'{source.replace("_", " ").title()} Content Analysis',
+                    'description': f'Analysis of {source.replace("_", " ")} content in {direction.replace("_", " ")} category',
+                    'channel': 'Content Analysis',
+                    'content_type': source
+                }
+                
+                # Get AI-enhanced topics
+                ai_topics = ai_service.generate_topics_from_content(content_summary, direction, source)
+                
+                # Combine and prioritize AI topics
+                if ai_topics:
+                    # Use AI topics as primary, fallback to original topics
+                    enhanced_topics = []
+                    for ai_topic in ai_topics[:3]:  # Use top 3 AI topics
+                        enhanced_topics.append(ai_topic)
+                    
+                    # Add original topics if we need more
+                    for topic in topics:
+                        if len(enhanced_topics) >= 5:
+                            break
+                        # Check if topic is not already included
+                        if not any(ai_topic['title'] == topic.get('title', '') for ai_topic in enhanced_topics):
+                            enhanced_topics.append(topic)
+                    
+                    topics = enhanced_topics[:5]
+            except Exception as e:
+                print(f"Error enhancing topics with AI: {e}")
+                # Continue with original topics if AI enhancement fails
+        
         return jsonify({
             'success': True,
             'topics': topics
@@ -1959,7 +1995,7 @@ def generate_topics():
 
 @api_routes.route('/topics/generate-from-content', methods=['POST'])
 def generate_topics_from_content():
-    """Generate topics from specific videos or podcasts"""
+    """Generate AI-powered topics from specific videos or podcasts"""
     try:
         data = request.get_json()
         
@@ -1973,72 +2009,10 @@ def generate_topics_from_content():
                 'error': 'Content type, content data, and direction are required'
             }), 400
         
-        # Extract relevant information from the content
-        title = content_data.get('title', '')
-        description = content_data.get('description', '')
-        host = content_data.get('host', '')
+        # Use AI service to generate topics
+        from backend.services.ai_service import ai_service
         
-        # Generate topics based on the content
-        topics = []
-        
-        if content_type == 'video':
-            # Generate topics from video content
-            topics = [
-                {
-                    'title': f'Analysis of "{title[:50]}..."',
-                    'description': f'Deep dive into the concepts and ideas presented in this video',
-                    'trending_score': 85
-                },
-                {
-                    'title': f'Key Takeaways from {host}\'s Content',
-                    'description': f'Extract and expand on the main points from this video',
-                    'trending_score': 82
-                },
-                {
-                    'title': f'Related {direction.replace("_", " ").title()} Topics',
-                    'description': f'Explore similar themes and subjects in {direction.replace("_", " ")}',
-                    'trending_score': 80
-                },
-                {
-                    'title': f'Discussion Points from "{title[:30]}..."',
-                    'description': f'Create engaging discussion topics based on this video content',
-                    'trending_score': 78
-                },
-                {
-                    'title': f'Expert Insights on {direction.replace("_", " ").title()}',
-                    'description': f'Professional perspective and analysis of the video content',
-                    'trending_score': 75
-                }
-            ]
-        elif content_type == 'podcast':
-            # Generate topics from podcast content
-            topics = [
-                {
-                    'title': f'Podcast Insights: "{title[:50]}..."',
-                    'description': f'Extract valuable insights and lessons from this podcast episode',
-                    'trending_score': 87
-                },
-                {
-                    'title': f'Expert Discussion with {host}',
-                    'description': f'Expand on the expertise and knowledge shared in this episode',
-                    'trending_score': 84
-                },
-                {
-                    'title': f'Key Learnings from {direction.replace("_", " ").title()} Podcast',
-                    'description': f'Summarize and elaborate on the main learning points',
-                    'trending_score': 81
-                },
-                {
-                    'title': f'Follow-up Questions and Analysis',
-                    'description': f'Generate thought-provoking questions and deeper analysis',
-                    'trending_score': 79
-                },
-                {
-                    'title': f'Actionable Insights from Podcast Content',
-                    'description': f'Practical takeaways and implementation strategies',
-                    'trending_score': 76
-                }
-            ]
+        topics = ai_service.generate_topics_from_content(content_data, direction, content_type)
         
         return jsonify({
             'success': True,

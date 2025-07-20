@@ -584,5 +584,172 @@ Return the enhanced content only, no explanations.
         
         return suggestions.get(platform, ['Optimize for your target audience', 'Include relevant hashtags', 'Add a clear call-to-action'])
 
+    def generate_topics_from_content(self, content_data: Dict[str, str], direction: str, content_type: str = 'video') -> List[Dict[str, any]]:
+        """Generate AI-powered topics from video or podcast content"""
+        
+        if not self.api_key:
+            return self._fallback_topics_from_content(content_data, direction, content_type)
+        
+        try:
+            # Extract content information
+            title = content_data.get('title', '')
+            description = content_data.get('description', '')
+            channel = content_data.get('channel', '') or content_data.get('host', '')
+            
+            prompt = f"""
+Analyze this {content_type} content and generate 5 highly relevant topic ideas for content creation in the {direction.replace('_', ' ')} niche.
+
+{content_type.title()} Information:
+- Title: {title}
+- Channel/Host: {channel}
+- Description: {description[:500]}{'...' if len(description) > 500 else ''}
+
+Requirements:
+- Generate 5 unique, engaging topic ideas
+- Each topic should be specific and actionable
+- Focus on the {direction.replace('_', ' ')} niche and target audience
+- Topics should be inspired by the content but not duplicate it
+- Include a brief description for each topic explaining its relevance
+- Make topics suitable for social media content creation
+- Consider trending angles and current interests in {direction.replace('_', ' ')}
+
+Format your response as a JSON array with this structure:
+[
+  {{
+    "title": "Specific topic title",
+    "description": "Brief explanation of why this topic is relevant and valuable",
+    "trending_score": 85,
+    "content_angle": "The specific angle or approach for this topic"
+  }}
+]
+
+Generate the topics now:
+"""
+            
+            payload = {
+                "model": "deepseek-chat",
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": "You are an expert content strategist specializing in social media content creation. Generate highly relevant, engaging topic ideas based on video/podcast content analysis."
+                    },
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ],
+                "max_tokens": 1000,
+                "temperature": 0.8
+            }
+            
+            response = requests.post(
+                f"{self.base_url}/chat/completions",
+                headers=self.headers,
+                json=payload,
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                content = result['choices'][0]['message']['content'].strip()
+                
+                # Try to parse JSON response
+                try:
+                    import json
+                    topics = json.loads(content)
+                    
+                    # Validate and format topics
+                    formatted_topics = []
+                    for topic in topics[:5]:  # Limit to 5 topics
+                        if isinstance(topic, dict) and 'title' in topic:
+                            formatted_topics.append({
+                                'title': topic.get('title', 'Unknown Topic'),
+                                'description': topic.get('description', 'No description available'),
+                                'trending_score': topic.get('trending_score', 80),
+                                'content_angle': topic.get('content_angle', 'General discussion')
+                            })
+                    
+                    return formatted_topics
+                    
+                except json.JSONDecodeError:
+                    # If JSON parsing fails, try to extract topics from text
+                    return self._extract_topics_from_text(content, direction)
+                    
+            else:
+                print(f"DeepSeek API error: {response.status_code} - {response.text}")
+                return self._fallback_topics_from_content(content_data, direction, content_type)
+                
+        except Exception as e:
+            print(f"Error calling DeepSeek API: {str(e)}")
+            return self._fallback_topics_from_content(content_data, direction, content_type)
+
+    def _extract_topics_from_text(self, text: str, direction: str) -> List[Dict[str, any]]:
+        """Extract topics from AI text response when JSON parsing fails"""
+        import re
+        
+        topics = []
+        lines = text.split('\n')
+        
+        for line in lines:
+            line = line.strip()
+            if line and not line.startswith('{') and not line.startswith('[') and not line.startswith(']'):
+                # Try to extract topic title
+                if ':' in line:
+                    title = line.split(':', 1)[1].strip()
+                else:
+                    title = line
+                
+                if title and len(title) > 10:
+                    topics.append({
+                        'title': title,
+                        'description': f'AI-generated topic based on {direction.replace("_", " ")} content analysis',
+                        'trending_score': 80,
+                        'content_angle': 'AI analysis'
+                    })
+        
+        return topics[:5]  # Return max 5 topics
+
+    def _fallback_topics_from_content(self, content_data: Dict[str, str], direction: str, content_type: str = 'video') -> List[Dict[str, any]]:
+        """Fallback topic generation when AI is not available"""
+        
+        title = content_data.get('title', '')
+        channel = content_data.get('channel', '') or content_data.get('host', '')
+        
+        # Generate basic topics based on content
+        base_topics = [
+            {
+                'title': f'Key Insights from "{title[:50]}"',
+                'description': f'Extract and expand on the main points from this {content_type}',
+                'trending_score': 85,
+                'content_angle': 'Content analysis'
+            },
+            {
+                'title': f'{direction.replace("_", " ").title()} Trends from {channel}',
+                'description': f'Explore current trends and insights in {direction.replace("_", " ")}',
+                'trending_score': 82,
+                'content_angle': 'Trend analysis'
+            },
+            {
+                'title': f'Expert Perspectives on {direction.replace("_", " ").title()}',
+                'description': f'Professional insights and expert opinions on {direction.replace("_", " ")} topics',
+                'trending_score': 80,
+                'content_angle': 'Expert insights'
+            },
+            {
+                'title': f'Practical Applications in {direction.replace("_", " ").title()}',
+                'description': f'Real-world applications and implementation strategies',
+                'trending_score': 78,
+                'content_angle': 'Practical tips'
+            },
+            {
+                'title': f'Future of {direction.replace("_", " ").title()}',
+                'description': f'Predictions and emerging trends in {direction.replace("_", " ")}',
+                'trending_score': 75,
+                'content_angle': 'Future trends'
+            }
+        ]
+        
+        return base_topics
+
 # Global instance
 ai_service = DeepSeekAIService() 
