@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import toast from 'react-hot-toast'
-import { ChevronRight, Sparkles, Copy, Download, RefreshCw, Search, Globe, TrendingUp, BookOpen, Youtube, Mic, Bot } from 'lucide-react'
+import { ChevronRight, Sparkles, Copy, Download, RefreshCw, Search, Globe, TrendingUp, BookOpen, Youtube, Mic, Bot, Zap } from 'lucide-react'
 import { apiClient, contentDirections, platforms, tones } from '../lib/api'
 import { useAuth } from '../contexts/AuthContext'
 import { useLanguage } from '../contexts/LanguageContext'
@@ -87,6 +87,12 @@ export default function Generator() {
   const [googleSearchQuery, setGoogleSearchQuery] = useState('')
   const [selectedCountry, setSelectedCountry] = useState('US')
   const [selectedState, setSelectedState] = useState('')
+  const [selectedCategories, setSelectedCategories] = useState({
+    'Interest-based': [],
+    'Industry': [],
+    'Lifestyle': [],
+    'Professional': []
+  })
   const { isAuthenticated } = useAuth()
   const { t } = useLanguage()
   const router = useRouter()
@@ -100,7 +106,7 @@ export default function Generator() {
     selectedTopic: '',
     tone: '',
     language: 'en',
-    imageStyle: 'professional'
+    imageStyle: 'photorealistic'
   })
 
   // Enhanced platforms with post types - Updated to match design document exactly
@@ -168,103 +174,137 @@ export default function Generator() {
     }
   ]
 
-  // Enhanced sources with Google integration - Updated to match design document exactly (8 sources)
+  // Enhanced sources with Google integration - Updated to match wireframe exactly
   const enhancedSources = [
     {
-      key: 'news',
-      name: t('news'),
+      key: 'google_search',
+      name: '🔍 Google Search',
+      icon: <Search className="w-6 h-6" />,
+      description: 'Custom search query with country selection',
+      hasSearch: true,
+      searchConfig: {
+        type: 'search',
+        fields: ['query', 'country'],
+        placeholder: 'Enter your search query...'
+      }
+    },
+    {
+      key: 'google_news',
+      name: '📰 Google News',
       icon: <Globe className="w-6 h-6" />,
-      description: t('financial_tech_business_industry_news'),
-      hasSearch: true
+      description: 'RSS feed + AI content analysis',
+      hasSearch: true,
+      searchConfig: {
+        type: 'news',
+        fields: ['country', 'category'],
+        placeholder: 'Search news by category...'
+      }
+    },
+    {
+      key: 'google_trends',
+      name: '📈 Google Trends',
+      icon: <TrendingUp className="w-6 h-6" />,
+      description: 'Real-time trending data + interest over time',
+      hasSearch: true,
+      searchConfig: {
+        type: 'trends',
+        fields: ['country', 'category'],
+        placeholder: 'Get trending topics...'
+      }
     },
     {
       key: 'books',
-      name: t('books'),
+      name: '📚 Book',
       icon: <BookOpen className="w-6 h-6" />,
-      description: t('business_self_help_industry_fiction'),
-      hasSearch: true
-    },
-    {
-      key: 'popular_threads',
-      name: t('popular_threads'),
-      icon: <TrendingUp className="w-6 h-6" />,
-      description: t('reddit_twitter_linkedin_viral_content'),
-      hasSearch: true
-    },
-    {
-      key: 'podcasts',
-      name: t('podcasts'),
-      icon: <Mic className="w-6 h-6" />,
-      description: t('business_and_tech_podcasts'),
-      hasSearch: true
+      description: 'AI-powered book discovery',
+      hasSearch: true,
+      searchConfig: {
+        type: 'books',
+        fields: ['book_name', 'author', 'upload_pdf'],
+        placeholder: 'Search books or upload PDF...'
+      }
     },
     {
       key: 'youtube',
-      name: t('youtube_videos'),
+      name: '📺 YouTube',
       icon: <Youtube className="w-6 h-6" />,
-      description: t('educational_content_ted_talks'),
-      hasSearch: true
+      description: 'Enhanced with Google search data',
+      hasSearch: true,
+      searchConfig: {
+        type: 'youtube',
+        fields: ['link', 'country'],
+        placeholder: 'Enter YouTube link or search...'
+      }
     },
     {
-      key: 'research_papers',
-      name: t('research_papers'),
-      icon: <Search className="w-6 h-6" />,
-      description: t('academic_insights'),
-      hasSearch: true
+      key: 'podcasts',
+      name: '🎧 Podcast',
+      icon: <Mic className="w-6 h-6" />,
+      description: 'Enhanced with Google search data',
+      hasSearch: true,
+      searchConfig: {
+        type: 'podcasts',
+        fields: ['link', 'country'],
+        placeholder: 'Enter podcast link or search...'
+      }
     },
     {
-      key: 'case_studies',
-      name: t('case_studies'),
-      icon: <BookOpen className="w-6 h-6" />,
-      description: t('business_success_stories'),
-      hasSearch: true
-    },
-    {
-      key: 'trending_topics',
-      name: t('trending_topics'),
-      icon: <TrendingUp className="w-6 h-6" />,
-      description: t('current_events_and_viral_content'),
-      hasSearch: true
+      key: 'ai_discovery',
+      name: '🤖 AI-Powered Discovery',
+      icon: <Zap className="w-6 h-6" />,
+      description: 'Combines all Google services + AI analysis',
+      hasSearch: true,
+      searchConfig: {
+        type: 'ai_discovery',
+        fields: ['country'],
+        placeholder: 'AI will choose popular topics...'
+      }
     }
   ]
 
-  // Image style options
+  // Image style options - Visual styles with proper descriptions
   const imageStyles = [
     {
-      key: 'professional',
-      name: t('professional'),
-      description: t('clean_corporate_business_focused'),
-      icon: '💼'
+      key: 'photorealistic',
+      name: 'Photorealistic',
+      description: 'High-quality, lifelike images with realistic details and lighting',
+      icon: '📸',
+      imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop'
     },
     {
-      key: 'creative',
-      name: t('creative'),
-      description: t('artistic_innovative_imaginative'),
-      icon: '🎨'
+      key: 'digital_art',
+      name: 'Digital Art',
+      description: 'Modern digital illustrations with vibrant colors and artistic flair',
+      icon: '🎨',
+      imageUrl: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=200&h=200&fit=crop'
     },
     {
-      key: 'minimalist',
-      name: t('minimalist'),
-      description: t('simple_clean_elegant'),
-      icon: '⚪'
+      key: 'watercolor',
+      name: 'Watercolor',
+      description: 'Soft, flowing brushstrokes with translucent colors and organic textures',
+      icon: '🖌️',
+      imageUrl: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=200&h=200&fit=crop'
     },
     {
-      key: 'vibrant',
-      name: t('vibrant'),
-      description: t('colorful_energetic_eye_catching'),
-      icon: '🌈'
+      key: 'geometric',
+      name: 'Geometric',
+      description: 'Clean lines, shapes, and patterns with modern minimalist design',
+      icon: '📐',
+      imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&h=200&fit=crop'
     },
     {
-      key: 'modern',
-      name: t('modern'),
-      description: t('contemporary_sleek_trendy'),
-      icon: '🚀'
+      key: 'vintage',
+      name: 'Vintage',
+      description: 'Retro aesthetic with warm tones, film grain, and nostalgic elements',
+      icon: '📷',
+      imageUrl: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=200&h=200&fit=crop'
     },
     {
-      key: 'natural',
-      name: t('natural'),
-      description: t('organic_earthy_authentic'),
-      icon: '🌿'
+      key: 'abstract',
+      name: 'Abstract',
+      description: 'Non-representational art with bold colors, shapes, and creative expression',
+      icon: '🎭',
+      imageUrl: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=200&h=200&fit=crop'
     }
   ]
 
@@ -938,12 +978,33 @@ Generated on: ${new Date().toLocaleString()}
 
                   {formData.direction && (
                     <div className="bg-gray-50 p-6 rounded-lg">
-                      <h3 className="text-lg font-semibold mb-4">Categories:</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
+                      <h3 className="text-lg font-semibold mb-4">Select Categories (Choose multiple):</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {Object.entries(getCategoriesForDirection(formData.direction)).map(([category, items]) => (
                           <div key={category}>
-                            <h4 className="font-medium mb-2">{category}:</h4>
-                            <p>{items.join(', ')}</p>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              {category}:
+                            </label>
+                            <select
+                              multiple
+                              value={selectedCategories[category] || []}
+                              onChange={(e) => {
+                                const selected = Array.from(e.target.selectedOptions, option => option.value)
+                                setSelectedCategories(prev => ({
+                                  ...prev,
+                                  [category]: selected
+                                }))
+                              }}
+                              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                              size="4"
+                            >
+                              {items.map((item) => (
+                                <option key={item} value={item}>
+                                  {item}
+                                </option>
+                              ))}
+                            </select>
+                            <p className="text-xs text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple</p>
                           </div>
                         ))}
                       </div>
@@ -1000,7 +1061,7 @@ Generated on: ${new Date().toLocaleString()}
 
             {currentStep === 3 && (
               <div>
-                <h2 className="text-2xl font-bold mb-6">What Inspires You?</h2>
+                <h2 className="text-2xl font-bold mb-6">Sources</h2>
                 <p className="text-gray-600 mb-6">Choose your content source (AI + Google will search based on your direction)</p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -1027,37 +1088,124 @@ Generated on: ${new Date().toLocaleString()}
                   <div className="bg-gray-50 p-6 rounded-lg">
                     <h3 className="text-lg font-semibold mb-4">Search Configuration</h3>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Search Query
-                        </label>
-                        <input
-                          type="text"
-                          value={googleSearchQuery}
-                          onChange={(e) => setGoogleSearchQuery(e.target.value)}
-                          placeholder="Enter your search query..."
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                      </div>
+                    {(() => {
+                      const selectedSource = enhancedSources.find(s => s.key === formData.source)
+                      const config = selectedSource?.searchConfig
                       
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Country
-                        </label>
-                        <select
-                          value={selectedCountry}
-                          onChange={(e) => setSelectedCountry(e.target.value)}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        >
-                          {countries.map(country => (
-                            <option key={country.code} value={country.code}>
-                              {country.name}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
+                      if (!config) return null
+                      
+                      return (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                          {config.fields.includes('query') && (
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Search Query
+                              </label>
+                              <input
+                                type="text"
+                                value={googleSearchQuery}
+                                onChange={(e) => setGoogleSearchQuery(e.target.value)}
+                                placeholder={config.placeholder}
+                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              />
+                            </div>
+                          )}
+                          
+                          {config.fields.includes('country') && (
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Country
+                              </label>
+                              <select
+                                value={selectedCountry}
+                                onChange={(e) => setSelectedCountry(e.target.value)}
+                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              >
+                                {countries.map(country => (
+                                  <option key={country.code} value={country.code}>
+                                    {country.name}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          )}
+                          
+                          {config.fields.includes('category') && (
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Category
+                              </label>
+                              <select
+                                value={selectedState}
+                                onChange={(e) => setSelectedState(e.target.value)}
+                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              >
+                                <option value="">All Categories</option>
+                                <option value="business">Business</option>
+                                <option value="technology">Technology</option>
+                                <option value="health">Health</option>
+                                <option value="entertainment">Entertainment</option>
+                                <option value="sports">Sports</option>
+                                <option value="science">Science</option>
+                                <option value="politics">Politics</option>
+                              </select>
+                            </div>
+                          )}
+                          
+                          {config.fields.includes('book_name') && (
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Book Name
+                              </label>
+                              <input
+                                type="text"
+                                placeholder="Enter book name..."
+                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              />
+                            </div>
+                          )}
+                          
+                          {config.fields.includes('author') && (
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Author
+                              </label>
+                              <input
+                                type="text"
+                                placeholder="Enter author name..."
+                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              />
+                            </div>
+                          )}
+                          
+                          {config.fields.includes('link') && (
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Link
+                              </label>
+                              <input
+                                type="url"
+                                placeholder="Enter URL..."
+                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              />
+                            </div>
+                          )}
+                          
+                          {config.fields.includes('upload_pdf') && (
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Upload PDF
+                              </label>
+                              <input
+                                type="file"
+                                accept=".pdf"
+                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })()}
 
                     <button
                       onClick={generateTopics}
@@ -1145,7 +1293,7 @@ Generated on: ${new Date().toLocaleString()}
                 <h2 className="text-2xl font-bold mb-6">Choose Image Style</h2>
                 <p className="text-gray-600 mb-6">Select the visual style for your generated images</p>
                 
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-6">
                   {imageStyles.map((style) => (
                     <button
                       key={style.key}
@@ -1156,7 +1304,14 @@ Generated on: ${new Date().toLocaleString()}
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
-                      <div className="text-2xl mb-2">{style.icon}</div>
+                      <div className="mb-3">
+                        <img 
+                          src={style.imageUrl} 
+                          alt={style.name}
+                          className="w-full h-24 object-cover rounded-lg mb-2"
+                        />
+                      </div>
+                      <div className="text-xl mb-2">{style.icon}</div>
                       <div className="font-medium mb-1">{style.name}</div>
                       <div className="text-sm text-gray-600">{style.description}</div>
                     </button>
