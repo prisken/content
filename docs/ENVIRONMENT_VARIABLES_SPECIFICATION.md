@@ -33,10 +33,10 @@ DEEPSEEK_MAX_TOKENS=4096
 DEEPSEEK_TEMPERATURE=0.7
 ```
 
-#### **Stable Diffusion** ❌ (Need to Obtain)
+#### **Stable Diffusion** ✅ (Already Configured)
 ```bash
 # Stable Diffusion Configuration
-STABILITY_API_KEY=your_stability_api_key  # Get from https://platform.stability.ai/
+STABILITY_API_KEY=sk-4LYzKcgv6IQ5qVtXBNTZD6j8oeo3NVToOWAar2ykfD8Ux5IW
 STABILITY_API_URL=https://api.stability.ai/v1
 SD_MODEL=stable-diffusion-xl-1024-v1-0
 SD_STEPS=30
@@ -192,26 +192,13 @@ NEXT_PUBLIC_SENTRY_DSN=your_sentry_dsn
 
 ### **✅ Already Configured**
 - **DeepSeek AI**: `sk-9d217f003dd24fd1bc1ce4e5440b11e9`
+- **Stability AI**: `sk-4LYzKcgv6IQ5qVtXBNTZD6j8oeo3NVToOWAar2ykfD8Ux5IW`
 - **Cloudinary**: API Key and Secret provided
 - **Secret Keys**: Generated and ready to use
 
 ### **❌ Need to Obtain**
 
-#### **1. Stability AI (Stable Diffusion) - For Image Generation**
-
-**Step-by-Step Guide:**
-1. **Visit**: https://platform.stability.ai/
-2. **Sign Up**: Create a new account
-3. **Get API Key**:
-   - Go to "Account" → "API Keys"
-   - Click "Create API Key"
-   - Copy the generated key (starts with `sk-`)
-4. **Set in Environment**:
-   ```bash
-   STABILITY_API_KEY=sk-your-actual-stability-api-key
-   ```
-
-#### **2. Google Custom Search API - For Topic Generation**
+#### **1. Google Custom Search API - For Topic Generation**
 
 **Step-by-Step Guide:**
 1. **Go to Google Cloud Console**: https://console.cloud.google.com/
@@ -314,7 +301,7 @@ NEXT_PUBLIC_SENTRY_DSN=your_sentry_dsn
 - [x] **Flask Configuration**: SECRET_KEY, FLASK_ENV, FLASK_APP
 - [ ] **Database**: DATABASE_URL (PostgreSQL) - Get from Railway
 - [x] **DeepSeek AI**: DEEPSEEK_API_KEY, DEEPSEEK_API_URL, DEEPSEEK_MODEL, DEEPSEEK_MAX_TOKENS, DEEPSEEK_TEMPERATURE
-- [ ] **Stable Diffusion**: STABILITY_API_KEY, STABILITY_API_URL, SD_MODEL, SD_STEPS, SD_CFG_SCALE - Get from Stability AI
+- [x] **Stable Diffusion**: STABILITY_API_KEY, STABILITY_API_URL, SD_MODEL, SD_STEPS, SD_CFG_SCALE
 - [ ] **Google APIs**: GOOGLE_CUSTOM_SEARCH_API_KEY, GOOGLE_CUSTOM_SEARCH_ENGINE_ID, GOOGLE_TRENDS_API_KEY, GOOGLE_BOOKS_API_KEY, GOOGLE_NEWS_RSS_ENABLED - Get from Google Cloud Console
 - [ ] **Redis**: REDIS_URL, CELERY_BROKER_URL - Get from Railway
 - [x] **Cloudinary**: CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET
@@ -348,8 +335,8 @@ curl -H "Authorization: Bearer sk-9d217f003dd24fd1bc1ce4e5440b11e9" \
      -d '{"model":"deepseek-chat","messages":[{"role":"user","content":"Hello"}]}' \
      https://api.deepseek.com/v1/chat/completions
 
-# Test Stability AI (After getting key)
-curl -H "Authorization: Bearer YOUR_STABILITY_KEY" \
+# Test Stability AI (Already Working)
+curl -H "Authorization: Bearer sk-4LYzKcgv6IQ5qVtXBNTZD6j8oeo3NVToOWAar2ykfD8Ux5IW" \
      -H "Content-Type: application/json" \
      -d '{"text_prompts":[{"text":"a beautiful landscape"}],"cfg_scale":7,"height":1024,"width":1024,"samples":1,"steps":30}' \
      https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image
@@ -359,11 +346,10 @@ curl "https://www.googleapis.com/customsearch/v1?key=YOUR_API_KEY&cx=YOUR_SEARCH
 ```
 
 ### **Priority Order for Setup**
-1. **Stability AI API Key** (for image generation)
-2. **Google Custom Search API** (for topic generation)
-3. **Database URL** (PostgreSQL from Railway)
-4. **Redis URL** (from Railway)
-5. **Domain Configuration** (from Vercel/Railway dashboards)
+1. **Google Custom Search API** (for topic generation)
+2. **Database URL** (PostgreSQL from Railway)
+3. **Redis URL** (from Railway)
+4. **Domain Configuration** (from Vercel/Railway dashboards)
 
 ---
 

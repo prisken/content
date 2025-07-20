@@ -36,8 +36,8 @@ DEEPSEEK_MODEL=deepseek-chat
 DEEPSEEK_MAX_TOKENS=4096
 DEEPSEEK_TEMPERATURE=0.7
 
-# Stable Diffusion (Get from Stability AI)
-STABILITY_API_KEY=your_stability_api_key
+# Stable Diffusion (Stability AI)
+STABILITY_API_KEY=sk-4LYzKcgv6IQ5qVtXBNTZD6j8oeo3NVToOWAar2ykfD8Ux5IW
 STABILITY_API_URL=https://api.stability.ai/v1
 SD_MODEL=stable-diffusion-xl-1024-v1-0
 SD_STEPS=30
@@ -160,13 +160,8 @@ NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=your_google_analytics_id
 
 ### **3. API Keys Setup**
 
-#### **Stability AI (Required for Image Generation)**
-1. Visit: https://platform.stability.ai/
-2. Sign up and get API key
-3. Add to both Railway and Vercel:
-   ```bash
-   STABILITY_API_KEY=sk-your-actual-key
-   ```
+#### **Stability AI (Already Configured)**
+✅ API Key: `sk-4LYzKcgv6IQ5qVtXBNTZD6j8oeo3NVToOWAar2ykfD8Ux5IW`
 
 #### **Google Custom Search API (Required for Topic Generation)**
 1. Go to: https://console.cloud.google.com/
