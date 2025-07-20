@@ -2158,7 +2158,7 @@ def google_trends():
 
 @api_routes.route('/youtube/video-info', methods=['POST'])
 def get_youtube_video_info():
-    """Get YouTube video metadata by video ID"""
+    """Get YouTube video metadata by video ID - DEPLOYMENT TEST"""
     try:
         data = request.get_json()
         video_id = data.get('videoId')
