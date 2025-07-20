@@ -21,15 +21,56 @@ export default function Generator() {
     source: '',
     topic: '',
     tone: '',
-    language: 'en'
+    language: 'en',
+    imageStyle: 'professional' // New field for image style
   })
+
+  // Image style options
+  const imageStyles = [
+    {
+      key: 'professional',
+      name: 'Professional',
+      description: 'Clean, corporate, business-focused',
+      icon: '💼'
+    },
+    {
+      key: 'creative',
+      name: 'Creative',
+      description: 'Artistic, innovative, imaginative',
+      icon: '🎨'
+    },
+    {
+      key: 'minimalist',
+      name: 'Minimalist',
+      description: 'Simple, clean, elegant',
+      icon: '⚪'
+    },
+    {
+      key: 'vibrant',
+      name: 'Vibrant',
+      description: 'Colorful, energetic, eye-catching',
+      icon: '🌈'
+    },
+    {
+      key: 'modern',
+      name: 'Modern',
+      description: 'Contemporary, sleek, trendy',
+      icon: '🚀'
+    },
+    {
+      key: 'natural',
+      name: 'Natural',
+      description: 'Organic, earthy, authentic',
+      icon: '🌿'
+    }
+  ]
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
   const nextStep = () => {
-    if (currentStep < 5) {
+    if (currentStep < 6) {
       setCurrentStep(currentStep + 1)
     }
   }
@@ -133,7 +174,7 @@ ${t('generated_on')}: ${new Date().toLocaleString()}
           {/* Progress Steps */}
           <div className="flex justify-center mb-8">
             <div className="flex items-center space-x-4">
-              {[1, 2, 3, 4, 5].map((step) => (
+              {[1, 2, 3, 4, 5, 6].map((step) => (
                 <div key={step} className="flex items-center">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${
                     step <= currentStep 
@@ -142,7 +183,7 @@ ${t('generated_on')}: ${new Date().toLocaleString()}
                   }`}>
                     {step}
                   </div>
-                  {step < 5 && (
+                  {step < 6 && (
                     <ChevronRight className={`w-6 h-6 mx-2 ${
                       step < currentStep ? 'text-blue-600' : 'text-gray-300'
                     }`} />
@@ -281,6 +322,31 @@ ${t('generated_on')}: ${new Date().toLocaleString()}
 
             {currentStep === 5 && (
               <div>
+                <h2 className="text-2xl font-bold mb-6">{t('select_image_style')}</h2>
+                <p className="text-gray-600 mb-6">{t('image_style_description')}</p>
+                
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {imageStyles.map((style) => (
+                    <button
+                      key={style.key}
+                      onClick={() => handleInputChange('imageStyle', style.key)}
+                      className={`p-4 border-2 rounded-lg text-left transition-all duration-200 ${
+                        formData.imageStyle === style.key
+                          ? 'border-blue-600 bg-blue-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="text-2xl mb-2">{style.icon}</div>
+                      <div className="font-medium mb-1">{style.name}</div>
+                      <div className="text-sm text-gray-600">{style.description}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {currentStep === 6 && (
+              <div>
                 <h2 className="text-2xl font-bold mb-6">{t('generate_content')}</h2>
                 <p className="text-gray-600 mb-6">{t('review_settings')}</p>
                 
@@ -293,6 +359,7 @@ ${t('generated_on')}: ${new Date().toLocaleString()}
                     <div><strong>{t('tone_label_settings')}</strong> {tones.find(t => t.key === formData.tone)?.name}</div>
                     <div><strong>{t('topic_label_settings')}</strong> {formData.topic}</div>
                     <div><strong>{t('language_label_settings')}</strong> {formData.language === 'en' ? t('english') : t('chinese')}</div>
+                    <div><strong>{t('image_style_label')}</strong> {imageStyles.find(s => s.key === formData.imageStyle)?.name}</div>
                   </div>
                 </div>
 
@@ -326,7 +393,7 @@ ${t('generated_on')}: ${new Date().toLocaleString()}
                 {t('previous')}
               </button>
               
-              {currentStep < 5 && (
+              {currentStep < 6 && (
                 <button
                   onClick={nextStep}
                   className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200"

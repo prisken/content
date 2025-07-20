@@ -1052,6 +1052,7 @@ def generate_content():
         topic = data.get('topic', 'Business Strategy')
         tone = data.get('tone', 'professional')
         language = data.get('language', 'en')
+        image_style = data.get('imageStyle', 'professional')  # New image style parameter
         generate_images = data.get('generate_images', True)  # New parameter
         
         # Step 1: Generate content using DeepSeek AI
@@ -1064,7 +1065,7 @@ def generate_content():
             content_text = generate_content_text(direction, platform, source, topic, tone, language)
         
         # Step 2: Analyze the generated content to create image prompts
-        image_prompts = analyze_content_for_image_generation(content_text, direction, platform, tone)
+        image_prompts = analyze_content_for_image_generation(content_text, direction, platform, tone, image_style)
         
         # Step 3: Generate images using Stable Diffusion with content-based prompts
         generated_images = {'primary': None, 'variations': [], 'total_count': 0}
@@ -1140,6 +1141,7 @@ def generate_content():
                 'tone': tone,
                 'region': 'global',
                 'language': language,
+                'image_style': image_style,  # Include image style in metadata
                 'generated_at': datetime.utcnow().isoformat() + 'Z',
                 'platform': platform.upper(),
                 'content_category': direction
@@ -1330,7 +1332,7 @@ def generate_content_text(direction, platform, source, topic, tone, language):
     
     return content
 
-def analyze_content_for_image_generation(content_text, direction, platform, tone):
+def analyze_content_for_image_generation(content_text, direction, platform, tone, image_style):
     """Analyze generated content to create intelligent image prompts for Stable Diffusion."""
     
     # Extract key themes and topics from the content
@@ -1373,17 +1375,109 @@ def analyze_content_for_image_generation(content_text, direction, platform, tone
     # Get platform-specific styling
     platform_style = platform_prompts.get(platform, platform_prompts['linkedin'])
     
-    # Create primary prompt based on content analysis
-    primary_prompt = create_primary_image_prompt(content_analysis, platform_style, direction, tone)
+    # Create primary prompt based on content analysis and image style
+    primary_prompt = create_primary_image_prompt(content_analysis, platform_style, direction, tone, image_style)
     
     # Create variation prompts
-    variation_prompts = create_variation_prompts(content_analysis, platform_style, direction, tone)
+    variation_prompts = create_variation_prompts(content_analysis, platform_style, direction, tone, image_style)
     
     return {
         'primary': primary_prompt,
         'variations': variation_prompts,
-        'content_analysis': content_analysis
+        'content_analysis': content_analysis,
+        'image_style': image_style
     }
+
+def create_primary_image_prompt(content_analysis, platform_style, direction, tone, image_style):
+    """Create the primary image prompt based on content analysis and image style."""
+    
+    # Image style modifiers
+    style_modifiers = {
+        'professional': 'professional, corporate, business-focused, clean, sophisticated',
+        'creative': 'artistic, creative, innovative, imaginative, expressive, unique',
+        'minimalist': 'minimalist, simple, clean, elegant, uncluttered, focused',
+        'vibrant': 'vibrant, colorful, energetic, eye-catching, dynamic, bold',
+        'modern': 'modern, contemporary, sleek, trendy, cutting-edge, futuristic',
+        'natural': 'natural, organic, earthy, authentic, warm, nature-inspired'
+    }
+    
+    # Get style modifier
+    style_modifier = style_modifiers.get(image_style, style_modifiers['professional'])
+    
+    # Build the prompt
+    prompt_parts = [
+        f"High-quality {style_modifier} image",
+        f"representing {content_analysis['direction'].replace('_', ' ')} content",
+        f"in a {tone} tone",
+        f"featuring {', '.join(content_analysis['visual_elements'][:3])}",
+        f"with {platform_style['composition']} composition",
+        f"using {platform_style['colors']} color palette",
+        "professional photography, 4K resolution, detailed, realistic"
+    ]
+    
+    return " ".join(prompt_parts)
+
+def create_variation_prompts(content_analysis, platform_style, direction, tone, image_style):
+    """Create variation image prompts for different perspectives with image style."""
+    
+    # Image style variations
+    style_variations = {
+        'professional': {
+            'abstract': 'professional abstract representation',
+            'action': 'professional dynamic scene',
+            'minimalist': 'professional minimalist design',
+            'environmental': 'professional environmental setting'
+        },
+        'creative': {
+            'abstract': 'creative artistic interpretation',
+            'action': 'creative dynamic expression',
+            'minimalist': 'creative minimalist approach',
+            'environmental': 'creative environmental concept'
+        },
+        'minimalist': {
+            'abstract': 'minimalist abstract design',
+            'action': 'minimalist dynamic composition',
+            'minimalist': 'pure minimalist elegance',
+            'environmental': 'minimalist environmental focus'
+        },
+        'vibrant': {
+            'abstract': 'vibrant abstract art',
+            'action': 'vibrant dynamic energy',
+            'minimalist': 'vibrant minimalist style',
+            'environmental': 'vibrant environmental scene'
+        },
+        'modern': {
+            'abstract': 'modern abstract design',
+            'action': 'modern dynamic composition',
+            'minimalist': 'modern minimalist approach',
+            'environmental': 'modern environmental setting'
+        },
+        'natural': {
+            'abstract': 'natural abstract representation',
+            'action': 'natural dynamic movement',
+            'minimalist': 'natural minimalist beauty',
+            'environmental': 'natural environmental harmony'
+        }
+    }
+    
+    # Get style-specific variations
+    style_vars = style_variations.get(image_style, style_variations['professional'])
+    
+    variations = [
+        # Abstract/conceptual variation
+        f"{style_vars['abstract']} of {content_analysis['direction'].replace('_', ' ')} concepts, {tone} mood, {platform_style['style']} aesthetic, creative interpretation",
+        
+        # Action/dynamic variation
+        f"{style_vars['action']} related to {content_analysis['direction'].replace('_', ' ')}, {tone} energy, {platform_style['style']} composition, movement and engagement",
+        
+        # Minimalist variation
+        f"{style_vars['minimalist']} representing {content_analysis['direction'].replace('_', ' ')} themes, {tone} simplicity, {platform_style['style']} approach, clean and focused",
+        
+        # Environmental variation
+        f"{style_vars['environmental']} showcasing {content_analysis['direction'].replace('_', ' ')} context, {tone} atmosphere, {platform_style['style']} environment, contextual relevance"
+    ]
+    
+    return variations
 
 def analyze_content_themes(content_text, direction, platform, tone):
     """Analyze content to extract key themes, topics, and visual elements."""
@@ -1459,41 +1553,6 @@ def extract_visual_elements(content_text, direction, tone):
     tone_visuals = direction_visuals.get(tone, direction_visuals['professional'])
     
     return tone_visuals
-
-def create_primary_image_prompt(content_analysis, platform_style, direction, tone):
-    """Create the primary image prompt based on content analysis."""
-    
-    # Build the prompt
-    prompt_parts = [
-        f"High-quality {platform_style['style']} image",
-        f"representing {content_analysis['direction'].replace('_', ' ')} content",
-        f"in a {tone} tone",
-        f"featuring {', '.join(content_analysis['visual_elements'][:3])}",
-        f"with {platform_style['composition']} composition",
-        f"using {platform_style['colors']} color palette",
-        "professional photography, 4K resolution, detailed, realistic"
-    ]
-    
-    return " ".join(prompt_parts)
-
-def create_variation_prompts(content_analysis, platform_style, direction, tone):
-    """Create variation image prompts for different perspectives."""
-    
-    variations = [
-        # Abstract/conceptual variation
-        f"Abstract artistic representation of {content_analysis['direction'].replace('_', ' ')} concepts, {tone} mood, {platform_style['style']} aesthetic, creative interpretation",
-        
-        # Action/dynamic variation
-        f"Dynamic action scene related to {content_analysis['direction'].replace('_', ' ')}, {tone} energy, {platform_style['style']} composition, movement and engagement",
-        
-        # Minimalist variation
-        f"Minimalist elegant design representing {content_analysis['direction'].replace('_', ' ')} themes, {tone} simplicity, {platform_style['style']} approach, clean and focused",
-        
-        # Environmental variation
-        f"Environmental setting showcasing {content_analysis['direction'].replace('_', ' ')} context, {tone} atmosphere, {platform_style['style']} environment, contextual relevance"
-    ]
-    
-    return variations
 
 @api_routes.route('/translate', methods=['POST'])
 def translate_content():
