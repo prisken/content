@@ -1074,20 +1074,22 @@ def generate_content():
             try:
                 # Simple image generation without complex timeout handling
                 from services.stable_diffusion import StableDiffusionService
-                stable_diffusion = StableDiffusionService()
+                from flask import current_app
                 
                 # Create image prompt based on content and style
                 image_prompt = f"Professional {image_style} style image for {platform} post about {selected_topic} in {direction.replace('_', ' ')} category, high quality, trending on artstation"
                 
-                # Generate image directly
-                primary_image = stable_diffusion.generate_image_with_prompt(
-                    platform=platform,
-                    prompt=image_prompt,
-                    content_direction=direction,
-                    topic=selected_topic,
-                    tone=tone,
-                    language=language
-                )
+                # Generate image with proper app context
+                with current_app.app_context():
+                    stable_diffusion = StableDiffusionService()
+                    primary_image = stable_diffusion.generate_image_with_prompt(
+                        platform=platform,
+                        prompt=image_prompt,
+                        content_direction=direction,
+                        topic=selected_topic,
+                        tone=tone,
+                        language=language
+                    )
                 
                 if 'error' not in primary_image and primary_image.get('image_data'):
                     generated_images = {
