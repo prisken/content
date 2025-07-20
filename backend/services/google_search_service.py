@@ -766,84 +766,86 @@ class GoogleSearchService:
             return self._scrape_podcasts(direction, categories)
         
         try:
-            # Create search query based on direction and categories
-            search_terms = [direction.replace('_', ' ')]
-            if categories:
-                search_terms.extend(categories[:3])  # Use top 3 categories
+            # Create multiple search queries for better results
+            search_queries = self._generate_search_queries(direction, categories, country, 'podcast')
             
-            # Add location-specific terms based on country
-            location_terms = self._get_location_terms(country)
-            if location_terms:
+            all_podcasts = []
+            seen_urls = set()  # Track seen URLs to avoid duplicates
+            
+            for i, search_query in enumerate(search_queries[:2]):  # Try first 2 queries
+                print(f"🔍 DEBUG: Search query {i+1}: '{search_query}'")
+                
+                # Add randomization for variety
                 import random
-                location_term = random.choice(location_terms)
-                search_terms.append(location_term)
+                start_index = random.randint(1, 5)  # Smaller range for better results
+                
+                params = {
+                    'key': self.api_key,
+                    'cx': self.search_engine_id,
+                    'q': search_query,
+                    'gl': country.lower(),
+                    'lr': f'lang_{self._get_language_code(country)}',  # Language preference
+                    'start': start_index,  # Random start position for variety
+                    'num': 5  # Get more results to filter from
+                }
             
-            # Create a cleaner search query for podcasts
-            base_query = ' '.join(search_terms)
-            search_query = f'{base_query} site:podcasts.apple.com'
+                response = requests.get(self.custom_search_url, params=params)
+                print(f"🔍 DEBUG: API Response Status: {response.status_code}")
+                
+                if response.status_code != 200:
+                    print(f"❌ DEBUG: API Error Response: {response.text[:500]}")
+                    continue  # Try next query instead of failing
+                
+                data = response.json()
+                print(f"🔍 DEBUG: API Response has {len(data.get('items', []))} items")
+                
+                if 'items' in data:
+                    print(f"🔍 DEBUG: Processing {len(data['items'])} search results")
+                    for item in data['items']:
+                        podcast_url = item.get('link', '')
+                        title = item.get('title', '')
+                        snippet = item.get('snippet', '')
+                        
+                        # Skip if we've seen this URL before
+                        if podcast_url in seen_urls:
+                            continue
+                        seen_urls.add(podcast_url)
+                        
+                        print(f"🔍 DEBUG: Processing: Title='{title[:50]}...'")
+                        print(f"🔍 DEBUG: URL='{podcast_url}'")
+                        
+                        # Extract podcast details from URL or search result
+                        podcast_details = self._extract_podcast_details(item)
+                        
+                        podcast = {
+                            'title': item.get('title', ''),
+                            'url': podcast_url,
+                            'cover': podcast_details.get('cover', 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=300&h=300&fit=crop'),
+                            'duration': podcast_details.get('duration', 'Unknown'),
+                            'episodes': podcast_details.get('episodes', 'Unknown'),
+                            'host': podcast_details.get('host', 'Unknown'),
+                            'description': item.get('snippet', '')
+                        }
+                        all_podcasts.append(podcast)
+                        print(f"✅ DEBUG: Added podcast: {podcast['title'][:50]}... (Host: {podcast['host']})")
+                        
+                        # Stop if we have enough unique results
+                        if len(all_podcasts) >= 3:
+                            break
+                
+                # Stop if we have enough results
+                if len(all_podcasts) >= 3:
+                    break
             
-            print(f"🔍 DEBUG: Search query: '{search_query}'")
-            print(f"🔍 DEBUG: Using Google Custom Search API with country: {country}")
-            
-            # Add randomization for variety
-            import random
-            start_index = random.randint(1, 10)  # Start from random position for variety
-            
-            params = {
-                'key': self.api_key,
-                'cx': self.search_engine_id,
-                'q': search_query,
-                'gl': country.lower(),
-                'lr': f'lang_{self._get_language_code(country)}',  # Language preference
-                'start': start_index,  # Random start position for variety
-                'num': 3  # Get 3 results
-            }
-            
-            response = requests.get(self.custom_search_url, params=params)
-            print(f"🔍 DEBUG: API Response Status: {response.status_code}")
-            
-            if response.status_code != 200:
-                print(f"❌ DEBUG: API Error Response: {response.text[:500]}")
-                raise Exception(f"API returned status {response.status_code}")
-            
-            data = response.json()
-            print(f"🔍 DEBUG: API Response has {len(data.get('items', []))} items")
-            podcasts = []
-            
-            if 'items' in data:
-                print(f"🔍 DEBUG: Processing {len(data['items'])} search results")
-                for i, item in enumerate(data['items']):
-                    podcast_url = item.get('link', '')
-                    title = item.get('title', '')
-                    snippet = item.get('snippet', '')
-                    
-                    print(f"🔍 DEBUG: Item {i+1}: Title='{title[:50]}...'")
-                    print(f"🔍 DEBUG: Item {i+1}: URL='{podcast_url}'")
-                    
-                    # Extract podcast details from URL or search result
-                    podcast_details = self._extract_podcast_details(item)
-                    
-                    podcast = {
-                        'title': item.get('title', ''),
-                        'url': podcast_url,
-                        'cover': podcast_details.get('cover', 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=300&h=300&fit=crop'),
-                        'duration': podcast_details.get('duration', 'Unknown'),
-                        'episodes': podcast_details.get('episodes', 'Unknown'),
-                        'host': podcast_details.get('host', 'Unknown'),
-                        'description': item.get('snippet', '')
-                    }
-                    podcasts.append(podcast)
-                    print(f"✅ DEBUG: Added podcast: {podcast['title'][:50]}... (Host: {podcast['host']})")
-            else:
-                print("⚠️ DEBUG: No 'items' found in API response")
-                print(f"🔍 DEBUG: API Response keys: {list(data.keys())}")
+            # Return the best results
+            podcasts = all_podcasts[:3]
             
             # Fallback to mock data if no results
             if not podcasts:
                 print("⚠️ DEBUG: No podcasts found, falling back to mock data")
                 podcasts = self._mock_podcasts(direction, categories)
             else:
-                print(f"✅ DEBUG: Successfully found {len(podcasts)} real podcasts")
+                print(f"✅ DEBUG: Successfully found {len(podcasts)} unique podcasts")
             
             print(f"🔍 DEBUG: Final podcast count: {len(podcasts)}")
             return podcasts
@@ -915,6 +917,72 @@ class GoogleSearchService:
         }
         return language_codes.get(country.upper(), 'en')
     
+    def _generate_search_queries(self, direction: str, categories: List[str], country: str, content_type: str = 'podcast') -> List[str]:
+        """Generate multiple search queries for better results"""
+        import random
+        
+        # Base direction terms
+        direction_terms = {
+            'business_finance': ['business', 'finance', 'entrepreneurship', 'money', 'investment'],
+            'technology': ['technology', 'tech', 'AI', 'programming', 'software'],
+            'health_wellness': ['health', 'wellness', 'fitness', 'nutrition', 'mental health'],
+            'food_cooking': ['food', 'cooking', 'recipes', 'kitchen', 'culinary'],
+            'education': ['education', 'learning', 'teaching', 'academic', 'study'],
+            'entertainment': ['entertainment', 'movies', 'music', 'celebrity', 'pop culture'],
+            'travel': ['travel', 'tourism', 'vacation', 'adventure', 'exploration'],
+            'sports': ['sports', 'fitness', 'athletics', 'training', 'competition'],
+            'lifestyle': ['lifestyle', 'personal development', 'self improvement', 'motivation'],
+            'science_research': ['science', 'research', 'discovery', 'innovation', 'technology']
+        }
+        
+        # Get direction-specific terms
+        direction_keywords = direction_terms.get(direction, [direction.replace('_', ' ')])
+        
+        # Get location terms
+        location_terms = self._get_location_terms(country)
+        
+        # Generate multiple search queries
+        queries = []
+        
+        # Query 1: Direction + Category + Location
+        if categories:
+            category_terms = categories[:2]  # Use top 2 categories
+            base_terms = direction_keywords[:2] + category_terms
+            if location_terms:
+                base_terms.append(random.choice(location_terms))
+            query = ' '.join(base_terms)
+            if content_type == 'podcast':
+                queries.append(f'{query} site:podcasts.apple.com')
+            else:
+                queries.append(f'{query} site:youtube.com')
+        
+        # Query 2: Direction + Location + "best"
+        if location_terms:
+            location_term = random.choice(location_terms)
+            query = f"{random.choice(direction_keywords)} {location_term} best"
+            if content_type == 'podcast':
+                queries.append(f'{query} site:podcasts.apple.com')
+            else:
+                queries.append(f'{query} site:youtube.com')
+        
+        # Query 3: Category-focused
+        if categories:
+            category = random.choice(categories)
+            query = f"{category} {random.choice(direction_keywords)}"
+            if content_type == 'podcast':
+                queries.append(f'{query} site:podcasts.apple.com')
+            else:
+                queries.append(f'{query} site:youtube.com')
+        
+        # Query 4: Popular/popular
+        query = f"{random.choice(direction_keywords)} popular"
+        if content_type == 'podcast':
+            queries.append(f'{query} site:podcasts.apple.com')
+        else:
+            queries.append(f'{query} site:youtube.com')
+        
+        return queries
+    
     def _generate_no_preview_image(self, title: str) -> str:
         """Generate a "No Preview Available" image with podcast title"""
         # Use a better placeholder service that handles text well
@@ -942,6 +1010,8 @@ class GoogleSearchService:
             r'by\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)',    # "by John Smith"
             r'hosted\s+by\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)',  # "hosted by John Smith"
             r'featuring\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)',    # "featuring John Smith"
+            r'presented\s+by\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)',  # "presented by John Smith"
+            r'from\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)',  # "from John Smith"
         ]
         
         # Search in title first, then snippet
@@ -954,6 +1024,22 @@ class GoogleSearchService:
             if match:
                 host = match.group(1)
                 break
+        
+        # If no host found, try to extract from podcast name
+        if host == 'Unknown Host':
+            # Look for podcast names that might be the host
+            podcast_name_patterns = [
+                r'^([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s+Show',  # "John Smith Show"
+                r'^([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s+Podcast',  # "John Smith Podcast"
+                r'^([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s+Experience',  # "John Smith Experience"
+                r'^([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s+Insights',  # "John Smith Insights"
+            ]
+            
+            for pattern in podcast_name_patterns:
+                match = re.search(pattern, title)
+                if match:
+                    host = match.group(1)
+                    break
         
         # If no host found, try to extract from URL or use a default
         if host == 'Unknown Host':
