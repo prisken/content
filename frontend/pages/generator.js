@@ -95,6 +95,14 @@ export default function Generator() {
   })
   const [generatedVideos, setGeneratedVideos] = useState([])
   const [generatedPodcasts, setGeneratedPodcasts] = useState([])
+  
+  // Debug effect to monitor podcast state changes
+  useEffect(() => {
+    console.log('🎤 Frontend: generatedPodcasts state changed:', generatedPodcasts);
+    if (generatedPodcasts.length > 0) {
+      console.log('🎤 Frontend: Podcast titles in state:', generatedPodcasts.map(p => p.title));
+    }
+  }, [generatedPodcasts]);
   const [isGeneratingLink, setIsGeneratingLink] = useState(false)
   const { isAuthenticated } = useAuth()
   const { t } = useLanguage()
@@ -873,12 +881,17 @@ export default function Generator() {
     console.log('🎤 Frontend: Starting podcast generation...');
     console.log('🎤 Frontend: Form data:', formData);
     console.log('🎤 Frontend: Selected categories:', selectedCategories);
+    console.log('🎤 Frontend: Current generatedPodcasts state:', generatedPodcasts);
     
     if (!formData.direction) {
       toast.error('Please select direction first')
       return
     }
 
+    // Clear previous results first
+    console.log('🎤 Frontend: Clearing previous podcast results');
+    setGeneratedPodcasts([]);
+    
     setIsGeneratingLink(true)
     try {
       const requestData = {
@@ -894,9 +907,13 @@ export default function Generator() {
       console.log('🎤 Frontend: Received response:', response);
       
       if (response.success && response.data) {
-        console.log('🎤 Frontend: Setting podcasts:', response.data.podcasts);
-        setGeneratedPodcasts(response.data.podcasts || [])
-        toast.success(`Found ${response.data.podcasts?.length || 0} popular podcasts!`)
+        const podcasts = response.data.podcasts || [];
+        console.log('🎤 Frontend: Setting podcasts:', podcasts);
+        console.log('🎤 Frontend: Podcast titles:', podcasts.map(p => p.title));
+        console.log('🎤 Frontend: Podcast hosts:', podcasts.map(p => p.host));
+        
+        setGeneratedPodcasts(podcasts)
+        toast.success(`Found ${podcasts.length} popular podcasts!`)
       } else {
         console.log('🎤 Frontend: Response not successful:', response);
         toast.error(response.error || 'Failed to generate podcast links')
