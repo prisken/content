@@ -1103,38 +1103,20 @@ def generate_content():
         generated_images = {'primary': None, 'variations': [], 'total_count': 0}
         if generate_images and image_prompts:
             try:
-                from services.stable_diffusion import StableDiffusionService
-                stable_diffusion = StableDiffusionService()
-                
-                # Generate primary image using content-analyzed prompt
-                primary_image = stable_diffusion.generate_image_with_prompt(
-                    platform=platform,
-                    prompt=image_prompts['primary'],
-                    content_direction=direction,
-                    topic=selected_topic,
-                    tone=tone,
-                    language=language
-                )
-                
-                # Generate variations using different content-analyzed prompts
-                variations = []
-                for i, variation_prompt in enumerate(image_prompts['variations'][:2]):
-                    variation_image = stable_diffusion.generate_image_with_prompt(
-                        platform=platform,
-                        prompt=variation_prompt,
-                        content_direction=direction,
-                        topic=selected_topic,
-                        tone=tone,
-                        language=language
-                    )
-                    variations.append(variation_image)
-                
+                # Temporarily disable image generation to fix timeout issues
+                print("Image generation temporarily disabled to prevent timeouts")
                 generated_images = {
-                    'primary': primary_image,
-                    'variations': variations,
-                    'total_count': len(variations) + 1,
+                    'primary': None,
+                    'variations': [],
+                    'total_count': 0,
+                    'note': 'Image generation temporarily disabled',
                     'prompts_used': image_prompts
                 }
+                
+                # TODO: Re-enable Stable Diffusion after fixing timeout issues
+                # from services.stable_diffusion import StableDiffusionService
+                # stable_diffusion = StableDiffusionService()
+                # ... rest of image generation code
                 
             except Exception as e:
                 print(f"Error generating images: {str(e)}")
