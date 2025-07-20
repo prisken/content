@@ -93,6 +93,9 @@ export default function Generator() {
     'Lifestyle': [],
     'Professional': []
   })
+  const [generatedVideoLink, setGeneratedVideoLink] = useState('')
+  const [generatedPodcastLink, setGeneratedPodcastLink] = useState('')
+  const [isGeneratingLink, setIsGeneratingLink] = useState(false)
   const { isAuthenticated } = useAuth()
   const { t } = useLanguage()
   const router = useRouter()
@@ -174,42 +177,42 @@ export default function Generator() {
     }
   ]
 
-  // Enhanced sources with Google integration - Updated to match wireframe exactly
+  // Enhanced sources with Google integration - Updated for mobile and simplified
   const enhancedSources = [
     {
-      key: 'google_search',
-      name: '🔍 Google Search',
+      key: 'whats_hot',
+      name: '🔥 What\'s Hot Online',
       icon: <Search className="w-6 h-6" />,
-      description: 'Custom search query with country selection',
+      description: 'Discover trending topics and viral content',
       hasSearch: true,
       searchConfig: {
-        type: 'search',
-        fields: ['query', 'country'],
-        placeholder: 'Enter your search query...'
+        type: 'whats_hot',
+        fields: ['country'],
+        placeholder: 'Find what\'s trending...'
       }
     },
     {
-      key: 'google_news',
-      name: '📰 Google News',
+      key: 'news',
+      name: '📰 News',
       icon: <Globe className="w-6 h-6" />,
-      description: 'RSS feed + AI content analysis',
+      description: 'Latest news and current events',
       hasSearch: true,
       searchConfig: {
         type: 'news',
-        fields: ['country', 'category'],
-        placeholder: 'Search news by category...'
+        fields: ['country'],
+        placeholder: 'Get latest news...'
       }
     },
     {
-      key: 'google_trends',
-      name: '📈 Google Trends',
+      key: 'trends',
+      name: '📈 Trends',
       icon: <TrendingUp className="w-6 h-6" />,
-      description: 'Real-time trending data + interest over time',
+      description: 'Real-time trending topics and interests',
       hasSearch: true,
       searchConfig: {
         type: 'trends',
-        fields: ['country', 'category'],
-        placeholder: 'Get trending topics...'
+        fields: ['country'],
+        placeholder: 'Discover trending topics...'
       }
     },
     {
@@ -225,34 +228,38 @@ export default function Generator() {
       }
     },
     {
-      key: 'youtube',
-      name: '📺 YouTube',
+      key: 'videos',
+      name: '📺 Videos',
       icon: <Youtube className="w-6 h-6" />,
-      description: 'Enhanced with Google search data',
+      description: 'Popular videos and trending content',
       hasSearch: true,
       searchConfig: {
-        type: 'youtube',
-        fields: ['link', 'country'],
-        placeholder: 'Enter YouTube link or search...'
+        type: 'videos',
+        fields: ['country'],
+        placeholder: 'Find popular videos...',
+        hasGenerateButton: true,
+        generateButtonText: 'Generate Video Link'
       }
     },
     {
       key: 'podcasts',
       name: '🎧 Podcast',
       icon: <Mic className="w-6 h-6" />,
-      description: 'Enhanced with Google search data',
+      description: 'Popular podcasts and trending audio content',
       hasSearch: true,
       searchConfig: {
         type: 'podcasts',
-        fields: ['link', 'country'],
-        placeholder: 'Enter podcast link or search...'
+        fields: ['country'],
+        placeholder: 'Find popular podcasts...',
+        hasGenerateButton: true,
+        generateButtonText: 'Generate Podcast Link'
       }
     },
     {
       key: 'ai_discovery',
       name: '🤖 AI-Powered Discovery',
       icon: <Zap className="w-6 h-6" />,
-      description: 'Combines all Google services + AI analysis',
+      description: 'Combines all sources + AI analysis',
       hasSearch: true,
       searchConfig: {
         type: 'ai_discovery',
@@ -834,6 +841,54 @@ export default function Generator() {
     }
   }
 
+  const generateVideoLink = async () => {
+    if (!formData.direction) {
+      toast.error('Please select direction first')
+      return
+    }
+
+    setIsGeneratingLink(true)
+    try {
+      const response = await apiClient.generateVideoLink({
+        direction: formData.direction,
+        categories: selectedCategories,
+        country: selectedCountry
+      })
+      
+      setGeneratedVideoLink(response.videoLink || '')
+      toast.success('Video link generated successfully!')
+    } catch (error) {
+      toast.error('Failed to generate video link')
+      console.error('Video link generation error:', error)
+    } finally {
+      setIsGeneratingLink(false)
+    }
+  }
+
+  const generatePodcastLink = async () => {
+    if (!formData.direction) {
+      toast.error('Please select direction first')
+      return
+    }
+
+    setIsGeneratingLink(true)
+    try {
+      const response = await apiClient.generatePodcastLink({
+        direction: formData.direction,
+        categories: selectedCategories,
+        country: selectedCountry
+      })
+      
+      setGeneratedPodcastLink(response.podcastLink || '')
+      toast.success('Podcast link generated successfully!')
+    } catch (error) {
+      toast.error('Failed to generate podcast link')
+      console.error('Podcast link generation error:', error)
+    } finally {
+      setIsGeneratingLink(false)
+    }
+  }
+
   const generateContent = async () => {
     if (!isAuthenticated()) {
       toast.error(t('login_required'))
@@ -916,24 +971,24 @@ Generated on: ${new Date().toLocaleString()}
         <meta name="description" content="Generate high-quality content with AI using DeepSeek and Stable Diffusion" />
       </Head>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-4 sm:py-8">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-2 sm:mb-4">
               AI Content Generator
             </h1>
-            <p className="text-xl text-gray-600">
+            <p className="text-lg sm:text-xl text-gray-600">
               Create engaging content with DeepSeek AI and Stable Diffusion
             </p>
           </div>
 
           {/* Progress Steps */}
-          <div className="flex justify-center mb-8">
-            <div className="flex items-center space-x-4">
+          <div className="flex justify-center mb-6 sm:mb-8">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               {[1, 2, 3, 4, 5].map((step) => (
                 <div key={step} className="flex items-center">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${
+                  <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ${
                     step <= currentStep 
                       ? 'bg-blue-600 text-white' 
                       : 'bg-gray-200 text-gray-600'
@@ -941,7 +996,7 @@ Generated on: ${new Date().toLocaleString()}
                     {step}
                   </div>
                   {step < 5 && (
-                    <ChevronRight className={`w-6 h-6 mx-2 ${
+                    <ChevronRight className={`w-4 h-4 sm:w-6 sm:h-6 mx-1 sm:mx-2 ${
                       step < currentStep ? 'text-blue-600' : 'text-gray-300'
                     }`} />
                   )}
@@ -951,11 +1006,11 @@ Generated on: ${new Date().toLocaleString()}
           </div>
 
           {/* Form Steps */}
-          <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
+          <div className="bg-white rounded-lg shadow-lg p-4 sm:p-8 mb-6 sm:mb-8">
             {currentStep === 1 && (
               <div>
-                <h2 className="text-2xl font-bold mb-6">Choose Your Focus</h2>
-                <p className="text-gray-600 mb-6">What niche, industry, or lifestyle interests you?</p>
+                <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Choose Your Focus</h2>
+                <p className="text-gray-600 mb-4 sm:mb-6">What niche, industry, or lifestyle interests you?</p>
                 
                 <div className="max-w-2xl">
                   <div className="mb-6">
@@ -979,32 +1034,38 @@ Generated on: ${new Date().toLocaleString()}
                   {formData.direction && (
                     <div className="bg-gray-50 p-6 rounded-lg">
                       <h3 className="text-lg font-semibold mb-4">Select Categories (Choose multiple):</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-4">
                         {Object.entries(getCategoriesForDirection(formData.direction)).map(([category, items]) => (
                           <div key={category}>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                               {category}:
                             </label>
-                            <select
-                              multiple
-                              value={selectedCategories[category] || []}
-                              onChange={(e) => {
-                                const selected = Array.from(e.target.selectedOptions, option => option.value)
-                                setSelectedCategories(prev => ({
-                                  ...prev,
-                                  [category]: selected
-                                }))
-                              }}
-                              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                              size="4"
-                            >
+                            <div className="flex flex-wrap gap-2">
                               {items.map((item) => (
-                                <option key={item} value={item}>
+                                <button
+                                  key={item}
+                                  type="button"
+                                  onClick={() => {
+                                    const currentSelected = selectedCategories[category] || []
+                                    const isSelected = currentSelected.includes(item)
+                                    const newSelected = isSelected
+                                      ? currentSelected.filter(i => i !== item)
+                                      : [...currentSelected, item]
+                                    setSelectedCategories(prev => ({
+                                      ...prev,
+                                      [category]: newSelected
+                                    }))
+                                  }}
+                                  className={`px-3 py-2 text-sm rounded-full border transition-all duration-200 ${
+                                    (selectedCategories[category] || []).includes(item)
+                                      ? 'bg-blue-600 text-white border-blue-600'
+                                      : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400'
+                                  }`}
+                                >
                                   {item}
-                                </option>
+                                </button>
                               ))}
-                            </select>
-                            <p className="text-xs text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple</p>
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -1016,21 +1077,21 @@ Generated on: ${new Date().toLocaleString()}
 
             {currentStep === 2 && (
               <div>
-                <h2 className="text-2xl font-bold mb-6">What Type of Content?</h2>
-                <p className="text-gray-600 mb-6">Where will you share this content?</p>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+                <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">What Type of Content?</h2>
+                <p className="text-gray-600 mb-4 sm:mb-6">Where will you share this content?</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
                   {enhancedPlatforms.map((platform) => (
                     <button
                       key={platform.key}
                       onClick={() => handleInputChange('platform', platform.key)}
-                      className={`p-4 border-2 rounded-lg text-left transition-all duration-200 ${
+                      className={`p-3 border-2 rounded-lg text-left transition-all duration-200 ${
                         formData.platform === platform.key
                           ? 'border-blue-600 bg-blue-50'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
-                      <div className="text-2xl mb-2">{platform.icon}</div>
-                      <div className="font-medium">{platform.name}</div>
+                      <div className="text-xl mb-1">{platform.icon}</div>
+                      <div className="font-medium text-sm">{platform.name}</div>
                     </button>
                   ))}
                 </div>
@@ -1038,7 +1099,7 @@ Generated on: ${new Date().toLocaleString()}
                 {formData.platform && (
                   <div>
                     <h3 className="text-lg font-semibold mb-4">Select Post Type</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                       {enhancedPlatforms.find(p => p.key === formData.platform)?.postTypes.map((postType) => (
                         <button
                           key={postType.key}
@@ -1050,7 +1111,7 @@ Generated on: ${new Date().toLocaleString()}
                               : 'border-gray-200 hover:border-gray-300'
                           } ${postType.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
-                          <div className="font-medium">{postType.name}</div>
+                          <div className="font-medium text-sm">{postType.name}</div>
                         </button>
                       ))}
                     </div>
@@ -1061,25 +1122,25 @@ Generated on: ${new Date().toLocaleString()}
 
             {currentStep === 3 && (
               <div>
-                <h2 className="text-2xl font-bold mb-6">Sources</h2>
-                <p className="text-gray-600 mb-6">Choose your content source (AI + Google will search based on your direction)</p>
+                <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Sources</h2>
+                <p className="text-gray-600 mb-4 sm:mb-6">Choose your content source (AI + Google will search based on your direction)</p>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                   {enhancedSources.map((source) => (
                     <div
                       key={source.key}
-                      className={`p-6 border-2 rounded-lg cursor-pointer transition-all duration-200 ${
+                      className={`p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 ${
                         formData.source === source.key
                           ? 'border-blue-600 bg-blue-50'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                       onClick={() => handleInputChange('source', source.key)}
                     >
-                      <div className="flex items-center mb-3">
-                        <div className="text-2xl mr-3">{source.icon}</div>
-                        <div className="font-medium text-lg">{source.name}</div>
+                      <div className="flex items-center mb-2">
+                        <div className="text-xl mr-2">{source.icon}</div>
+                        <div className="font-medium text-base">{source.name}</div>
                       </div>
-                      <p className="text-gray-600 text-sm">{source.description}</p>
+                      <p className="text-gray-600 text-xs">{source.description}</p>
                     </div>
                   ))}
                 </div>
@@ -1095,22 +1156,7 @@ Generated on: ${new Date().toLocaleString()}
                       if (!config) return null
                       
                       return (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                          {config.fields.includes('query') && (
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Search Query
-                              </label>
-                              <input
-                                type="text"
-                                value={googleSearchQuery}
-                                onChange={(e) => setGoogleSearchQuery(e.target.value)}
-                                placeholder={config.placeholder}
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                              />
-                            </div>
-                          )}
-                          
+                        <div className="space-y-4 mb-4">
                           {config.fields.includes('country') && (
                             <div>
                               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -1126,28 +1172,6 @@ Generated on: ${new Date().toLocaleString()}
                                     {country.name}
                                   </option>
                                 ))}
-                              </select>
-                            </div>
-                          )}
-                          
-                          {config.fields.includes('category') && (
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Category
-                              </label>
-                              <select
-                                value={selectedState}
-                                onChange={(e) => setSelectedState(e.target.value)}
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                              >
-                                <option value="">All Categories</option>
-                                <option value="business">Business</option>
-                                <option value="technology">Technology</option>
-                                <option value="health">Health</option>
-                                <option value="entertainment">Entertainment</option>
-                                <option value="sports">Sports</option>
-                                <option value="science">Science</option>
-                                <option value="politics">Politics</option>
                               </select>
                             </div>
                           )}
@@ -1178,19 +1202,6 @@ Generated on: ${new Date().toLocaleString()}
                             </div>
                           )}
                           
-                          {config.fields.includes('link') && (
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Link
-                              </label>
-                              <input
-                                type="url"
-                                placeholder="Enter URL..."
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                              />
-                            </div>
-                          )}
-                          
                           {config.fields.includes('upload_pdf') && (
                             <div>
                               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -1201,6 +1212,81 @@ Generated on: ${new Date().toLocaleString()}
                                 accept=".pdf"
                                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                               />
+                            </div>
+                          )}
+
+                          {/* Generate buttons for videos and podcasts */}
+                          {config.hasGenerateButton && (
+                            <div className="pt-2">
+                              {formData.source === 'videos' && (
+                                <div className="space-y-3">
+                                  <button
+                                    onClick={generateVideoLink}
+                                    disabled={isGeneratingLink}
+                                    className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-all duration-200"
+                                  >
+                                    {isGeneratingLink ? (
+                                      <>
+                                        <RefreshCw className="w-5 h-5 animate-spin" />
+                                        Generating Video Link...
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Youtube className="w-5 h-5" />
+                                        Generate Video Link
+                                      </>
+                                    )}
+                                  </button>
+                                  {generatedVideoLink && (
+                                    <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                                      <p className="text-sm text-green-800 font-medium mb-1">Generated Video Link:</p>
+                                      <a 
+                                        href={generatedVideoLink} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="text-sm text-blue-600 hover:underline break-all"
+                                      >
+                                        {generatedVideoLink}
+                                      </a>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+
+                              {formData.source === 'podcasts' && (
+                                <div className="space-y-3">
+                                  <button
+                                    onClick={generatePodcastLink}
+                                    disabled={isGeneratingLink}
+                                    className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-all duration-200"
+                                  >
+                                    {isGeneratingLink ? (
+                                      <>
+                                        <RefreshCw className="w-5 h-5 animate-spin" />
+                                        Generating Podcast Link...
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Mic className="w-5 h-5" />
+                                        Generate Podcast Link
+                                      </>
+                                    )}
+                                  </button>
+                                  {generatedPodcastLink && (
+                                    <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                                      <p className="text-sm text-green-800 font-medium mb-1">Generated Podcast Link:</p>
+                                      <a 
+                                        href={generatedPodcastLink} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="text-sm text-blue-600 hover:underline break-all"
+                                      >
+                                        {generatedPodcastLink}
+                                      </a>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
                             </div>
                           )}
                         </div>
@@ -1263,24 +1349,24 @@ Generated on: ${new Date().toLocaleString()}
 
             {currentStep === 4 && (
               <div>
-                <h2 className="text-2xl font-bold mb-6">How Should It Sound?</h2>
+                <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">How Should It Sound?</h2>
                 <p className="text-gray-600 mb-6">Choose the tone for your content</p>
                 
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold mb-4">Select Tone</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {tones.map((tone) => (
                       <button
                         key={tone.key}
                         onClick={() => handleInputChange('tone', tone.key)}
-                        className={`p-4 border-2 rounded-lg transition-all duration-200 ${
+                        className={`p-3 border-2 rounded-lg transition-all duration-200 ${
                           formData.tone === tone.key
                             ? 'border-blue-600 bg-blue-50'
                             : 'border-gray-200 hover:border-gray-300'
                         }`}
                       >
-                        <div className="text-2xl mb-2">{tone.icon}</div>
-                        <div className="font-medium">{tone.name}</div>
+                        <div className="text-xl mb-1">{tone.icon}</div>
+                        <div className="font-medium text-sm">{tone.name}</div>
                       </button>
                     ))}
                   </div>
@@ -1290,30 +1376,30 @@ Generated on: ${new Date().toLocaleString()}
 
             {currentStep === 5 && (
               <div>
-                <h2 className="text-2xl font-bold mb-6">Choose Image Style</h2>
-                <p className="text-gray-600 mb-6">Select the visual style for your generated images</p>
+                <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Choose Image Style</h2>
+                <p className="text-gray-600 mb-4 sm:mb-6">Select the visual style for your generated images</p>
                 
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                   {imageStyles.map((style) => (
                     <button
                       key={style.key}
                       onClick={() => handleInputChange('imageStyle', style.key)}
-                      className={`p-4 border-2 rounded-lg text-left transition-all duration-200 ${
+                      className={`p-3 border-2 rounded-lg text-left transition-all duration-200 ${
                         formData.imageStyle === style.key
                           ? 'border-blue-600 bg-blue-50'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
-                      <div className="mb-3">
+                      <div className="mb-2">
                         <img 
                           src={style.imageUrl} 
                           alt={style.name}
-                          className="w-full h-24 object-cover rounded-lg mb-2"
+                          className="w-full h-20 object-cover rounded-lg mb-2"
                         />
                       </div>
-                      <div className="text-xl mb-2">{style.icon}</div>
-                      <div className="font-medium mb-1">{style.name}</div>
-                      <div className="text-sm text-gray-600">{style.description}</div>
+                      <div className="text-lg mb-1">{style.icon}</div>
+                      <div className="font-medium text-sm mb-1">{style.name}</div>
+                      <div className="text-xs text-gray-600">{style.description}</div>
                     </button>
                   ))}
                 </div>
