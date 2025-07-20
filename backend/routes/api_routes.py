@@ -397,6 +397,12 @@ TRANSLATIONS = {
         'colorful_energetic_eye_catching': 'Colorful, energetic, eye-catching',
         'contemporary_sleek_trendy': 'Contemporary, sleek, trendy',
         'organic_earthy_authentic': 'Organic, earthy, authentic',
+        # Category translations
+        'interest_based': 'Interest-based',
+        'industry': 'Industry',
+        'lifestyle': 'Lifestyle',
+        'professional_category': 'Professional',
+        'coming_soon': 'Coming Soon',
         # Settings page translations
         'settings_description': 'Configure your Content Creator Pro settings',
         'settings_subtitle': 'Configure your account and preferences',
@@ -653,6 +659,12 @@ TRANSLATIONS = {
         'colorful_energetic_eye_catching': '多彩、充满活力、引人注目',
         'contemporary_sleek_trendy': '现代、时尚、潮流',
         'organic_earthy_authentic': '有机、自然、真实',
+        # Category translations
+        'interest_based': '基于兴趣',
+        'industry': '行业',
+        'lifestyle': '生活方式',
+        'professional_category': '专业',
+        'coming_soon': '即将推出',
         'personal_dev': '个人发展',
         'parenting_family': '育儿与家庭',
         'art_creativity': '艺术与创意',

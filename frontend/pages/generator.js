@@ -107,63 +107,63 @@ export default function Generator() {
   const enhancedPlatforms = [
     {
       key: 'linkedin',
-      name: 'LinkedIn Posts',
+      name: t('linkedin_posts'),
       icon: '💼',
       postTypes: [
-        { key: 'posts', name: 'Posts' },
-        { key: 'articles', name: 'Articles' },
-        { key: 'newsletters', name: 'Newsletters' }
+        { key: 'posts', name: t('posts') },
+        { key: 'articles', name: t('articles') },
+        { key: 'newsletters', name: t('newsletters') }
       ]
     },
     {
       key: 'facebook',
-      name: 'Facebook Posts',
+      name: t('facebook_posts'),
       icon: '📘',
       postTypes: [
-        { key: 'posts', name: 'Posts' },
-        { key: 'stories', name: 'Stories' },
-        { key: 'reels', name: 'Reels (Coming Soon)', disabled: true }
+        { key: 'posts', name: t('posts') },
+        { key: 'stories', name: t('stories') },
+        { key: 'reels', name: `Reels (${t('coming_soon')})`, disabled: true }
       ]
     },
     {
       key: 'instagram',
-      name: 'Instagram Posts',
+      name: t('instagram_posts'),
       icon: '📷',
       postTypes: [
-        { key: 'posts', name: 'Posts' },
-        { key: 'stories', name: 'Stories' },
-        { key: 'reels', name: 'Reels (Coming Soon)', disabled: true },
-        { key: 'igtv', name: 'IGTV (Coming Soon)', disabled: true }
+        { key: 'posts', name: t('posts') },
+        { key: 'stories', name: t('stories') },
+        { key: 'reels', name: `Reels (${t('coming_soon')})`, disabled: true },
+        { key: 'igtv', name: `IGTV (${t('coming_soon')})`, disabled: true }
       ]
     },
     {
       key: 'twitter',
-      name: 'Twitter Posts',
+      name: t('twitter_posts'),
       icon: '🐦',
       postTypes: [
-        { key: 'tweets', name: 'Tweets' },
-        { key: 'threads', name: 'Threads' },
-        { key: 'spaces', name: 'Spaces (Coming Soon)', disabled: true }
+        { key: 'tweets', name: t('tweets') },
+        { key: 'threads', name: t('threads') },
+        { key: 'spaces', name: `Spaces (${t('coming_soon')})`, disabled: true }
       ]
     },
     {
       key: 'youtube',
-      name: 'YouTube Shorts',
+      name: t('youtube_shorts_platform'),
       icon: '📺',
       postTypes: [
-        { key: 'shorts', name: 'Shorts (Coming Soon)', disabled: true },
-        { key: 'videos', name: 'Videos (Coming Soon)', disabled: true },
-        { key: 'scripts', name: 'Scripts' }
+        { key: 'shorts', name: `Shorts (${t('coming_soon')})`, disabled: true },
+        { key: 'videos', name: `Videos (${t('coming_soon')})`, disabled: true },
+        { key: 'scripts', name: t('scripts') }
       ]
     },
     {
       key: 'blog',
-      name: 'Blog Articles',
+      name: t('blog_articles'),
       icon: '📝',
       postTypes: [
-        { key: 'articles', name: 'Articles' },
-        { key: 'newsletters', name: 'Newsletters' },
-        { key: 'guides', name: 'Guides' }
+        { key: 'articles', name: t('articles') },
+        { key: 'newsletters', name: t('newsletters') },
+        { key: 'guides', name: t('guides') }
       ]
     }
   ]
@@ -172,58 +172,58 @@ export default function Generator() {
   const enhancedSources = [
     {
       key: 'news',
-      name: 'News',
+      name: t('news'),
       icon: <Globe className="w-6 h-6" />,
-      description: 'Financial, tech, business, industry news (localised by region)',
+      description: t('financial_tech_business_industry_news'),
       hasSearch: true
     },
     {
       key: 'books',
-      name: 'Books',
+      name: t('books'),
       icon: <BookOpen className="w-6 h-6" />,
-      description: 'Business, self-help, industry, fiction',
+      description: t('business_self_help_industry_fiction'),
       hasSearch: true
     },
     {
       key: 'popular_threads',
-      name: 'Popular Threads',
+      name: t('popular_threads'),
       icon: <TrendingUp className="w-6 h-6" />,
-      description: 'Reddit, Twitter, LinkedIn viral content',
+      description: t('reddit_twitter_linkedin_viral_content'),
       hasSearch: true
     },
     {
       key: 'podcasts',
-      name: 'Podcasts',
+      name: t('podcasts'),
       icon: <Mic className="w-6 h-6" />,
-      description: 'Business and tech podcasts',
+      description: t('business_and_tech_podcasts'),
       hasSearch: true
     },
     {
       key: 'youtube',
-      name: 'YouTube Videos',
+      name: t('youtube_videos'),
       icon: <Youtube className="w-6 h-6" />,
-      description: 'Educational content, TED Talks',
+      description: t('educational_content_ted_talks'),
       hasSearch: true
     },
     {
       key: 'research_papers',
-      name: 'Research Papers',
+      name: t('research_papers'),
       icon: <Search className="w-6 h-6" />,
-      description: 'Academic insights',
+      description: t('academic_insights'),
       hasSearch: true
     },
     {
       key: 'case_studies',
-      name: 'Case Studies',
+      name: t('case_studies'),
       icon: <BookOpen className="w-6 h-6" />,
-      description: 'Business success stories',
+      description: t('business_success_stories'),
       hasSearch: true
     },
     {
       key: 'trending_topics',
-      name: 'Trending Topics',
+      name: t('trending_topics'),
       icon: <TrendingUp className="w-6 h-6" />,
-      description: 'Current events and viral content (localised)',
+      description: t('current_events_and_viral_content'),
       hasSearch: true
     }
   ]
@@ -232,38 +232,38 @@ export default function Generator() {
   const imageStyles = [
     {
       key: 'professional',
-      name: 'Professional',
-      description: 'Clean, corporate, business-focused',
+      name: t('professional'),
+      description: t('clean_corporate_business_focused'),
       icon: '💼'
     },
     {
       key: 'creative',
-      name: 'Creative',
-      description: 'Artistic, innovative, imaginative',
+      name: t('creative'),
+      description: t('artistic_innovative_imaginative'),
       icon: '🎨'
     },
     {
       key: 'minimalist',
-      name: 'Minimalist',
-      description: 'Simple, clean, elegant',
+      name: t('minimalist'),
+      description: t('simple_clean_elegant'),
       icon: '⚪'
     },
     {
       key: 'vibrant',
-      name: 'Vibrant',
-      description: 'Colorful, energetic, eye-catching',
+      name: t('vibrant'),
+      description: t('colorful_energetic_eye_catching'),
       icon: '🌈'
     },
     {
       key: 'modern',
-      name: 'Modern',
-      description: 'Contemporary, sleek, trendy',
+      name: t('modern'),
+      description: t('contemporary_sleek_trendy'),
       icon: '🚀'
     },
     {
       key: 'natural',
-      name: 'Natural',
-      description: 'Organic, earthy, authentic',
+      name: t('natural'),
+      description: t('organic_earthy_authentic'),
       icon: '🌿'
     }
   ]
