@@ -1054,7 +1054,7 @@ def generate_content():
         language = data.get('language', 'en')
         generate_images = data.get('generate_images', True)  # New parameter
         
-        # Generate content using AI service or fallback
+        # Step 1: Generate content using DeepSeek AI
         if AI_SERVICE_AVAILABLE:
             content_text = ai_service.generate_content(
                 direction, platform, source, topic, tone, language, 
@@ -1063,35 +1063,44 @@ def generate_content():
         else:
             content_text = generate_content_text(direction, platform, source, topic, tone, language)
         
-        # Generate images using Stable Diffusion if requested
+        # Step 2: Analyze the generated content to create image prompts
+        image_prompts = analyze_content_for_image_generation(content_text, direction, platform, tone)
+        
+        # Step 3: Generate images using Stable Diffusion with content-based prompts
         generated_images = {'primary': None, 'variations': [], 'total_count': 0}
-        if generate_images:
+        if generate_images and image_prompts:
             try:
                 from services.stable_diffusion import StableDiffusionService
                 stable_diffusion = StableDiffusionService()
                 
-                # Generate primary image
-                primary_image = stable_diffusion.generate_image(
+                # Generate primary image using content-analyzed prompt
+                primary_image = stable_diffusion.generate_image_with_prompt(
                     platform=platform,
+                    prompt=image_prompts['primary'],
                     content_direction=direction,
                     topic=topic,
                     tone=tone,
                     language=language
                 )
                 
-                # Generate variations
-                variations = stable_diffusion.generate_multiple_images(
-                    platform=platform,
-                    content_direction=direction,
-                    topic=topic,
-                    tone=tone,
-                    count=2
-                )
+                # Generate variations using different content-analyzed prompts
+                variations = []
+                for i, variation_prompt in enumerate(image_prompts['variations'][:2]):
+                    variation_image = stable_diffusion.generate_image_with_prompt(
+                        platform=platform,
+                        prompt=variation_prompt,
+                        content_direction=direction,
+                        topic=topic,
+                        tone=tone,
+                        language=language
+                    )
+                    variations.append(variation_image)
                 
                 generated_images = {
                     'primary': primary_image,
                     'variations': variations,
-                    'total_count': len(variations) + 1
+                    'total_count': len(variations) + 1,
+                    'prompts_used': image_prompts
                 }
                 
             except Exception as e:
@@ -1100,7 +1109,8 @@ def generate_content():
                     'primary': None,
                     'variations': [],
                     'total_count': 0,
-                    'error': str(e)
+                    'error': str(e),
+                    'prompts_used': image_prompts
                 }
         
         # Create enhanced response with analytics
@@ -1319,6 +1329,171 @@ def generate_content_text(direction, platform, source, topic, tone, language):
         content = template.format(topic=topic, content=base_content[:200] + "..." if len(base_content) > 200 else base_content)
     
     return content
+
+def analyze_content_for_image_generation(content_text, direction, platform, tone):
+    """Analyze generated content to create intelligent image prompts for Stable Diffusion."""
+    
+    # Extract key themes and topics from the content
+    content_analysis = analyze_content_themes(content_text, direction, platform, tone)
+    
+    # Create platform-specific image prompts
+    platform_prompts = {
+        'linkedin': {
+            'style': 'professional, corporate, business-focused',
+            'composition': 'clean, modern, sophisticated',
+            'colors': 'professional blues, grays, whites'
+        },
+        'facebook': {
+            'style': 'engaging, social, community-focused',
+            'composition': 'warm, inviting, relatable',
+            'colors': 'vibrant, social media friendly'
+        },
+        'instagram': {
+            'style': 'aesthetic, visual, inspirational',
+            'composition': 'visually appealing, artistic, curated',
+            'colors': 'trendy, Instagram-worthy, aesthetic'
+        },
+        'twitter': {
+            'style': 'trending, engaging, shareable',
+            'composition': 'eye-catching, bold, impactful',
+            'colors': 'high contrast, attention-grabbing'
+        },
+        'youtube_shorts': {
+            'style': 'dynamic, engaging, video-friendly',
+            'composition': 'action-oriented, movement-focused',
+            'colors': 'bright, energetic, video-optimized'
+        },
+        'blog': {
+            'style': 'informative, professional, educational',
+            'composition': 'clean, organized, content-focused',
+            'colors': 'professional, readable, content-friendly'
+        }
+    }
+    
+    # Get platform-specific styling
+    platform_style = platform_prompts.get(platform, platform_prompts['linkedin'])
+    
+    # Create primary prompt based on content analysis
+    primary_prompt = create_primary_image_prompt(content_analysis, platform_style, direction, tone)
+    
+    # Create variation prompts
+    variation_prompts = create_variation_prompts(content_analysis, platform_style, direction, tone)
+    
+    return {
+        'primary': primary_prompt,
+        'variations': variation_prompts,
+        'content_analysis': content_analysis
+    }
+
+def analyze_content_themes(content_text, direction, platform, tone):
+    """Analyze content to extract key themes, topics, and visual elements."""
+    
+    # Extract hashtags and key phrases
+    hashtags = extract_hashtags(content_text)
+    
+    # Identify key topics and themes
+    themes = {
+        'business_finance': ['business', 'finance', 'strategy', 'growth', 'investment', 'market', 'corporate', 'entrepreneurship'],
+        'technology': ['technology', 'innovation', 'digital', 'software', 'AI', 'tech', 'development', 'cybersecurity'],
+        'health_wellness': ['health', 'wellness', 'fitness', 'mental health', 'nutrition', 'wellbeing', 'lifestyle'],
+        'education': ['education', 'learning', 'knowledge', 'skills', 'development', 'academic', 'teaching'],
+        'entertainment': ['entertainment', 'media', 'culture', 'arts', 'music', 'film', 'gaming'],
+        'travel_tourism': ['travel', 'tourism', 'adventure', 'destinations', 'exploration', 'journey'],
+        'food_cooking': ['food', 'cooking', 'culinary', 'recipes', 'dining', 'kitchen', 'chef'],
+        'fashion_beauty': ['fashion', 'beauty', 'style', 'trends', 'design', 'aesthetics'],
+        'sports_fitness': ['sports', 'fitness', 'athletics', 'training', 'performance', 'competition'],
+        'science_research': ['science', 'research', 'discovery', 'innovation', 'experiments', 'analysis'],
+        'politics_news': ['politics', 'news', 'current events', 'policy', 'government', 'social issues'],
+        'environment': ['environment', 'sustainability', 'climate', 'nature', 'green', 'conservation'],
+        'personal_dev': ['personal development', 'growth', 'motivation', 'success', 'self-improvement'],
+        'parenting_family': ['parenting', 'family', 'children', 'home', 'relationships', 'family life'],
+        'art_creativity': ['art', 'creativity', 'design', 'inspiration', 'artistic', 'creative'],
+        'real_estate': ['real estate', 'property', 'housing', 'architecture', 'investment', 'home'],
+        'automotive': ['automotive', 'cars', 'vehicles', 'transportation', 'driving', 'auto industry'],
+        'pet_care': ['pet care', 'animals', 'pets', 'veterinary', 'pet health', 'animal care']
+    }
+    
+    # Get direction-specific themes
+    direction_themes = themes.get(direction, themes['business_finance'])
+    
+    # Analyze content for key words and themes
+    content_lower = content_text.lower()
+    found_themes = [theme for theme in direction_themes if theme in content_lower]
+    
+    # Extract visual elements from content
+    visual_elements = extract_visual_elements(content_text, direction, tone)
+    
+    return {
+        'direction': direction,
+        'platform': platform,
+        'tone': tone,
+        'hashtags': hashtags,
+        'themes': found_themes,
+        'visual_elements': visual_elements,
+        'content_summary': content_text[:100] + "..." if len(content_text) > 100 else content_text
+    }
+
+def extract_visual_elements(content_text, direction, tone):
+    """Extract visual elements that should be represented in the image."""
+    
+    visual_mapping = {
+        'business_finance': {
+            'professional': ['office setting', 'business meeting', 'charts and graphs', 'corporate environment', 'professional attire'],
+            'casual': ['modern workspace', 'collaborative environment', 'creative business setting', 'startup atmosphere'],
+            'inspirational': ['successful business person', 'growth charts', 'achievement symbols', 'professional development']
+        },
+        'technology': {
+            'professional': ['computer screens', 'digital interface', 'tech workspace', 'coding environment', 'data visualization'],
+            'casual': ['modern gadgets', 'tech lifestyle', 'digital innovation', 'smart devices'],
+            'inspirational': ['futuristic technology', 'innovation symbols', 'digital transformation', 'tech advancement']
+        },
+        'health_wellness': {
+            'professional': ['medical professional', 'healthcare setting', 'fitness equipment', 'wellness environment'],
+            'casual': ['healthy lifestyle', 'fitness activities', 'wellness practices', 'natural environment'],
+            'inspirational': ['healthy living', 'wellness journey', 'mindfulness practices', 'vitality symbols']
+        }
+    }
+    
+    # Get direction-specific visual elements
+    direction_visuals = visual_mapping.get(direction, visual_mapping['business_finance'])
+    tone_visuals = direction_visuals.get(tone, direction_visuals['professional'])
+    
+    return tone_visuals
+
+def create_primary_image_prompt(content_analysis, platform_style, direction, tone):
+    """Create the primary image prompt based on content analysis."""
+    
+    # Build the prompt
+    prompt_parts = [
+        f"High-quality {platform_style['style']} image",
+        f"representing {content_analysis['direction'].replace('_', ' ')} content",
+        f"in a {tone} tone",
+        f"featuring {', '.join(content_analysis['visual_elements'][:3])}",
+        f"with {platform_style['composition']} composition",
+        f"using {platform_style['colors']} color palette",
+        "professional photography, 4K resolution, detailed, realistic"
+    ]
+    
+    return " ".join(prompt_parts)
+
+def create_variation_prompts(content_analysis, platform_style, direction, tone):
+    """Create variation image prompts for different perspectives."""
+    
+    variations = [
+        # Abstract/conceptual variation
+        f"Abstract artistic representation of {content_analysis['direction'].replace('_', ' ')} concepts, {tone} mood, {platform_style['style']} aesthetic, creative interpretation",
+        
+        # Action/dynamic variation
+        f"Dynamic action scene related to {content_analysis['direction'].replace('_', ' ')}, {tone} energy, {platform_style['style']} composition, movement and engagement",
+        
+        # Minimalist variation
+        f"Minimalist elegant design representing {content_analysis['direction'].replace('_', ' ')} themes, {tone} simplicity, {platform_style['style']} approach, clean and focused",
+        
+        # Environmental variation
+        f"Environmental setting showcasing {content_analysis['direction'].replace('_', ' ')} context, {tone} atmosphere, {platform_style['style']} environment, contextual relevance"
+    ]
+    
+    return variations
 
 @api_routes.route('/translate', methods=['POST'])
 def translate_content():

@@ -170,6 +170,94 @@ class StableDiffusionService:
                 'topic': topic
             }
     
+    def generate_image_with_prompt(self, platform, prompt, content_direction, topic, tone, language='en'):
+        """Generate image using a custom prompt based on content analysis"""
+        try:
+            # Get platform configuration
+            platform_config = self.platform_configs.get(platform, self.platform_configs['facebook'])
+            
+            # STRICT VALIDATION: Ensure only supported aspect ratios are used
+            if platform_config['aspect_ratio'] not in self.supported_ratios:
+                # Get the closest supported ratio for this platform
+                platform_config = self._get_closest_supported_ratio(platform)
+                current_app.logger.warning(f"Platform {platform} uses unsupported ratio, falling back to {platform_config['aspect_ratio']}")
+            
+            # Double-check dimensions match supported ratios
+            width = platform_config['width']
+            height = platform_config['height']
+            aspect_ratio = platform_config['aspect_ratio']
+            
+            # Validate dimensions are exactly what Stable Diffusion expects
+            expected_dims = self.supported_ratios[aspect_ratio]
+            if width != expected_dims['width'] or height != expected_dims['height']:
+                width = expected_dims['width']
+                height = expected_dims['height']
+                current_app.logger.warning(f"Correcting dimensions to Stable Diffusion supported: {width}x{height}")
+            
+            # Use the provided custom prompt
+            custom_prompt = prompt
+            
+            # Add negative prompt to avoid unwanted elements
+            negative_prompt = "blurry, low quality, distorted, unrealistic, cartoon, anime, text overlay, watermark, logo, signature"
+            
+            # Create the prompt structure for Stable Diffusion
+            prompt_structure = {
+                'text_prompts': [
+                    {
+                        'text': custom_prompt,
+                        'weight': 1.0
+                    },
+                    {
+                        'text': negative_prompt,
+                        'weight': -1.0
+                    }
+                ]
+            }
+            
+            # Generate image using Stable Diffusion API
+            image_data = self._call_stable_diffusion_api(
+                prompt=prompt_structure,
+                width=width,
+                height=height
+            )
+            
+            # Create response with platform-specific metadata
+            response = {
+                'image_data': image_data,
+                'platform': platform,
+                'dimensions': {
+                    'width': width,
+                    'height': height,
+                    'aspect_ratio': aspect_ratio
+                },
+                'format': platform_config['format'],
+                'file_size': len(image_data) if image_data else 0,
+                'prompt_used': custom_prompt,
+                'content_direction': content_direction,
+                'topic': topic,
+                'tone': tone,
+                'language': language,
+                'stable_diffusion_note': platform_config['note'],
+                'validation': {
+                    'supported_ratio': True,
+                    'dimensions_valid': True,
+                    'fallback_used': platform_config['aspect_ratio'] != self.platform_configs.get(platform, {}).get('aspect_ratio', ''),
+                    'custom_prompt': True
+                }
+            }
+            
+            return response
+            
+        except Exception as e:
+            current_app.logger.error(f"Error generating image with custom prompt: {str(e)}")
+            return {
+                'error': f"Failed to generate image: {str(e)}",
+                'platform': platform,
+                'content_direction': content_direction,
+                'topic': topic,
+                'custom_prompt': prompt
+            }
+    
     def _build_image_prompt(self, content_direction, topic, tone, platform):
         """Build image generation prompt based on content specifications"""
         # Get base style from content direction
