@@ -1065,14 +1065,13 @@ def generate_content():
         image_style = data.get('imageStyle', 'professional')
         generate_images = data.get('generate_images', True)
         
-        # Simple content generation (no complex functions)
-        content_text = f"🚀 {selected_topic}\n\nBased on {source.replace('_', ' ')} insights, here's what you need to know about {direction.replace('_', ' ')}.\n\nKey takeaways:\n• Understanding {selected_topic} is crucial for success\n• Focus on practical applications in {direction.replace('_', ' ')}\n• Continuous learning drives innovation\n\nWhat's your experience with {selected_topic}? Share your thoughts below! 👇\n\n#{direction.replace('_', '')} #{selected_topic.replace(' ', '')} #ProfessionalDevelopment"
+        # Generate content text based on parameters
+        content_text = generate_content_text(direction, platform, source, selected_topic, tone, language)
         
-        # Generate images using Stable Diffusion (simplified approach)
+        # Generate images using Stable Diffusion
         generated_images = {'primary': None, 'variations': [], 'total_count': 0}
         if generate_images:
             try:
-                # Simple image generation without complex timeout handling
                 from services.stable_diffusion import StableDiffusionService
                 from flask import current_app
                 
@@ -1092,28 +1091,27 @@ def generate_content():
                     )
                 
                 if 'error' not in primary_image and primary_image.get('image_data'):
-                    # Store the image data temporarily and return a reference
+                    # Store the image data and return a hash reference
                     import hashlib
                     image_hash = hashlib.md5(f"{platform}_{selected_topic}_{image_style}".encode()).hexdigest()
                     
-                    # Store in a simple cache (in production, use Redis)
+                    # Store in application cache
                     if not hasattr(current_app, 'image_cache'):
                         current_app.image_cache = {}
                     current_app.image_cache[image_hash] = primary_image.get('image_data')
                     
                     generated_images = {
-                        'primary': image_hash,  # Return hash reference instead of base64
+                        'primary': image_hash,
                         'variations': [],
                         'total_count': 1,
-                        'prompt_used': image_prompt,
-                        'note': f'Image generated successfully. Use /api/image/{image_hash} to get the actual image.'
+                        'prompt_used': image_prompt
                     }
                 else:
                     generated_images = {
                         'primary': None,
                         'variations': [],
                         'total_count': 0,
-                        'note': 'Image generation failed, using fallback',
+                        'note': 'Image generation failed',
                         'error': primary_image.get('error', 'Unknown error')
                     }
                 
@@ -1130,19 +1128,19 @@ def generate_content():
                 'primary': None,
                 'variations': [],
                 'total_count': 0,
-                'note': 'Image generation disabled by user'
+                'note': 'Image generation disabled'
             }
         
-        # Simple response
+        # Build comprehensive response
         response = {
             'content': {
                 'text': content_text,
                 'length': len(content_text),
                 'max_length': 1300,
-                'hashtags': [f"#{direction.replace('_', '')}", f"#{selected_topic.replace(' ', '')}", "#ProfessionalDevelopment"],
-                'call_to_action': "Share your thoughts below!",
+                'hashtags': extract_hashtags(content_text),
+                'call_to_action': extract_call_to_action(content_text),
                 'word_count': len(content_text.split()),
-                'readability_score': 75
+                'readability_score': calculate_readability_score(content_text)
             },
             'variations': [],
             'images': generated_images,
@@ -1151,10 +1149,7 @@ def generate_content():
                 'videos': [],
                 'graphics': []
             },
-            'platform_specifications': {
-                'character_limit': 1300,
-                'image_format': {'width': 1200, 'height': 630}
-            },
+            'platform_specifications': get_platform_specifications(platform),
             'metadata': {
                 'content_direction': direction,
                 'content_type': platform,
@@ -1169,19 +1164,14 @@ def generate_content():
                 'generated_at': datetime.utcnow().isoformat() + 'Z',
                 'platform': platform.upper(),
                 'content_category': direction,
-                'ai_enhanced': False
+                'ai_enhanced': True
             },
-            'analytics': {
-                'engagement_score': 85,
-                'reach_potential': 'High',
-                'optimal_posting_time': '9:00 AM',
-                'best_posting_days': ['Tuesday', 'Wednesday', 'Thursday']
-            },
+            'analytics': generate_analytics_data(platform, direction, tone, content_text),
             'validation': {
-                'compliance_check': True,
-                'quality_score': 80,
-                'optimization_suggestions': ['Add more specific examples', 'Include industry statistics'],
-                'performance_insights': 'Content is well-structured and engaging'
+                'compliance_check': validate_content(content_text, platform),
+                'quality_score': calculate_content_quality_score(content_text, platform),
+                'optimization_suggestions': generate_optimization_suggestions(content_text, platform),
+                'performance_insights': generate_performance_insights(platform)
             }
         }
         
@@ -2014,7 +2004,7 @@ def get_image(image_hash):
             }
         })
         
-        # Add CORS headers
+        # Add CORS headers for frontend access
         response.headers.add('Access-Control-Allow-Origin', '*')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
         response.headers.add('Access-Control-Allow-Methods', 'GET')

@@ -26,21 +26,16 @@ function GeneratedImage({ imageHash }) {
         
         // Fetch image data from the backend using the same API configuration
         const backendUrl = process.env.BACKEND_URL || 'https://content-contentmaker.up.railway.app'
-        console.log('Fetching image from:', `${backendUrl}/api/image/${imageHash}`)
-        
         const response = await fetch(`${backendUrl}/api/image/${imageHash}`)
-        console.log('Image response status:', response.status)
         
         if (!response.ok) {
           throw new Error(`Failed to fetch image: ${response.status}`)
         }
         
         const data = await response.json()
-        console.log('Image data received:', data.success ? 'Yes' : 'No')
         
         if (data.success && data.data?.image_data) {
           setImageData(data.data.image_data)
-          console.log('Image data set successfully')
         } else {
           throw new Error('No image data received')
         }
