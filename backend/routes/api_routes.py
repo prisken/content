@@ -2004,8 +2004,8 @@ def get_image(image_hash):
         
         image_data = current_app.image_cache[image_hash]
         
-        # Return image as base64 data
-        return jsonify({
+        # Return image as base64 data with CORS headers
+        response = jsonify({
             'success': True,
             'data': {
                 'image_data': image_data,
@@ -2013,6 +2013,13 @@ def get_image(image_hash):
                 'hash': image_hash
             }
         })
+        
+        # Add CORS headers
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'GET')
+        
+        return response
         
     except Exception as e:
         return jsonify({

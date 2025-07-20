@@ -24,8 +24,9 @@ function GeneratedImage({ imageHash }) {
         setLoading(true)
         setError(false)
         
-        // Fetch image data from the backend
-        const response = await fetch(`${process.env.BACKEND_URL || 'https://content-contentmaker.up.railway.app'}/api/image/${imageHash}`)
+        // Fetch image data from the backend using the same API configuration
+        const backendUrl = process.env.BACKEND_URL || 'https://content-contentmaker.up.railway.app'
+        const response = await fetch(`${backendUrl}/api/image/${imageHash}`)
         
         if (!response.ok) {
           throw new Error('Failed to fetch image')
