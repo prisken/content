@@ -870,6 +870,10 @@ export default function Generator() {
   }
 
   const generatePodcastLink = async () => {
+    console.log('🎤 Frontend: Starting podcast generation...');
+    console.log('🎤 Frontend: Form data:', formData);
+    console.log('🎤 Frontend: Selected categories:', selectedCategories);
+    
     if (!formData.direction) {
       toast.error('Please select direction first')
       return
@@ -877,21 +881,29 @@ export default function Generator() {
 
     setIsGeneratingLink(true)
     try {
-      const response = await apiClient.generatePodcastLink({
+      const requestData = {
         direction: formData.direction,
         categories: selectedCategories,
         country: selectedCountry
-      })
+      };
+      
+      console.log('🎤 Frontend: Sending request with data:', requestData);
+      
+      const response = await apiClient.generatePodcastLink(requestData)
+      
+      console.log('🎤 Frontend: Received response:', response);
       
       if (response.success && response.data) {
+        console.log('🎤 Frontend: Setting podcasts:', response.data.podcasts);
         setGeneratedPodcasts(response.data.podcasts || [])
         toast.success(`Found ${response.data.podcasts?.length || 0} popular podcasts!`)
       } else {
+        console.log('🎤 Frontend: Response not successful:', response);
         toast.error(response.error || 'Failed to generate podcast links')
       }
     } catch (error) {
+      console.error('🎤 Frontend: Podcast generation error:', error);
       toast.error('Failed to generate podcast links')
-      console.error('Podcast link generation error:', error)
     } finally {
       setIsGeneratingLink(false)
     }
