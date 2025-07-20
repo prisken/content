@@ -1092,11 +1092,21 @@ def generate_content():
                     )
                 
                 if 'error' not in primary_image and primary_image.get('image_data'):
+                    # Store the image data temporarily and return a reference
+                    import hashlib
+                    image_hash = hashlib.md5(f"{platform}_{selected_topic}_{image_style}".encode()).hexdigest()
+                    
+                    # Store in a simple cache (in production, use Redis)
+                    if not hasattr(current_app, 'image_cache'):
+                        current_app.image_cache = {}
+                    current_app.image_cache[image_hash] = primary_image.get('image_data')
+                    
                     generated_images = {
-                        'primary': primary_image.get('image_data'),
+                        'primary': image_hash,  # Return hash reference instead of base64
                         'variations': [],
                         'total_count': 1,
-                        'prompt_used': image_prompt
+                        'prompt_used': image_prompt,
+                        'note': f'Image generated successfully. Use /api/image/{image_hash} to get the actual image.'
                     }
                 else:
                     generated_images = {
@@ -1973,6 +1983,37 @@ def google_books():
                 'error': 'Google Books service not available'
             }), 503
             
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@api_routes.route('/image/<image_hash>', methods=['GET'])
+def get_image(image_hash):
+    """Get image data by hash reference"""
+    try:
+        from flask import current_app
+        
+        # Check if image exists in cache
+        if not hasattr(current_app, 'image_cache') or image_hash not in current_app.image_cache:
+            return jsonify({
+                'success': False,
+                'error': 'Image not found or expired'
+            }), 404
+        
+        image_data = current_app.image_cache[image_hash]
+        
+        # Return image as base64 data
+        return jsonify({
+            'success': True,
+            'data': {
+                'image_data': image_data,
+                'format': 'base64',
+                'hash': image_hash
+            }
+        })
+        
     except Exception as e:
         return jsonify({
             'success': False,
