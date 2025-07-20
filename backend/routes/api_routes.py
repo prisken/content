@@ -1947,41 +1947,31 @@ def generate_topics():
         # Limit to 5 topics
         topics = topics[:5]
         
-        # If we have topics, enhance them with AI analysis
-        if topics and GOOGLE_SERVICE_AVAILABLE:
+        # Always use AI for creative topic generation
+        if GOOGLE_SERVICE_AVAILABLE:
             try:
                 from services.ai_service import ai_service
                 
-                # Create a content summary for AI analysis
+                # Create a creative prompt for AI
                 content_summary = {
-                    'title': f'{source.replace("_", " ").title()} Content Analysis',
-                    'description': f'Analysis of {source.replace("_", " ")} content in {direction.replace("_", " ")} category',
-                    'channel': 'Content Analysis',
+                    'title': f'Creative {direction.replace("_", " ").title()} Topics',
+                    'description': f'Generate fresh and engaging topics for {direction.replace("_", " ")} content from {source.replace("_", " ")} sources',
+                    'channel': 'Creative Content',
                     'content_type': source
                 }
                 
-                # Get AI-enhanced topics
+                # Get AI-generated topics
                 ai_topics = ai_service.generate_topics_from_content(content_summary, direction, source)
                 
-                # Combine and prioritize AI topics
-                if ai_topics:
-                    # Use AI topics as primary, fallback to original topics
-                    enhanced_topics = []
-                    for ai_topic in ai_topics[:3]:  # Use top 3 AI topics
-                        enhanced_topics.append(ai_topic)
-                    
-                    # Add original topics if we need more
-                    for topic in topics:
-                        if len(enhanced_topics) >= 5:
-                            break
-                        # Check if topic is not already included
-                        if not any(ai_topic['title'] == topic.get('title', '') for ai_topic in enhanced_topics):
-                            enhanced_topics.append(topic)
-                    
-                    topics = enhanced_topics[:5]
+                # Use AI topics if available, otherwise use original topics
+                if ai_topics and len(ai_topics) >= 3:
+                    topics = ai_topics[:5]
+                else:
+                    # Keep original topics as fallback
+                    topics = topics[:5]
             except Exception as e:
-                print(f"Error enhancing topics with AI: {e}")
-                # Continue with original topics if AI enhancement fails
+                print(f"Error generating AI topics: {e}")
+                # Continue with original topics if AI fails
         
         return jsonify({
             'success': True,

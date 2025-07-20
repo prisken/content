@@ -597,40 +597,30 @@ Return the enhanced content only, no explanations.
             channel = content_data.get('channel', '') or content_data.get('host', '')
             
             prompt = f"""
-You are Jess, an expert content strategist and social media specialist. Analyze this {content_type} content and generate 5 highly specific, actionable topic ideas for content creation in the {direction.replace('_', ' ')} niche.
+You are Jess, a creative content strategist. Based on this {content_type} content, generate 5 fresh and engaging topic ideas for the {direction.replace('_', ' ')} niche.
 
-{content_type.title()} Information:
+Content Info:
 - Title: {title}
 - Channel/Host: {channel}
-- Description: {description[:800]}{'...' if len(description) > 800 else ''}
+- Description: {description[:500]}{'...' if len(description) > 500 else ''}
 
-As Jess, I need you to:
-1. **Deeply analyze** the actual content from the video/podcast
-2. **Extract specific insights** and key points mentioned
-3. **Identify trending angles** and current discussions in {direction.replace('_', ' ')}
-4. **Create actionable topics** that expand on the content's themes
-5. **Focus on practical value** for the target audience
+Be creative and think outside the box! Generate topics that are:
+- Engaging and interesting
+- Relevant to {direction.replace('_', ' ')}
+- Suitable for social media
+- Unique and fresh perspectives
 
-Requirements:
-- Generate 5 unique, highly specific topic ideas
-- Each topic must be directly inspired by the actual content analysis
-- Focus on the {direction.replace('_', ' ')} niche and target audience
-- Topics should expand on themes, insights, or questions raised in the content
-- Include specific angles and approaches for each topic
-- Make topics suitable for social media content creation
-- Consider current trends and audience pain points in {direction.replace('_', ' ')}
-
-Format your response as a JSON array with this structure:
+Format as JSON array:
 [
   {{
-    "title": "Specific, actionable topic title",
-    "description": "Detailed explanation of why this topic is relevant, what value it provides, and how it relates to the analyzed content",
+    "title": "Creative topic title",
+    "description": "Brief explanation of the topic",
     "trending_score": 85,
-    "content_angle": "The specific angle, approach, or unique perspective for this topic"
+    "content_angle": "Creative angle or approach"
   }}
 ]
 
-As Jess, analyze this content and generate the topics now:
+Generate 5 creative topics now:
 """
             
             payload = {
@@ -723,37 +713,37 @@ As Jess, analyze this content and generate the topics now:
         channel = content_data.get('channel', '') or content_data.get('host', '')
         description = content_data.get('description', '')
         
-        # Generate specific topics based on actual content analysis
+        # Generate creative topics based on content
         base_topics = [
             {
-                'title': f'Deep Dive: Key Insights from "{title[:40]}"',
-                'description': f'As Jess, I analyzed this {content_type} and found specific insights that can be expanded into engaging content. This topic explores the main themes and actionable takeaways.',
+                'title': f'🎯 Hidden Gems from "{title[:30]}"',
+                'description': f'Discover the unexpected insights and creative angles from this {content_type} that most people miss.',
                 'trending_score': 88,
-                'content_angle': 'Content analysis with practical applications'
+                'content_angle': 'Creative insights'
             },
             {
-                'title': f'What {channel} Got Right About {direction.replace("_", " ").title()}',
-                'description': f'Breaking down the specific strategies and insights shared in this {content_type}. This topic focuses on the most valuable lessons and how to apply them.',
+                'title': f'🚀 {direction.replace("_", " ").title()} Hacks That Actually Work',
+                'description': f'Real-world strategies and practical tips that you can implement immediately.',
                 'trending_score': 85,
-                'content_angle': 'Strategy breakdown and implementation'
+                'content_angle': 'Practical hacks'
             },
             {
-                'title': f'Beyond the {content_type.title()}: Advanced {direction.replace("_", " ").title()} Strategies',
-                'description': f'Taking the concepts from this {content_type} to the next level. This topic explores advanced applications and deeper insights for serious practitioners.',
+                'title': f'💡 The Future of {direction.replace("_", " ").title()}',
+                'description': f'Explore emerging trends and innovative approaches that are shaping the future.',
                 'trending_score': 82,
-                'content_angle': 'Advanced applications and deep insights'
+                'content_angle': 'Future trends'
             },
             {
-                'title': f'The {direction.replace("_", " ").title()} Framework: A Step-by-Step Guide',
-                'description': f'Based on the insights from this {content_type}, I\'ve created a practical framework that anyone can follow. This topic provides actionable steps and clear implementation strategies.',
+                'title': f'🔥 {direction.replace("_", " ").title()} Secrets Revealed',
+                'description': f'Behind-the-scenes insights and insider knowledge that give you the edge.',
                 'trending_score': 80,
-                'content_angle': 'Practical framework and implementation'
+                'content_angle': 'Insider knowledge'
             },
             {
-                'title': f'Common Mistakes in {direction.replace("_", " ").title()} (And How to Avoid Them)',
-                'description': f'Drawing from the lessons in this {content_type}, this topic addresses the most common pitfalls and provides specific solutions to help others succeed.',
+                'title': f'⚡ Quick Wins in {direction.replace("_", " ").title()}',
+                'description': f'Fast, actionable strategies that deliver immediate results and boost your success.',
                 'trending_score': 78,
-                'content_angle': 'Problem-solving and prevention strategies'
+                'content_angle': 'Quick results'
             }
         ]
         

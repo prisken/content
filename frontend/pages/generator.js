@@ -853,6 +853,33 @@ export default function Generator() {
     }
   }
 
+  const refreshTopics = async () => {
+    if (!formData.direction || !formData.source) {
+      toast.error('Please select direction and source first')
+      return
+    }
+
+    setIsLoadingTopics(true)
+    try {
+      const response = await apiClient.generateTopics({
+        direction: formData.direction,
+        source: formData.source,
+        sourceDetails: {
+          country: selectedCountry,
+          query: googleSearchQuery
+        }
+      })
+      
+      setSelectedTopics(response.topics || [])
+      toast.success('New topics generated!')
+    } catch (error) {
+      toast.error('Failed to refresh topics')
+      console.error('Topic refresh error:', error)
+    } finally {
+      setIsLoadingTopics(false)
+    }
+  }
+
   const generateTopicsFromSelectedContent = async () => {
     if (!formData.direction) {
       toast.error('Please select direction first')
@@ -1675,7 +1702,26 @@ Generated on: ${new Date().toLocaleString()}
 
                 {selectedTopics.length > 0 && (
                   <div className="mt-6">
-                    <h3 className="text-lg font-semibold mb-4">Generated Topics</h3>
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-lg font-semibold">Generated Topics</h3>
+                      <button
+                        onClick={refreshTopics}
+                        disabled={isLoadingTopics}
+                        className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white rounded-lg flex items-center gap-2 transition-all duration-200"
+                      >
+                        {isLoadingTopics ? (
+                          <>
+                            <RefreshCw className="w-4 h-4 animate-spin" />
+                            Refreshing...
+                          </>
+                        ) : (
+                          <>
+                            <RefreshCw className="w-4 h-4" />
+                            Refresh Topics
+                          </>
+                        )}
+                      </button>
+                    </div>
                     <div className="grid grid-cols-1 gap-3">
                       {selectedTopics.map((topic, index) => (
                         <button
