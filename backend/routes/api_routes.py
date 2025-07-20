@@ -2009,10 +2009,21 @@ def generate_topics_from_content():
                 'error': 'Content type, content data, and direction are required'
             }), 400
         
+        # Prepare content data for AI service
+        if isinstance(content_data, str):
+            # If content_data is a string, create a proper structure for AI service
+            ai_content_data = {
+                'title': content_data,
+                'description': f'Content about {content_data} in the {direction.replace("_", " ")} category',
+                'channel': 'Content Creator'
+            }
+        else:
+            ai_content_data = content_data
+        
         # Generate topics using AI service
         try:
             from services.ai_service import ai_service
-            topics = ai_service.generate_topics_from_content(content_data, direction, content_type)
+            topics = ai_service.generate_topics_from_content(ai_content_data, direction, content_type)
         except Exception as e:
             print(f"AI service error: {e}")
             # Fallback to basic topic generation
