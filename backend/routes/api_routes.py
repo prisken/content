@@ -24,6 +24,15 @@ except ImportError:
 
 api_routes = Blueprint('api', __name__)
 
+@api_routes.route('/test', methods=['GET'])
+def test_endpoint():
+    """Simple test endpoint to verify API is working"""
+    return jsonify({
+        'success': True,
+        'message': 'API is working',
+        'timestamp': datetime.utcnow().isoformat()
+    })
+
 # Content directions mapping - Updated to match design document exactly
 CONTENT_DIRECTIONS = {
     'business_finance': {
