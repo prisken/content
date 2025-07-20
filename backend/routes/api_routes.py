@@ -2342,6 +2342,7 @@ def generate_podcast_link():
 @api_routes.route('/debug/google-search', methods=['GET'])
 def debug_google_search():
     """Debug endpoint to check Google Search API configuration"""
+    import os
     try:
         # Check all possible Google API environment variables
         all_env_vars = {k: v for k, v in os.environ.items() if 'GOOGLE' in k.upper()}
