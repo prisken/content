@@ -410,6 +410,7 @@ class GoogleSearchService:
     
     def get_youtube_topics(self, direction: str, country: str) -> List[Dict[str, Any]]:
         """Get topics from YouTube (mock implementation)"""
+        # For now, return mock data. In production, this would use YouTube Data API
         youtube_topics = {
             'technology': [
                 {'title': 'AI Tutorial: Getting Started', 'description': 'Beginner-friendly guide to artificial intelligence', 'trending_score': 88},
@@ -675,6 +676,339 @@ class GoogleSearchService:
         }
         
         return podcast_topics.get(direction, podcast_topics['technology'])
+    
+    def search_youtube_videos(self, direction: str, categories: List[str], country: str = 'US') -> List[Dict[str, Any]]:
+        """Search for real YouTube videos using Google Custom Search"""
+        if not self.api_key or not self.search_engine_id:
+            return self._mock_youtube_videos(direction, categories)
+        
+        try:
+            # Create search query based on direction and categories
+            search_terms = [direction.replace('_', ' ')]
+            if categories:
+                search_terms.extend(categories[:3])  # Use top 3 categories
+            
+            search_query = ' '.join(search_terms) + ' site:youtube.com'
+            
+            params = {
+                'key': self.api_key,
+                'cx': self.search_engine_id,
+                'q': search_query,
+                'gl': country.lower(),
+                'num': 3,  # Get 3 results
+                'searchType': 'video'
+            }
+            
+            response = requests.get(self.custom_search_url, params=params)
+            response.raise_for_status()
+            
+            data = response.json()
+            videos = []
+            
+            if 'items' in data:
+                for item in data['items']:
+                    # Extract video ID from URL
+                    video_url = item.get('link', '')
+                    video_id = self._extract_youtube_id(video_url)
+                    
+                    if video_id:
+                        # Get additional video details (thumbnail, duration, etc.)
+                        video_details = self._get_youtube_video_details(video_id)
+                        
+                        video = {
+                            'title': item.get('title', ''),
+                            'url': video_url,
+                            'thumbnail': video_details.get('thumbnail', 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=300&h=200&fit=crop'),
+                            'duration': video_details.get('duration', 'Unknown'),
+                            'views': video_details.get('views', 'Unknown'),
+                            'channel': video_details.get('channel', 'Unknown'),
+                            'description': item.get('snippet', '')
+                        }
+                        videos.append(video)
+            
+            # Fallback to mock data if no results
+            if not videos:
+                videos = self._mock_youtube_videos(direction, categories)
+            
+            return videos
+            
+        except Exception as e:
+            print(f"YouTube search error: {e}")
+            return self._mock_youtube_videos(direction, categories)
+    
+    def search_podcasts(self, direction: str, categories: List[str], country: str = 'US') -> List[Dict[str, Any]]:
+        """Search for real podcasts using Google Custom Search"""
+        if not self.api_key or not self.search_engine_id:
+            return self._mock_podcasts(direction, categories)
+        
+        try:
+            # Create search query based on direction and categories
+            search_terms = [direction.replace('_', ' ')]
+            if categories:
+                search_terms.extend(categories[:3])  # Use top 3 categories
+            
+            search_query = ' '.join(search_terms) + ' podcast'
+            
+            params = {
+                'key': self.api_key,
+                'cx': self.search_engine_id,
+                'q': search_query,
+                'gl': country.lower(),
+                'num': 3,  # Get 3 results
+                'sitesearch': 'podcasts.apple.com'  # Focus on Apple Podcasts
+            }
+            
+            response = requests.get(self.custom_search_url, params=params)
+            response.raise_for_status()
+            
+            data = response.json()
+            podcasts = []
+            
+            if 'items' in data:
+                for item in data['items']:
+                    podcast_url = item.get('link', '')
+                    
+                    # Extract podcast details from URL or search result
+                    podcast_details = self._extract_podcast_details(item)
+                    
+                    podcast = {
+                        'title': item.get('title', ''),
+                        'url': podcast_url,
+                        'cover': podcast_details.get('cover', 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=300&h=300&fit=crop'),
+                        'duration': podcast_details.get('duration', 'Unknown'),
+                        'episodes': podcast_details.get('episodes', 'Unknown'),
+                        'host': podcast_details.get('host', 'Unknown'),
+                        'description': item.get('snippet', '')
+                    }
+                    podcasts.append(podcast)
+            
+            # Fallback to mock data if no results
+            if not podcasts:
+                podcasts = self._mock_podcasts(direction, categories)
+            
+            return podcasts
+            
+        except Exception as e:
+            print(f"Podcast search error: {e}")
+            return self._mock_podcasts(direction, categories)
+    
+    def _extract_youtube_id(self, url: str) -> str:
+        """Extract YouTube video ID from URL"""
+        import re
+        
+        # YouTube URL patterns
+        patterns = [
+            r'(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)',
+            r'youtube\.com\/watch\?.*v=([^&\n?#]+)'
+        ]
+        
+        for pattern in patterns:
+            match = re.search(pattern, url)
+            if match:
+                return match.group(1)
+        
+        return None
+    
+    def _get_youtube_video_details(self, video_id: str) -> Dict[str, Any]:
+        """Get additional YouTube video details (mock implementation)"""
+        # In production, this would use YouTube Data API
+        # For now, return mock data
+        return {
+            'thumbnail': f'https://img.youtube.com/vi/{video_id}/maxresdefault.jpg',
+            'duration': '12:34',
+            'views': '1.2M',
+            'channel': 'Popular Channel'
+        }
+    
+    def _extract_podcast_details(self, search_item: Dict[str, Any]) -> Dict[str, Any]:
+        """Extract podcast details from search result (mock implementation)"""
+        # In production, this would parse the actual podcast page
+        # For now, return mock data
+        return {
+            'cover': 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=300&h=300&fit=crop',
+            'duration': '45-60 min',
+            'episodes': '100+',
+            'host': 'Popular Host'
+        }
+    
+    def _mock_youtube_videos(self, direction: str, categories: List[str]) -> List[Dict[str, Any]]:
+        """Mock YouTube videos with rich metadata"""
+        mock_videos = {
+            'business_finance': [
+                {
+                    'title': 'How to Build a Successful Business from Scratch',
+                    'url': 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+                    'thumbnail': 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=300&h=200&fit=crop',
+                    'duration': '12:34',
+                    'views': '2.1M',
+                    'channel': 'Business Insights'
+                },
+                {
+                    'title': 'Financial Freedom: 10 Steps to Wealth',
+                    'url': 'https://www.youtube.com/watch?v=9bZkp7q19f0',
+                    'thumbnail': 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=300&h=200&fit=crop',
+                    'duration': '18:45',
+                    'views': '1.8M',
+                    'channel': 'Finance Mastery'
+                },
+                {
+                    'title': 'Entrepreneurship Secrets Revealed',
+                    'url': 'https://www.youtube.com/watch?v=kJQP7kiw5Fk',
+                    'thumbnail': 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=300&h=200&fit=crop',
+                    'duration': '15:22',
+                    'views': '3.2M',
+                    'channel': 'Startup Success'
+                }
+            ],
+            'technology': [
+                {
+                    'title': 'AI Revolution: What\'s Next in Tech',
+                    'url': 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+                    'thumbnail': 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=300&h=200&fit=crop',
+                    'duration': '14:18',
+                    'views': '1.5M',
+                    'channel': 'Tech Trends'
+                },
+                {
+                    'title': 'Coding for Beginners: Start Your Journey',
+                    'url': 'https://www.youtube.com/watch?v=9bZkp7q19f0',
+                    'thumbnail': 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=300&h=200&fit=crop',
+                    'duration': '22:33',
+                    'views': '2.8M',
+                    'channel': 'Code Academy'
+                },
+                {
+                    'title': 'Future of Web Development',
+                    'url': 'https://www.youtube.com/watch?v=kJQP7kiw5Fk',
+                    'thumbnail': 'https://images.unsplash.com/photo-1547658719-da2b51169166?w=300&h=200&fit=crop',
+                    'duration': '16:47',
+                    'views': '1.9M',
+                    'channel': 'Web Dev Pro'
+                }
+            ],
+            'health_wellness': [
+                {
+                    'title': 'Complete Morning Routine for Success',
+                    'url': 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+                    'thumbnail': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop',
+                    'duration': '11:25',
+                    'views': '4.1M',
+                    'channel': 'Wellness Daily'
+                },
+                {
+                    'title': 'Nutrition Myths Debunked',
+                    'url': 'https://www.youtube.com/watch?v=9bZkp7q19f0',
+                    'thumbnail': 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=300&h=200&fit=crop',
+                    'duration': '19:12',
+                    'views': '2.3M',
+                    'channel': 'Health Facts'
+                },
+                {
+                    'title': 'Meditation for Beginners',
+                    'url': 'https://www.youtube.com/watch?v=kJQP7kiw5Fk',
+                    'thumbnail': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop',
+                    'duration': '13:56',
+                    'views': '3.7M',
+                    'channel': 'Mindful Living'
+                }
+            ]
+        }
+        
+        return mock_videos.get(direction, mock_videos['business_finance'])
+    
+    def _mock_podcasts(self, direction: str, categories: List[str]) -> List[Dict[str, Any]]:
+        """Mock podcasts with rich metadata"""
+        mock_podcasts = {
+            'business_finance': [
+                {
+                    'title': 'The Tim Ferriss Show',
+                    'url': 'https://podcasts.apple.com/us/podcast/the-tim-ferriss-show/id863897795',
+                    'cover': 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=300&h=300&fit=crop',
+                    'duration': '1-2 hours',
+                    'episodes': '700+',
+                    'host': 'Tim Ferriss',
+                    'description': 'Interviews with world-class performers'
+                },
+                {
+                    'title': 'How I Built This',
+                    'url': 'https://podcasts.apple.com/us/podcast/how-i-built-this/id1150510297',
+                    'cover': 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=300&h=300&fit=crop',
+                    'duration': '45-60 min',
+                    'episodes': '400+',
+                    'host': 'Guy Raz',
+                    'description': 'Stories behind successful companies'
+                },
+                {
+                    'title': 'Masters of Scale',
+                    'url': 'https://podcasts.apple.com/us/podcast/masters-of-scale/id1227971746',
+                    'cover': 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=300&h=300&fit=crop',
+                    'duration': '30-45 min',
+                    'episodes': '200+',
+                    'host': 'Reid Hoffman',
+                    'description': 'How companies grow from zero to a gazillion'
+                }
+            ],
+            'technology': [
+                {
+                    'title': 'Lex Fridman Podcast',
+                    'url': 'https://podcasts.apple.com/us/podcast/lex-fridman-podcast/id1434243584',
+                    'cover': 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=300&h=300&fit=crop',
+                    'duration': '2-3 hours',
+                    'episodes': '400+',
+                    'host': 'Lex Fridman',
+                    'description': 'Conversations about AI, science, and technology'
+                },
+                {
+                    'title': 'The Vergecast',
+                    'url': 'https://podcasts.apple.com/us/podcast/the-vergecast/id430333725',
+                    'cover': 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=300&h=300&fit=crop',
+                    'duration': '1-2 hours',
+                    'episodes': '600+',
+                    'host': 'The Verge Team',
+                    'description': 'Tech news and analysis'
+                },
+                {
+                    'title': 'Recode Decode',
+                    'url': 'https://podcasts.apple.com/us/podcast/recode-decode/id1011668648',
+                    'cover': 'https://images.unsplash.com/photo-1547658719-da2b51169166?w=300&h=300&fit=crop',
+                    'duration': '45-60 min',
+                    'episodes': '500+',
+                    'host': 'Kara Swisher',
+                    'description': 'Tech industry insights and interviews'
+                }
+            ],
+            'health_wellness': [
+                {
+                    'title': 'The Joe Rogan Experience',
+                    'url': 'https://podcasts.apple.com/us/podcast/the-joe-rogan-experience/id360084272',
+                    'cover': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=300&fit=crop',
+                    'duration': '2-3 hours',
+                    'episodes': '2000+',
+                    'host': 'Joe Rogan',
+                    'description': 'Long-form conversations with interesting people'
+                },
+                {
+                    'title': 'On Purpose with Jay Shetty',
+                    'url': 'https://podcasts.apple.com/us/podcast/on-purpose-with-jay-shetty/id1437448722',
+                    'cover': 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=300&h=300&fit=crop',
+                    'duration': '30-45 min',
+                    'episodes': '300+',
+                    'host': 'Jay Shetty',
+                    'description': 'Wisdom for modern life'
+                },
+                {
+                    'title': 'The Wellness Mama Podcast',
+                    'url': 'https://podcasts.apple.com/us/podcast/the-wellness-mama-podcast/id1070840096',
+                    'cover': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=300&fit=crop',
+                    'duration': '20-30 min',
+                    'episodes': '400+',
+                    'host': 'Katie Wells',
+                    'description': 'Natural health and wellness tips'
+                }
+            ]
+        }
+        
+        return mock_podcasts.get(direction, mock_podcasts['business_finance'])
     
     def get_ai_discovery_topics(self, direction: str, country: str) -> List[Dict[str, Any]]:
         """Get AI-powered discovery topics combining multiple sources"""
