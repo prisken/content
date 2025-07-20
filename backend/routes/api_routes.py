@@ -2109,38 +2109,9 @@ def generate_video_link():
         
         search_query = ' '.join(search_terms)
         
-        # Use Google Search service to find real videos
-        if GOOGLE_SERVICE_AVAILABLE:
-            google_service = GoogleSearchService()
-            videos = google_service.search_youtube_videos(direction, category_keywords, country)
-        else:
-            # Fallback to mock data if Google service not available
-            videos = [
-                {
-                    'title': 'How to Build a Successful Business from Scratch',
-                    'url': 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-                    'thumbnail': 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=300&h=200&fit=crop',
-                    'duration': '12:34',
-                    'views': '2.1M',
-                    'channel': 'Business Insights'
-                },
-                {
-                    'title': 'Financial Freedom: 10 Steps to Wealth',
-                    'url': 'https://www.youtube.com/watch?v=9bZkp7q19f0',
-                    'thumbnail': 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=300&h=200&fit=crop',
-                    'duration': '18:45',
-                    'views': '1.8M',
-                    'channel': 'Finance Mastery'
-                },
-                {
-                    'title': 'Entrepreneurship Secrets Revealed',
-                    'url': 'https://www.youtube.com/watch?v=kJQP7kiw5Fk',
-                    'thumbnail': 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=300&h=200&fit=crop',
-                    'duration': '15:22',
-                    'views': '3.2M',
-                    'channel': 'Startup Success'
-                }
-            ]
+        # Use Google Search service to find real videos (with web scraping fallback)
+        google_service = GoogleSearchService()
+        videos = google_service.search_youtube_videos(direction, category_keywords, country)
         
         return jsonify({
             'success': True,
@@ -2181,41 +2152,9 @@ def generate_podcast_link():
         
         search_query = ' '.join(search_terms)
         
-        # Use Google Search service to find real podcasts
-        if GOOGLE_SERVICE_AVAILABLE:
-            google_service = GoogleSearchService()
-            podcasts = google_service.search_podcasts(direction, category_keywords, country)
-        else:
-            # Fallback to mock data if Google service not available
-            podcasts = [
-                {
-                    'title': 'The Tim Ferriss Show',
-                    'url': 'https://podcasts.apple.com/us/podcast/the-tim-ferriss-show/id863897795',
-                    'cover': 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=300&h=300&fit=crop',
-                    'duration': '1-2 hours',
-                    'episodes': '700+',
-                    'host': 'Tim Ferriss',
-                    'description': 'Interviews with world-class performers'
-                },
-                {
-                    'title': 'How I Built This',
-                    'url': 'https://podcasts.apple.com/us/podcast/how-i-built-this/id1150510297',
-                    'cover': 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=300&h=300&fit=crop',
-                    'duration': '45-60 min',
-                    'episodes': '400+',
-                    'host': 'Guy Raz',
-                    'description': 'Stories behind successful companies'
-                },
-                {
-                    'title': 'Masters of Scale',
-                    'url': 'https://podcasts.apple.com/us/podcast/masters-of-scale/id1227971746',
-                    'cover': 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=300&h=300&fit=crop',
-                    'duration': '30-45 min',
-                    'episodes': '200+',
-                    'host': 'Reid Hoffman',
-                    'description': 'How companies grow from zero to a gazillion'
-                }
-            ]
+        # Use Google Search service to find real podcasts (with web scraping fallback)
+        google_service = GoogleSearchService()
+        podcasts = google_service.search_podcasts(direction, category_keywords, country)
         
         # Create search query for display
         search_terms = [direction.replace('_', ' ')]
