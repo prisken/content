@@ -1056,16 +1056,20 @@ class GoogleSearchService:
                             description = desc
                             break
                 
-                return {
-                    'title': title,
-                    'channel': channel,
-                    'description': description,
-                    'thumbnail': f'https://img.youtube.com/vi/{video_id}/maxresdefault.jpg',
-                    'duration': 'Unknown',
-                    'views': 'Unknown',
-                    'published_at': '',
-                    'tags': []
-                }
+                # Only return web scraped data if we found meaningful information
+                if title != 'Unknown Title' and channel != 'Unknown Channel':
+                    return {
+                        'title': title,
+                        'channel': channel,
+                        'description': description,
+                        'thumbnail': f'https://img.youtube.com/vi/{video_id}/maxresdefault.jpg',
+                        'duration': 'Unknown',
+                        'views': 'Unknown',
+                        'published_at': '',
+                        'tags': []
+                    }
+                else:
+                    print(f"⚠️ DEBUG: Web scraping found no meaningful data, using enhanced mock data")
         except Exception as e:
             print(f"Error in fallback method: {e}")
         
