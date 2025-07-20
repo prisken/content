@@ -1070,7 +1070,7 @@ class GoogleSearchService:
             print(f"Error in fallback method: {e}")
         
         # Final fallback to realistic mock data based on video ID
-        print(f"🎯 DEBUG: Using enhanced fallback mock data for video ID: {video_id}")
+        print(f"🚀 DEBUG: Using enhanced fallback mock data for video ID: {video_id}")
         
         # Generate realistic mock data based on video ID hash
         import hashlib
@@ -1087,7 +1087,9 @@ class GoogleSearchService:
             "Breakthrough Insights: Game-Changing Information",
             "Comprehensive Overview: All You Need to Know",
             "Step-by-Step Tutorial: Perfect Results Guaranteed",
-            "Industry Secrets: Professional Methods Unveiled"
+            "Industry Secrets: Professional Methods Unveiled",
+            "Master Class: Professional Techniques Revealed",
+            "Complete Course: From Beginner to Expert"
         ]
         
         mock_channels = [
@@ -1100,7 +1102,9 @@ class GoogleSearchService:
             "Master Class",
             "Expert Academy",
             "Knowledge Base",
-            "Skill Mastery"
+            "Skill Mastery",
+            "Professional Training",
+            "Expert Tutorials"
         ]
         
         mock_descriptions = [
