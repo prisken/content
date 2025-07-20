@@ -1297,151 +1297,61 @@ def generate_content():
         }), 500
 
 def generate_content_text(direction, platform, source, topic, tone, language):
-    """Generate content text based on parameters"""
+    """Generate content text based on parameters using AI service with proper formats"""
     
-    # Platform-specific templates
-    platform_templates = {
-        'linkedin': {
-            'professional': [
-                "🚀 {topic} Insights: {content}",
-                "💡 Key Takeaway: {content}",
-                "📈 {topic} Analysis: {content}",
-                "🎯 {topic} Strategy: {content}",
-                "🔍 {topic} Deep Dive: {content}"
-            ],
-            'casual': [
-                "Hey there! 👋 {content}",
-                "Quick thought on {topic}: {content}",
-                "Just sharing some insights on {topic}: {content}",
-                "What do you think about {topic}? {content}",
-                "Here's my take on {topic}: {content}"
-            ]
-        },
-        'facebook': {
-            'professional': [
-                "📊 {topic} Update: {content}",
-                "💼 {topic} Discussion: {content}",
-                "📋 {topic} Summary: {content}",
-                "🎯 {topic} Focus: {content}",
-                "🔍 {topic} Overview: {content}"
-            ],
-            'casual': [
-                "Hey friends! 😊 {content}",
-                "What's your opinion on {topic}? {content}",
-                "Sharing some thoughts on {topic}: {content}",
-                "Anyone else thinking about {topic}? {content}",
-                "Quick update on {topic}: {content}"
-            ]
-        },
-        'twitter': {
-            'professional': [
-                "📈 {topic}: {content}",
-                "💡 {topic} insight: {content}",
-                "🎯 {topic} key point: {content}",
-                "🔍 {topic} analysis: {content}",
-                "📊 {topic} data: {content}"
-            ],
-            'casual': [
-                "🤔 {topic} thoughts: {content}",
-                "💭 {topic} musing: {content}",
-                "👀 {topic} observation: {content}",
-                "💪 {topic} take: {content}",
-                "🎉 {topic} update: {content}"
-            ]
-        },
-        'instagram': {
-            'professional': [
-                "📸 {topic} Spotlight: {content}",
-                "🎨 {topic} Visual: {content}",
-                "📱 {topic} Story: {content}",
-                "✨ {topic} Highlight: {content}",
-                "🌟 {topic} Feature: {content}"
-            ],
-            'casual': [
-                "📸 {topic} vibes: {content}",
-                "🎨 {topic} moment: {content}",
-                "📱 {topic} share: {content}",
-                "✨ {topic} feels: {content}",
-                "🌟 {topic} energy: {content}"
-            ]
-        },
-        'youtube': {
-            'professional': [
-                "🎥 {topic} Analysis: {content}",
-                "📺 {topic} Discussion: {content}",
-                "🎬 {topic} Review: {content}",
-                "📹 {topic} Tutorial: {content}",
-                "🎭 {topic} Showcase: {content}"
-            ],
-            'casual': [
-                "🎥 {topic} chat: {content}",
-                "📺 {topic} thoughts: {content}",
-                "🎬 {topic} review: {content}",
-                "📹 {topic} tutorial: {content}",
-                "🎭 {topic} showcase: {content}"
-            ]
-        },
-        'blog': {
-            'professional': [
-                "## {topic}\n\n{content}\n\n### Key Takeaways\n\n- {content}\n- {content}\n- {content}",
-                "# {topic} Analysis\n\n{content}\n\n## Summary\n\n{content}",
-                "## {topic} Guide\n\n{content}\n\n### Best Practices\n\n{content}",
-                "# {topic} Insights\n\n{content}\n\n## Conclusion\n\n{content}",
-                "## {topic} Strategy\n\n{content}\n\n### Implementation\n\n{content}"
-            ],
-            'casual': [
-                "## {topic}\n\n{content}\n\n### My Thoughts\n\n{content}",
-                "# {topic} Chat\n\n{content}\n\n## What I Learned\n\n{content}",
-                "## {topic} Experience\n\n{content}\n\n### Tips & Tricks\n\n{content}",
-                "# {topic} Journey\n\n{content}\n\n## Lessons Learned\n\n{content}",
-                "## {topic} Adventure\n\n{content}\n\n### Key Insights\n\n{content}"
-            ]
+    try:
+        # Use the AI service for proper format-based content generation
+        from services.ai_service import ai_service
+        
+        # Generate content using the AI service with platform-specific formats
+        content_text = ai_service.generate_content(
+            direction=direction,
+            platform=platform,
+            source=source,
+            topic=topic,
+            tone=tone,
+            language=language,
+            generate_images=False  # Images are handled separately
+        )
+        
+        return content_text
+        
+    except Exception as e:
+        print(f"Error generating content with AI service: {str(e)}")
+        
+        # Fallback to basic template if AI service fails
+        fallback_templates = {
+            'linkedin': {
+                'professional': f"🚀 {topic}\n\nBased on {source.replace('_', ' ')} insights, here's what you need to know about {direction.replace('_', ' ')}.\n\nKey takeaways:\n• Understanding {topic} is crucial for success\n• Focus on practical applications in {direction.replace('_', ' ')}\n• Continuous learning drives innovation\n\nWhat's your experience with {topic}? Share your thoughts below! 👇\n\n#{direction.replace('_', '')} #{topic.replace(' ', '')}",
+                'casual': f"Hey there! 👋\n\nQuick thought on {topic} - inspired by some great {source.replace('_', ' ')} content I've been consuming.\n\nHere's what I've learned:\n• There's always something new to discover about {topic}\n• Community insights are invaluable\n\nWhat do you think? Any tips to share? 🤔\n\n#{direction.replace('_', '')} #{topic.replace(' ', '')}"
+            },
+            'facebook': {
+                'professional': f"📊 {topic} Update\n\nSharing insights from {source.replace('_', ' ')} about {direction.replace('_', ' ')}.\n\nKey points:\n• Current trends in {direction.replace('_', ' ')}\n• Future implications for {topic}\n\nWhat's your take on this? Comment below!\n\n#{direction.replace('_', '')} #{topic.replace(' ', '')} #Technology #Innovation",
+                'casual': f"Hey friends! 😊\n\nJust wanted to share some thoughts on {topic} that I picked up from {source.replace('_', ' ')}.\n\nHere's what caught my attention:\n• How {topic} affects our daily lives\n• Ways to improve our approach to {direction.replace('_', ' ')}\n\nAnyone else thinking about this? Let's discuss! 💬\n\n#{direction.replace('_', '')} #{topic.replace(' ', '')} #TechTalk #Innovation"
+            },
+            'twitter': {
+                'professional': f"💡 {topic}\n\nKey insights from {source.replace('_', ' ')}:\n\n• Understanding {topic} is crucial for success\n• Focus on practical applications\n\n#{direction.replace('_', '')} #{topic.replace(' ', '')}",
+                'casual': f"🤔 {topic}\n\nJust learned from {source.replace('_', ' ')}:\n\n• There's always something new to discover\n• Community insights are invaluable\n\nThoughts? #{direction.replace('_', '')} #{topic.replace(' ', '')}"
+            },
+            'instagram': {
+                'professional': f"🚀 {topic}\n\nBased on {source.replace('_', ' ')} insights, here's what you need to know about {direction.replace('_', ' ')}.\n\nKey takeaways:\n• Understanding {topic} is crucial for success\n• Focus on practical applications in {direction.replace('_', ' ')}\n• Continuous learning drives innovation\n\nWhat's your experience with {topic}? Share your thoughts below! 👇\n\n#Technology #Innovation #{direction.replace('_', '')} #{topic.replace(' ', '')} #TechTrends #DigitalTransformation #FutureTech #AI #Innovation #TechLife",
+                'casual': f"Hey there! 👋\n\nQuick thought on {topic} - inspired by some great {source.replace('_', ' ')} content I've been consuming.\n\nHere's what I've learned:\n• There's always something new to discover about {topic}\n• Community insights are invaluable\n\nWhat do you think? Any tips to share? 🤔\n\n#TechTalk #Innovation #{direction.replace('_', '')} #{topic.replace(' ', '')} #TechCommunity #Learning #Growth #TechTrends #DigitalLife"
+            },
+            'youtube': {
+                'professional': f"🎬 {topic}\n\nHook: Discover the secrets behind {topic} that most people miss!\n\nProblem: Many struggle with understanding {topic} in {direction.replace('_', ' ')}.\n\nSolution: In this video, we'll break down the key insights from {source.replace('_', ' ')} and show you practical applications.\n\nCall-to-Action: Subscribe for more insights on {direction.replace('_', ' ')}!\n\nVoiceover: Start with 'Have you ever wondered about {topic}?' and end with 'Don't forget to like and subscribe!'",
+                'casual': f"🎬 {topic}\n\nHook: Let's talk about {topic} - it's more interesting than you think!\n\nProblem: People often overlook the importance of {topic}.\n\nSolution: We'll explore how {topic} impacts our daily lives and share some cool insights.\n\nCall-to-Action: Hit that subscribe button for more awesome content!\n\nVoiceover: Start with 'Hey everyone!' and end with 'Thanks for watching!'"
+            },
+            'blog': {
+                'professional': f"# {topic}: A Comprehensive Guide to {direction.replace('_', ' ').title()}\n\n## Introduction\n\nIn today's rapidly evolving {direction.replace('_', ' ')} landscape, understanding {topic} has become more crucial than ever. Based on insights from {source.replace('_', ' ')}, this comprehensive guide will provide you with actionable strategies and practical applications.\n\n## Key Insights from {source.replace('_', ' ').title()}\n\n### Understanding {topic}\n{topic} represents a fundamental shift in how we approach {direction.replace('_', ' ')}. The insights from {source.replace('_', ' ')} reveal several key aspects:\n\n- **Practical Applications**: How {topic} can be implemented in real-world scenarios\n- **Industry Impact**: The broader implications for {direction.replace('_', ' ')}\n- **Future Trends**: What to expect in the coming years\n\n### Implementation Strategies\n\nBased on {source.replace('_', ' ')} research, here are the most effective strategies:\n\n1. **Start Small**: Begin with basic applications of {topic}\n2. **Scale Gradually**: Build upon initial successes\n3. **Measure Results**: Track progress and adjust accordingly\n\n## Conclusion\n\n{topic} offers tremendous opportunities for those willing to embrace change and innovation. By following the insights from {source.replace('_', ' ')} and implementing the strategies outlined above, you can position yourself for success in the evolving {direction.replace('_', ' ')} landscape.\n\n**Ready to get started?** Take the first step today and explore how {topic} can transform your approach to {direction.replace('_', ' ')}.",
+                'casual': f"# {topic}: What You Need to Know About {direction.replace('_', ' ').title()}\n\n## Hey there! 👋\n\nSo, you've probably heard about {topic} and wondered what all the fuss is about. Well, you're in the right place! Based on some really interesting {source.replace('_', ' ')} content I've been exploring, I'm here to break it down for you in a way that actually makes sense.\n\n## What's the Deal with {topic}?\n\n### The Basics\n{topic} is basically changing how we think about {direction.replace('_', ' ')}. Here's what you need to know:\n\n- **What it is**: A fresh approach to {direction.replace('_', ' ')}\n- **Why it matters**: It's making waves in the industry\n- **How to use it**: Practical tips that actually work\n\n### Cool Things I Learned\n\nFrom diving into {source.replace('_', ' ')} content, here are some really cool insights:\n\n1. **It's More Accessible Than You Think**: You don't need to be an expert to get started\n2. **Community is Key**: There are tons of people exploring this together\n3. **Small Steps Lead to Big Results**: Start simple and build from there\n\n## Wrapping Up\n\n{topic} is definitely worth your attention if you're interested in {direction.replace('_', ' ')}. The insights from {source.replace('_', ' ')} show that it's not just a trend - it's here to stay.\n\n**Want to learn more?** Check out the resources below and join the conversation!"
+            }
         }
-    }
-    
-    # Direction-specific content
-    direction_content = {
-        'business_finance': [
-            "The key to sustainable business growth lies in understanding market dynamics and customer needs. Companies that adapt quickly to changing conditions often outperform their competitors.",
-            "Financial planning is crucial for both personal and business success. Diversification and risk management should be at the core of any investment strategy.",
-            "Market analysis shows that businesses focusing on customer experience and digital transformation are seeing significant growth in today's competitive landscape.",
-            "Entrepreneurship requires a balance of innovation, risk-taking, and strategic planning. The most successful startups often solve real problems with scalable solutions.",
-            "Corporate strategy must evolve with market conditions. Companies that invest in technology and employee development tend to have better long-term outcomes."
-        ],
-        'technology': [
-            "AI and machine learning are transforming industries across the board. Companies that embrace these technologies early are gaining significant competitive advantages.",
-            "Software development is becoming more collaborative and agile. Teams that focus on user experience and rapid iteration are delivering better products.",
-            "Cybersecurity is more important than ever. Organizations need to implement comprehensive security strategies to protect against evolving threats.",
-            "Cloud computing has revolutionized how businesses operate. The flexibility and scalability it provides are essential for modern digital transformation.",
-            "Digital transformation isn't just about technology—it's about changing how organizations think and operate in the digital age."
-        ],
-        'health_wellness': [
-            "Mental health awareness is growing, and it's crucial to prioritize self-care in our busy lives. Small daily practices can make a significant difference.",
-            "Physical fitness goes beyond just exercise—it's about creating sustainable habits that support overall well-being and energy levels.",
-            "Nutrition plays a fundamental role in our health and performance. Understanding how food affects our bodies can transform our daily lives.",
-            "Wellness is a holistic approach that combines physical, mental, and emotional health. Balance is key to long-term well-being.",
-            "Mindfulness practices can help reduce stress and improve focus. Even a few minutes of daily meditation can have profound effects."
-        ]
-    }
-    
-    # Get content based on direction
-    content_pool = direction_content.get(direction, direction_content['business_finance'])
-    base_content = random.choice(content_pool)
-    
-    # Get template based on platform and tone
-    templates = platform_templates.get(platform, platform_templates['linkedin'])
-    tone_templates = templates.get(tone, templates['professional'])
-    template = random.choice(tone_templates)
-    
-    # Generate final content
-    if platform == 'blog':
-        # For blog posts, use longer format
-        content = template.format(topic=topic, content=base_content)
-    else:
-        # For social media, use shorter format
-        content = template.format(topic=topic, content=base_content[:200] + "..." if len(base_content) > 200 else base_content)
-    
-    return content
+        
+        # Get appropriate fallback template
+        platform_templates = fallback_templates.get(platform, fallback_templates['linkedin'])
+        template = platform_templates.get(tone, platform_templates['professional'])
+        
+        return template
 
 def analyze_content_for_image_generation(content_text, direction, platform, tone, image_style):
     """Analyze generated content to create intelligent image prompts for Stable Diffusion."""
