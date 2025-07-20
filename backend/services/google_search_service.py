@@ -967,17 +967,29 @@ class GoogleSearchService:
                 
                 # Try to extract data from YouTube's initial data
                 try:
-                    # Look for ytInitialData
-                    yt_initial_data_match = re.search(r'var ytInitialData = ({.*?});', content)
-                    if yt_initial_data_match:
-                        yt_data = json.loads(yt_initial_data_match.group(1))
-                        
-                        # Navigate through the data structure to find video info
-                        video_details = self._extract_video_details_from_yt_data(yt_data, video_id)
-                        if video_details:
-                            return video_details
+                    # Look for ytInitialData with different patterns
+                    yt_initial_data_patterns = [
+                        r'var ytInitialData = ({.*?});',
+                        r'ytInitialData\s*=\s*({.*?});',
+                        r'window\["ytInitialData"\]\s*=\s*({.*?});'
+                    ]
+                    
+                    for pattern in yt_initial_data_patterns:
+                        yt_initial_data_match = re.search(pattern, content, re.DOTALL)
+                        if yt_initial_data_match:
+                            try:
+                                yt_data = json.loads(yt_initial_data_match.group(1))
+                                print(f"🔍 DEBUG: Found ytInitialData with pattern: {pattern}")
+                                
+                                # Navigate through the data structure to find video info
+                                video_details = self._extract_video_details_from_yt_data(yt_data, video_id)
+                                if video_details:
+                                    return video_details
+                            except json.JSONDecodeError as e:
+                                print(f"❌ DEBUG: JSON decode error for pattern {pattern}: {e}")
+                                continue
                 except Exception as e:
-                    print(f"Error parsing ytInitialData: {e}")
+                    print(f"❌ DEBUG: Error parsing ytInitialData: {e}")
                 
                 # Fallback to meta tags
                 soup = BeautifulSoup(content, 'html.parser')
@@ -987,16 +999,22 @@ class GoogleSearchService:
                 title_sources = [
                     soup.find('meta', property='og:title'),
                     soup.find('meta', {'name': 'title'}),
-                    soup.find('title')
+                    soup.find('meta', {'itemprop': 'name'}),
+                    soup.find('title'),
+                    soup.find('h1', {'class': 'title'}),
+                    soup.find('h1', {'id': 'video-title'})
                 ]
                 
                 for title_source in title_sources:
                     if title_source:
                         if title_source.name == 'title':
-                            title = title_source.get_text().replace(' - YouTube', '').strip()
+                            title = title_source.get_text().replace(' - YouTube', '').replace(' - YouTube', '').strip()
+                        elif title_source.name in ['h1', 'h2', 'h3']:
+                            title = title_source.get_text().strip()
                         else:
                             title = title_source.get('content', '').strip()
-                        if title and title != 'Unknown Title':
+                        if title and title != 'Unknown Title' and len(title) > 5:
+                            print(f"✅ DEBUG: Found title: {title}")
                             break
                 
                 # Try to extract channel from multiple sources
@@ -1004,16 +1022,23 @@ class GoogleSearchService:
                 channel_sources = [
                     soup.find('link', {'itemprop': 'name'}),
                     soup.find('meta', {'name': 'author'}),
-                    soup.find('a', {'class': 'yt-simple-endpoint'})
+                    soup.find('meta', {'itemprop': 'author'}),
+                    soup.find('a', {'class': 'yt-simple-endpoint'}),
+                    soup.find('a', {'class': 'ytd-channel-name'}),
+                    soup.find('span', {'class': 'ytd-channel-name'}),
+                    soup.find('div', {'class': 'ytd-channel-name'})
                 ]
                 
                 for channel_source in channel_sources:
                     if channel_source:
                         if channel_source.name == 'a':
                             channel = channel_source.get_text().strip()
+                        elif channel_source.name in ['span', 'div']:
+                            channel = channel_source.get_text().strip()
                         else:
                             channel = channel_source.get('content', '').strip()
-                        if channel and channel != 'Unknown Channel':
+                        if channel and channel != 'Unknown Channel' and len(channel) > 2:
+                            print(f"✅ DEBUG: Found channel: {channel}")
                             break
                 
                 # Try to extract description
