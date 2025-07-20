@@ -10,74 +10,74 @@ This document specifies all environment variables required for both frontend and
 ### **Core Flask Configuration**
 ```bash
 # Flask Configuration
-SECRET_KEY=your-secret-key-change-in-production
+SECRET_KEY=dba4712bba83d7be5688812bffaa65b4309af94acc2cb5a29dbf03a1439a2447
 FLASK_ENV=production
 FLASK_APP=app.py
 ```
 
 ### **Database Configuration**
 ```bash
-# Database Configuration
+# Database Configuration (Railway PostgreSQL - Get from Railway Dashboard)
 DATABASE_URL=postgresql://username:password@host:port/database_name
 ```
 
 ### **AI Service Configuration**
 
-#### **DeepSeek AI**
+#### **DeepSeek AI** ✅ (Already Configured)
 ```bash
 # DeepSeek AI Configuration
-DEEPSEEK_API_KEY=your-deepseek-api-key
+DEEPSEEK_API_KEY=sk-9d217f003dd24fd1bc1ce4e5440b11e9
 DEEPSEEK_API_URL=https://api.deepseek.com/v1
 DEEPSEEK_MODEL=deepseek-chat
 DEEPSEEK_MAX_TOKENS=4096
 DEEPSEEK_TEMPERATURE=0.7
 ```
 
-#### **Stable Diffusion**
+#### **Stable Diffusion** ❌ (Need to Obtain)
 ```bash
 # Stable Diffusion Configuration
-STABILITY_API_KEY=your-stability-api-key
+STABILITY_API_KEY=your_stability_api_key  # Get from https://platform.stability.ai/
 STABILITY_API_URL=https://api.stability.ai/v1
 SD_MODEL=stable-diffusion-xl-1024-v1-0
 SD_STEPS=30
 SD_CFG_SCALE=7.0
 ```
 
-#### **Google APIs**
+#### **Google APIs** ❌ (Need to Obtain)
 ```bash
 # Google APIs Configuration
-GOOGLE_CUSTOM_SEARCH_API_KEY=your-google-search-api-key
-GOOGLE_CUSTOM_SEARCH_ENGINE_ID=your-search-engine-id
-GOOGLE_TRENDS_API_KEY=your-google-trends-api-key
-GOOGLE_BOOKS_API_KEY=your-google-books-api-key
+GOOGLE_CUSTOM_SEARCH_API_KEY=your_google_search_api_key  # Get from Google Cloud Console
+GOOGLE_CUSTOM_SEARCH_ENGINE_ID=your_search_engine_id     # Get from https://programmablesearchengine.google.com/
+GOOGLE_TRENDS_API_KEY=your_google_trends_api_key         # Optional - Using mock data
+GOOGLE_BOOKS_API_KEY=your_google_books_api_key           # Same as Custom Search API key
 GOOGLE_NEWS_RSS_ENABLED=true
 ```
 
 ### **Infrastructure Configuration**
 
-#### **Redis & Celery**
+#### **Redis & Celery** ❌ (Need to Set Up)
 ```bash
-# Redis Configuration (for Celery)
+# Redis Configuration (for Celery) - Get from Railway Dashboard
 REDIS_URL=redis://username:password@host:port/database_number
 CELERY_BROKER_URL=redis://username:password@host:port/database_number
 ```
 
-#### **Cloudinary (Image Storage)**
+#### **Cloudinary (Image Storage)** ✅ (Already Configured)
 ```bash
 # Cloudinary Configuration
 CLOUDINARY_CLOUD_NAME=your-cloud-name
-CLOUDINARY_API_KEY=your-api-key
-CLOUDINARY_API_SECRET=your-api-secret
+CLOUDINARY_API_KEY=117158686154364
+CLOUDINARY_API_SECRET=QkWKsPdbREy6Ox86kpncl6q4KbI
 ```
 
 ### **Security Configuration**
 ```bash
 # Security Configuration
-JWT_SECRET_KEY=your_jwt_secret_key
+JWT_SECRET_KEY=a5308400690e449e632a50f4004ffeacc662cb24b9cdf7708811e7da069cb247
 JWT_ACCESS_TOKEN_EXPIRES=3600
-CORS_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
-ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
-CSRF_TRUSTED_ORIGINS=https://yourdomain.com
+CORS_ORIGINS=https://your-vercel-app.vercel.app,https://www.your-vercel-app.vercel.app
+ALLOWED_HOSTS=your-vercel-app.vercel.app,www.your-vercel-app.vercel.app
+CSRF_TRUSTED_ORIGINS=https://your-vercel-app.vercel.app
 ```
 
 ### **Rate Limiting Configuration**
@@ -130,14 +130,14 @@ UPLOAD_FOLDER=uploads
 ### **Core Configuration**
 ```bash
 # Backend Configuration
-BACKEND_URL=http://localhost:8000
+BACKEND_URL=https://your-railway-app.railway.app
 
 # Environment
-NODE_ENV=development
+NODE_ENV=production
 
 # Frontend Configuration
 NEXT_PUBLIC_APP_NAME=Content Creator Pro
-NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_APP_URL=https://your-vercel-app.vercel.app
 ```
 
 ### **AI Feature Flags**
@@ -151,8 +151,8 @@ NEXT_PUBLIC_GOOGLE_SEARCH_ENABLED=true
 ### **Google APIs Configuration (Frontend)**
 ```bash
 # Google APIs Configuration (Frontend)
-NEXT_PUBLIC_GOOGLE_CUSTOM_SEARCH_API_KEY=your_google_search_api_key
-NEXT_PUBLIC_GOOGLE_CUSTOM_SEARCH_ENGINE_ID=your_search_engine_id
+NEXT_PUBLIC_GOOGLE_CUSTOM_SEARCH_API_KEY=your_google_search_api_key  # Same as backend
+NEXT_PUBLIC_GOOGLE_CUSTOM_SEARCH_ENGINE_ID=your_search_engine_id     # Same as backend
 ```
 
 ### **Feature Flags**
@@ -188,94 +188,182 @@ NEXT_PUBLIC_SENTRY_DSN=your_sentry_dsn
 
 ---
 
+## 🔑 **How to Obtain Missing API Keys and Configuration**
+
+### **✅ Already Configured**
+- **DeepSeek AI**: `sk-9d217f003dd24fd1bc1ce4e5440b11e9`
+- **Cloudinary**: API Key and Secret provided
+- **Secret Keys**: Generated and ready to use
+
+### **❌ Need to Obtain**
+
+#### **1. Stability AI (Stable Diffusion) - For Image Generation**
+
+**Step-by-Step Guide:**
+1. **Visit**: https://platform.stability.ai/
+2. **Sign Up**: Create a new account
+3. **Get API Key**:
+   - Go to "Account" → "API Keys"
+   - Click "Create API Key"
+   - Copy the generated key (starts with `sk-`)
+4. **Set in Environment**:
+   ```bash
+   STABILITY_API_KEY=sk-your-actual-stability-api-key
+   ```
+
+#### **2. Google Custom Search API - For Topic Generation**
+
+**Step-by-Step Guide:**
+1. **Go to Google Cloud Console**: https://console.cloud.google.com/
+2. **Create/Select Project**: Create new or select existing project
+3. **Enable Custom Search API**:
+   - Go to "APIs & Services" → "Library"
+   - Search for "Custom Search API"
+   - Click "Enable"
+4. **Create Credentials**:
+   - Go to "APIs & Services" → "Credentials"
+   - Click "Create Credentials" → "API Key"
+   - Copy the API key
+5. **Create Search Engine**:
+   - Go to: https://programmablesearchengine.google.com/
+   - Click "Create a search engine"
+   - Enter any site (e.g., `www.google.com`)
+   - Get your Search Engine ID (looks like: `012345678901234567890:abcdefghijk`)
+6. **Set in Environment**:
+   ```bash
+   GOOGLE_CUSTOM_SEARCH_API_KEY=your-google-api-key
+   GOOGLE_CUSTOM_SEARCH_ENGINE_ID=your-search-engine-id
+   ```
+
+#### **3. Database Configuration (PostgreSQL)**
+
+**Option A: Railway PostgreSQL (Recommended)**
+1. **Go to Railway**: https://railway.app/
+2. **Create New Project**
+3. **Add PostgreSQL Database**:
+   - Click "New Service" → "Database" → "PostgreSQL"
+   - Railway will provide connection string
+4. **Get Connection String**:
+   - Go to database service
+   - Click "Connect" → "PostgreSQL"
+   - Copy the connection string
+5. **Set in Environment**:
+   ```bash
+   DATABASE_URL=postgresql://username:password@host:port/database_name
+   ```
+
+**Option B: Local PostgreSQL**
+1. **Install PostgreSQL**: https://www.postgresql.org/download/
+2. **Create Database**:
+   ```bash
+   createdb content_creator
+   ```
+3. **Set in Environment**:
+   ```bash
+   DATABASE_URL=postgresql://localhost:5432/content_creator
+   ```
+
+#### **4. Redis Configuration (For Background Tasks)**
+
+**Option A: Railway Redis**
+1. **Go to Railway**: https://railway.app/
+2. **Add Redis Service**:
+   - Click "New Service" → "Database" → "Redis"
+3. **Get Connection String**:
+   - Go to Redis service
+   - Click "Connect" → "Redis"
+   - Copy the connection string
+4. **Set in Environment**:
+   ```bash
+   REDIS_URL=redis://username:password@host:port/database_number
+   CELERY_BROKER_URL=redis://username:password@host:port/database_number
+   ```
+
+**Option B: Local Redis**
+1. **Install Redis**: https://redis.io/download
+2. **Start Redis**:
+   ```bash
+   redis-server
+   ```
+3. **Set in Environment**:
+   ```bash
+   REDIS_URL=redis://localhost:6379/0
+   CELERY_BROKER_URL=redis://localhost:6379/0
+   ```
+
+#### **5. Domain Configuration**
+
+**Get Your Deployment URLs:**
+1. **Vercel Domain**: Check your Vercel dashboard for your app URL
+2. **Railway Domain**: Check your Railway dashboard for your backend URL
+3. **Update Environment Variables**:
+   ```bash
+   # Replace with your actual domains
+   CORS_ORIGINS=https://your-vercel-app.vercel.app
+   ALLOWED_HOSTS=your-vercel-app.vercel.app
+   CSRF_TRUSTED_ORIGINS=https://your-vercel-app.vercel.app
+   BACKEND_URL=https://your-railway-app.railway.app
+   NEXT_PUBLIC_APP_URL=https://your-vercel-app.vercel.app
+   ```
+
+---
+
 ## 📋 **Complete Environment Setup Checklist**
 
 ### **Backend Setup (Railway/Heroku)**
-- [ ] **Flask Configuration**: SECRET_KEY, FLASK_ENV, FLASK_APP
-- [ ] **Database**: DATABASE_URL (PostgreSQL)
-- [ ] **DeepSeek AI**: DEEPSEEK_API_KEY, DEEPSEEK_API_URL, DEEPSEEK_MODEL, DEEPSEEK_MAX_TOKENS, DEEPSEEK_TEMPERATURE
-- [ ] **Stable Diffusion**: STABILITY_API_KEY, STABILITY_API_URL, SD_MODEL, SD_STEPS, SD_CFG_SCALE
-- [ ] **Google APIs**: GOOGLE_CUSTOM_SEARCH_API_KEY, GOOGLE_CUSTOM_SEARCH_ENGINE_ID, GOOGLE_TRENDS_API_KEY, GOOGLE_BOOKS_API_KEY, GOOGLE_NEWS_RSS_ENABLED
-- [ ] **Redis**: REDIS_URL, CELERY_BROKER_URL
-- [ ] **Cloudinary**: CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET
-- [ ] **Security**: JWT_SECRET_KEY, JWT_ACCESS_TOKEN_EXPIRES, CORS_ORIGINS, ALLOWED_HOSTS, CSRF_TRUSTED_ORIGINS
-- [ ] **Rate Limiting**: RATE_LIMIT_CONTENT_GENERATION, RATE_LIMIT_GOOGLE_SEARCH, RATE_LIMIT_IMAGE_GENERATION, RATE_LIMIT_WINDOW
-- [ ] **Performance**: CACHE_CONFIG_GOOGLE_SEARCH, CACHE_CONFIG_CONTENT_GENERATION, CACHE_CONFIG_IMAGE_GENERATION, CACHE_CONFIG_ANALYTICS
-- [ ] **Monitoring**: PROMETHEUS_ENABLED, METRICS_ENDPOINT, LOG_LEVEL
+- [x] **Flask Configuration**: SECRET_KEY, FLASK_ENV, FLASK_APP
+- [ ] **Database**: DATABASE_URL (PostgreSQL) - Get from Railway
+- [x] **DeepSeek AI**: DEEPSEEK_API_KEY, DEEPSEEK_API_URL, DEEPSEEK_MODEL, DEEPSEEK_MAX_TOKENS, DEEPSEEK_TEMPERATURE
+- [ ] **Stable Diffusion**: STABILITY_API_KEY, STABILITY_API_URL, SD_MODEL, SD_STEPS, SD_CFG_SCALE - Get from Stability AI
+- [ ] **Google APIs**: GOOGLE_CUSTOM_SEARCH_API_KEY, GOOGLE_CUSTOM_SEARCH_ENGINE_ID, GOOGLE_TRENDS_API_KEY, GOOGLE_BOOKS_API_KEY, GOOGLE_NEWS_RSS_ENABLED - Get from Google Cloud Console
+- [ ] **Redis**: REDIS_URL, CELERY_BROKER_URL - Get from Railway
+- [x] **Cloudinary**: CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET
+- [x] **Security**: JWT_SECRET_KEY, JWT_ACCESS_TOKEN_EXPIRES, CORS_ORIGINS, ALLOWED_HOSTS, CSRF_TRUSTED_ORIGINS
+- [x] **Rate Limiting**: RATE_LIMIT_CONTENT_GENERATION, RATE_LIMIT_GOOGLE_SEARCH, RATE_LIMIT_IMAGE_GENERATION, RATE_LIMIT_WINDOW
+- [x] **Performance**: CACHE_CONFIG_GOOGLE_SEARCH, CACHE_CONFIG_CONTENT_GENERATION, CACHE_CONFIG_IMAGE_GENERATION, CACHE_CONFIG_ANALYTICS
+- [x] **Monitoring**: PROMETHEUS_ENABLED, METRICS_ENDPOINT, LOG_LEVEL
 - [ ] **Optional**: MAIL_SERVER, MAIL_PORT, MAIL_USE_TLS, MAIL_USERNAME, MAIL_PASSWORD
-- [ ] **File Upload**: MAX_CONTENT_LENGTH, UPLOAD_FOLDER
+- [x] **File Upload**: MAX_CONTENT_LENGTH, UPLOAD_FOLDER
 
 ### **Frontend Setup (Vercel)**
-- [ ] **Backend**: BACKEND_URL
-- [ ] **Environment**: NODE_ENV
-- [ ] **App**: NEXT_PUBLIC_APP_NAME, NEXT_PUBLIC_APP_URL
-- [ ] **AI Features**: NEXT_PUBLIC_DEEPSEEK_ENABLED, NEXT_PUBLIC_STABLE_DIFFUSION_ENABLED, NEXT_PUBLIC_GOOGLE_SEARCH_ENABLED
-- [ ] **Google APIs**: NEXT_PUBLIC_GOOGLE_CUSTOM_SEARCH_API_KEY, NEXT_PUBLIC_GOOGLE_CUSTOM_SEARCH_ENGINE_ID
-- [ ] **Feature Flags**: NEXT_PUBLIC_IMAGE_GENERATION_ENABLED, NEXT_PUBLIC_GOOGLE_TRENDS_ENABLED, NEXT_PUBLIC_GOOGLE_NEWS_ENABLED, NEXT_PUBLIC_GOOGLE_BOOKS_ENABLED
-- [ ] **UI Config**: NEXT_PUBLIC_MAX_TOPICS_PER_REQUEST, NEXT_PUBLIC_MAX_IMAGE_VARIATIONS, NEXT_PUBLIC_CONTENT_GENERATION_TIMEOUT, NEXT_PUBLIC_IMAGE_GENERATION_TIMEOUT
+- [ ] **Backend**: BACKEND_URL - Get from Railway
+- [x] **Environment**: NODE_ENV
+- [ ] **App**: NEXT_PUBLIC_APP_NAME, NEXT_PUBLIC_APP_URL - Get from Vercel
+- [x] **AI Features**: NEXT_PUBLIC_DEEPSEEK_ENABLED, NEXT_PUBLIC_STABLE_DIFFUSION_ENABLED, NEXT_PUBLIC_GOOGLE_SEARCH_ENABLED
+- [ ] **Google APIs**: NEXT_PUBLIC_GOOGLE_CUSTOM_SEARCH_API_KEY, NEXT_PUBLIC_GOOGLE_CUSTOM_SEARCH_ENGINE_ID - Same as backend
+- [x] **Feature Flags**: NEXT_PUBLIC_IMAGE_GENERATION_ENABLED, NEXT_PUBLIC_GOOGLE_TRENDS_ENABLED, NEXT_PUBLIC_GOOGLE_NEWS_ENABLED, NEXT_PUBLIC_GOOGLE_BOOKS_ENABLED
+- [x] **UI Config**: NEXT_PUBLIC_MAX_TOPICS_PER_REQUEST, NEXT_PUBLIC_MAX_IMAGE_VARIATIONS, NEXT_PUBLIC_CONTENT_GENERATION_TIMEOUT, NEXT_PUBLIC_IMAGE_GENERATION_TIMEOUT
 - [ ] **Analytics**: NEXT_PUBLIC_ANALYTICS_ENABLED, NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
 - [ ] **Error Reporting**: NEXT_PUBLIC_SENTRY_DSN
 
 ---
 
-## 🔑 **API Keys Required**
+## 🚀 **Quick Setup Commands**
 
-### **DeepSeek AI**
-- **Service**: DeepSeek AI for content generation
-- **URL**: https://api.deepseek.com/
-- **Cost**: Pay-per-use
-- **Setup**: Sign up and get API key
-
-### **Stability AI (Stable Diffusion)**
-- **Service**: Stable Diffusion for image generation
-- **URL**: https://platform.stability.ai/
-- **Cost**: Pay-per-use
-- **Setup**: Sign up and get API key
-
-### **Google APIs**
-- **Google Custom Search**: https://developers.google.com/custom-search
-- **Google Trends**: https://trends.google.com/trends/
-- **Google Books**: https://developers.google.com/books
-- **Cost**: Free tier available
-- **Setup**: Google Cloud Console
-
-### **Cloudinary**
-- **Service**: Image storage and optimization
-- **URL**: https://cloudinary.com/
-- **Cost**: Free tier available
-- **Setup**: Sign up and get credentials
-
----
-
-## 🚀 **Deployment Configuration**
-
-### **Production Environment Variables**
+### **Test API Keys**
 ```bash
-# Production Backend (Railway/Heroku)
-FLASK_ENV=production
-DATABASE_URL=postgresql://production-db-url
-REDIS_URL=redis://production-redis-url
-BACKEND_URL=https://your-production-backend.railway.app
+# Test DeepSeek AI (Already Working)
+curl -H "Authorization: Bearer sk-9d217f003dd24fd1bc1ce4e5440b11e9" \
+     -H "Content-Type: application/json" \
+     -d '{"model":"deepseek-chat","messages":[{"role":"user","content":"Hello"}]}' \
+     https://api.deepseek.com/v1/chat/completions
 
-# Production Frontend (Vercel)
-NODE_ENV=production
-BACKEND_URL=https://your-production-backend.railway.app
-NEXT_PUBLIC_APP_URL=https://your-production-frontend.vercel.app
+# Test Stability AI (After getting key)
+curl -H "Authorization: Bearer YOUR_STABILITY_KEY" \
+     -H "Content-Type: application/json" \
+     -d '{"text_prompts":[{"text":"a beautiful landscape"}],"cfg_scale":7,"height":1024,"width":1024,"samples":1,"steps":30}' \
+     https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image
+
+# Test Google Custom Search (After getting key)
+curl "https://www.googleapis.com/customsearch/v1?key=YOUR_API_KEY&cx=YOUR_SEARCH_ENGINE_ID&q=test"
 ```
 
-### **Development Environment Variables**
-```bash
-# Development Backend
-FLASK_ENV=development
-DATABASE_URL=postgresql://localhost:5432/content_creator_dev
-REDIS_URL=redis://localhost:6379/0
-BACKEND_URL=http://localhost:8000
-
-# Development Frontend
-NODE_ENV=development
-BACKEND_URL=http://localhost:8000
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-```
+### **Priority Order for Setup**
+1. **Stability AI API Key** (for image generation)
+2. **Google Custom Search API** (for topic generation)
+3. **Database URL** (PostgreSQL from Railway)
+4. **Redis URL** (from Railway)
+5. **Domain Configuration** (from Vercel/Railway dashboards)
 
 ---
 
@@ -284,8 +372,8 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 ### **Sensitive Variables**
 - **API Keys**: Never commit to version control
 - **Database URLs**: Keep secure and rotate regularly
-- **JWT Secrets**: Use strong, unique secrets
-- **Cloudinary Credentials**: Keep private
+- **JWT Secrets**: Use strong, unique secrets (✅ Generated)
+- **Cloudinary Credentials**: Keep private (✅ Configured)
 
 ### **Environment-Specific Configuration**
 - **Development**: Use local services where possible
