@@ -2228,9 +2228,14 @@ def generate_video_link():
         
         # Extract category keywords for search
         category_keywords = []
-        for category_type, items in categories.items():
-            if items:
-                category_keywords.extend(items)
+        if isinstance(categories, dict):
+            for category_type, items in categories.items():
+                if items:
+                    category_keywords.extend(items)
+        elif isinstance(categories, list):
+            category_keywords = categories
+        else:
+            category_keywords = [direction.replace('_', ' ')]
         
         # Create search query based on direction and categories
         search_terms = [direction.replace('_', ' ')]
@@ -2274,9 +2279,14 @@ def generate_podcast_link():
         
         # Extract category keywords for search
         category_keywords = []
-        for category_type, items in categories.items():
-            if items:
-                category_keywords.extend(items)
+        if isinstance(categories, dict):
+            for category_type, items in categories.items():
+                if items:
+                    category_keywords.extend(items)
+        elif isinstance(categories, list):
+            category_keywords = categories
+        else:
+            category_keywords = [direction.replace('_', ' ')]
         
         # Create search query based on direction and categories
         search_terms = [direction.replace('_', ' ')]
