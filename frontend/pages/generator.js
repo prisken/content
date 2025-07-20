@@ -377,21 +377,57 @@ Generated on: ${new Date().toLocaleString()}
               <div>
                 <h2 className="text-2xl font-bold mb-6">Choose Content Direction</h2>
                 <p className="text-gray-600 mb-6">What niche, industry, or lifestyle interests you?</p>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {contentDirections.map((direction) => (
-                    <button
-                      key={direction.key}
-                      onClick={() => handleInputChange('direction', direction.key)}
-                      className={`p-4 border-2 rounded-lg text-left transition-all duration-200 ${
-                        formData.direction === direction.key
-                          ? 'border-blue-600 bg-blue-50'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
+                
+                <div className="max-w-2xl">
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Content Direction
+                    </label>
+                    <select
+                      value={formData.direction}
+                      onChange={(e) => handleInputChange('direction', e.target.value)}
+                      className="w-full p-4 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg"
                     >
-                      <div className="text-2xl mb-2">{direction.icon}</div>
-                      <div className="font-medium">{direction.name}</div>
-                    </button>
-                  ))}
+                      <option value="">Select your niche, industry, or lifestyle...</option>
+                      {contentDirections.map((direction) => (
+                        <option key={direction.key} value={direction.key}>
+                          {direction.icon} {direction.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {formData.direction && (
+                    <div className="bg-gray-50 p-6 rounded-lg">
+                      <h3 className="text-lg font-semibold mb-4">Categories:</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
+                        <div>
+                          <h4 className="font-medium mb-2">Interest-based:</h4>
+                          <p>Gaming, Photography, Music, Art, Cooking...</p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium mb-2">Industry:</h4>
+                          <p>Technology, Healthcare, Finance, Education, Marketing...</p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium mb-2">Lifestyle:</h4>
+                          <p>Fitness, Travel, Parenting, Minimalism, Sustainability...</p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium mb-2">Professional:</h4>
+                          <p>Entrepreneurship, Career Development, Leadership...</p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium mb-2">Creative:</h4>
+                          <p>Design, Writing, Film, Fashion, Architecture...</p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium mb-2">Academic:</h4>
+                          <p>Science, Research, Philosophy, History, Literature...</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
