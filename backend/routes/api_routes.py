@@ -2009,16 +2009,17 @@ def generate_topics_from_content():
                 'error': 'Content type, content data, and direction are required'
             }), 400
         
-        # Generate topics using fallback method for now
+        # Generate topics using AI service
         try:
             from services.ai_service import ai_service
             topics = ai_service.generate_topics_from_content(content_data, direction, content_type)
         except Exception as e:
             print(f"AI service error: {e}")
             # Fallback to basic topic generation
+            content_title = content_data if isinstance(content_data, str) else content_data.get("title", "Content")
             topics = [
                 {
-                    'title': f'Key Insights from {content_data.get("title", "Content")}',
+                    'title': f'Key Insights from {content_title}',
                     'description': f'Extract and expand on the main points from this {content_type}',
                     'trending_score': 85,
                     'content_angle': 'Content analysis'
