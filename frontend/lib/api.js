@@ -53,24 +53,62 @@ export const apiClient = {
     return this.request('/health');
   },
 
-  // Content Generation
+  // AI Content Generation
   async generateContent(data) {
     // Transform frontend data format to backend format
     const backendData = {
-      content_direction: data.direction,
-      content_type: data.platform,
-      source_type: data.source,
-      specific_content: data.topic,
+      direction: data.direction,
+      platform: data.platform,
+      postType: data.postType,
+      source: data.source,
+      sourceDetails: data.sourceDetails,
+      selectedTopic: data.selectedTopic,
       tone: data.tone,
-      region: data.region || 'global',
       language: data.language || 'en',
-      user_id: data.user_id || null,
+      imageStyle: data.imageStyle,
       generate_images: data.generate_images !== false // Default to true
     };
     
     return this.request('/api/generate', {
       method: 'POST',
       body: backendData,
+    });
+  },
+
+  // Topic Generation with Google Search
+  async generateTopics(data) {
+    return this.request('/api/topics/generate', {
+      method: 'POST',
+      body: data,
+    });
+  },
+
+  // Google Search Integration
+  async googleSearch(query, country = 'US') {
+    return this.request('/api/google/search', {
+      method: 'POST',
+      body: { query, country },
+    });
+  },
+
+  async googleNews(country = 'US', category = 'all') {
+    return this.request('/api/google/news', {
+      method: 'POST',
+      body: { country, category },
+    });
+  },
+
+  async googleTrends(query, country = 'US') {
+    return this.request('/api/google/trends', {
+      method: 'POST',
+      body: { query, country },
+    });
+  },
+
+  async googleBooks(query, country = 'US') {
+    return this.request('/api/google/books', {
+      method: 'POST',
+      body: { query, country },
     });
   },
 
@@ -192,7 +230,7 @@ export const contentDirections = [
   { key: 'pet_care', name: 'Pet Care', icon: '🐕' },
 ];
 
-// Platforms data
+// Platforms data (legacy - now using enhancedPlatforms in generator.js)
 export const platforms = [
   { key: 'linkedin', name: 'LinkedIn', icon: '💼' },
   { key: 'facebook', name: 'Facebook', icon: '📘' },
@@ -202,7 +240,7 @@ export const platforms = [
   { key: 'blog_article', name: 'Blog Article', icon: '📝' },
 ];
 
-// Sources data
+// Sources data (legacy - now using enhancedSources in generator.js)
 export const sources = [
   { key: 'personal_experience', name: 'Personal Experience' },
   { key: 'industry_trends', name: 'Industry Trends' },
@@ -227,10 +265,10 @@ export const tones = [
 
 // Image styles data
 export const imageStyles = [
-  { key: 'modern', name: 'Modern' },
-  { key: 'vintage', name: 'Vintage' },
-  { key: 'minimalist', name: 'Minimalist' },
-  { key: 'colorful', name: 'Colorful' },
   { key: 'professional', name: 'Professional' },
   { key: 'creative', name: 'Creative' },
+  { key: 'minimalist', name: 'Minimalist' },
+  { key: 'vibrant', name: 'Vibrant' },
+  { key: 'modern', name: 'Modern' },
+  { key: 'natural', name: 'Natural' },
 ]; 

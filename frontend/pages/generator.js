@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import toast from 'react-hot-toast'
-import { ChevronRight, Sparkles, Copy, Download, RefreshCw } from 'lucide-react'
-import { apiClient, contentDirections, platforms, sources, tones } from '../lib/api'
+import { ChevronRight, Sparkles, Copy, Download, RefreshCw, Search, Globe, TrendingUp, BookOpen, Youtube, Mic, Bot } from 'lucide-react'
+import { apiClient, contentDirections, platforms, tones } from '../lib/api'
 import { useAuth } from '../contexts/AuthContext'
 import { useLanguage } from '../contexts/LanguageContext'
 import { useRouter } from 'next/router'
@@ -11,6 +11,10 @@ export default function Generator() {
   const [currentStep, setCurrentStep] = useState(1)
   const [isGenerating, setIsGenerating] = useState(false)
   const [generatedContent, setGeneratedContent] = useState(null)
+  const [selectedTopics, setSelectedTopics] = useState([])
+  const [isLoadingTopics, setIsLoadingTopics] = useState(false)
+  const [googleSearchQuery, setGoogleSearchQuery] = useState('')
+  const [selectedCountry, setSelectedCountry] = useState('US')
   const { isAuthenticated } = useAuth()
   const { t } = useLanguage()
   const router = useRouter()
@@ -18,12 +22,132 @@ export default function Generator() {
   const [formData, setFormData] = useState({
     direction: '',
     platform: '',
+    postType: '',
     source: '',
-    topic: '',
+    sourceDetails: {},
+    selectedTopic: '',
     tone: '',
     language: 'en',
-    imageStyle: 'professional' // New field for image style
+    imageStyle: 'professional'
   })
+
+  // Enhanced platforms with post types
+  const enhancedPlatforms = [
+    {
+      key: 'linkedin',
+      name: 'LinkedIn',
+      icon: '💼',
+      postTypes: [
+        { key: 'posts', name: 'Posts' },
+        { key: 'articles', name: 'Articles' },
+        { key: 'newsletters', name: 'Newsletters' }
+      ]
+    },
+    {
+      key: 'facebook',
+      name: 'Facebook',
+      icon: '📘',
+      postTypes: [
+        { key: 'posts', name: 'Posts' },
+        { key: 'stories', name: 'Stories' },
+        { key: 'reels', name: 'Reels (Coming Soon)', disabled: true }
+      ]
+    },
+    {
+      key: 'instagram',
+      name: 'Instagram',
+      icon: '📷',
+      postTypes: [
+        { key: 'posts', name: 'Posts' },
+        { key: 'stories', name: 'Stories' },
+        { key: 'reels', name: 'Reels (Coming Soon)', disabled: true },
+        { key: 'igtv', name: 'IGTV (Coming Soon)', disabled: true }
+      ]
+    },
+    {
+      key: 'twitter',
+      name: 'Twitter',
+      icon: '🐦',
+      postTypes: [
+        { key: 'tweets', name: 'Tweets' },
+        { key: 'threads', name: 'Threads' },
+        { key: 'spaces', name: 'Spaces (Coming Soon)', disabled: true }
+      ]
+    },
+    {
+      key: 'youtube',
+      name: 'YouTube',
+      icon: '📺',
+      postTypes: [
+        { key: 'shorts', name: 'Shorts (Coming Soon)', disabled: true },
+        { key: 'videos', name: 'Videos (Coming Soon)', disabled: true },
+        { key: 'scripts', name: 'Scripts' }
+      ]
+    },
+    {
+      key: 'blog',
+      name: 'Blog',
+      icon: '📝',
+      postTypes: [
+        { key: 'articles', name: 'Articles' },
+        { key: 'newsletters', name: 'Newsletters' },
+        { key: 'guides', name: 'Guides' }
+      ]
+    }
+  ]
+
+  // Enhanced sources with Google integration
+  const enhancedSources = [
+    {
+      key: 'google_search',
+      name: 'Google Search',
+      icon: <Search className="w-6 h-6" />,
+      description: 'Real-time Google search with AI analysis',
+      hasSearch: true
+    },
+    {
+      key: 'google_news',
+      name: 'Google News',
+      icon: <Globe className="w-6 h-6" />,
+      description: 'RSS feed + AI content analysis',
+      hasSearch: true
+    },
+    {
+      key: 'google_trends',
+      name: 'Google Trends',
+      icon: <TrendingUp className="w-6 h-6" />,
+      description: 'Real-time trending data + interest over time',
+      hasSearch: true
+    },
+    {
+      key: 'books',
+      name: 'Books',
+      icon: <BookOpen className="w-6 h-6" />,
+      description: 'AI-powered book discovery',
+      hasSearch: true
+    },
+    {
+      key: 'youtube',
+      name: 'YouTube',
+      icon: <Youtube className="w-6 h-6" />,
+      description: 'Enhanced with Google search data',
+      hasSearch: true
+    },
+    {
+      key: 'podcasts',
+      name: 'Podcasts',
+      icon: <Mic className="w-6 h-6" />,
+      description: 'Enhanced with Google search data',
+      hasSearch: true
+    },
+    {
+      key: 'ai_discovery',
+      name: 'AI-Powered Discovery',
+      icon: <Bot className="w-6 h-6" />,
+      description: 'Combines all Google services + AI analysis',
+      hasSearch: true
+    }
+  ]
 
   // Image style options
   const imageStyles = [
@@ -65,8 +189,31 @@ export default function Generator() {
     }
   ]
 
+  // Countries for Google search
+  const countries = [
+    { code: 'US', name: 'United States' },
+    { code: 'CA', name: 'Canada' },
+    { code: 'GB', name: 'United Kingdom' },
+    { code: 'AU', name: 'Australia' },
+    { code: 'DE', name: 'Germany' },
+    { code: 'FR', name: 'France' },
+    { code: 'JP', name: 'Japan' },
+    { code: 'IN', name: 'India' },
+    { code: 'BR', name: 'Brazil' },
+    { code: 'MX', name: 'Mexico' }
+  ]
+
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }))
+    
+    // Reset dependent fields
+    if (field === 'platform') {
+      setFormData(prev => ({ ...prev, postType: '' }))
+    }
+    if (field === 'source') {
+      setFormData(prev => ({ ...prev, sourceDetails: {}, selectedTopic: '' }))
+      setSelectedTopics([])
+    }
   }
 
   const nextStep = () => {
@@ -81,26 +228,55 @@ export default function Generator() {
     }
   }
 
+  const generateTopics = async () => {
+    if (!formData.direction || !formData.source) {
+      toast.error('Please select direction and source first')
+      return
+    }
+
+    setIsLoadingTopics(true)
+    try {
+      const response = await apiClient.generateTopics({
+        direction: formData.direction,
+        source: formData.source,
+        sourceDetails: {
+          country: selectedCountry,
+          query: googleSearchQuery
+        }
+      })
+      
+      setSelectedTopics(response.topics || [])
+      toast.success('Topics generated successfully!')
+    } catch (error) {
+      toast.error('Failed to generate topics')
+      console.error('Topic generation error:', error)
+    } finally {
+      setIsLoadingTopics(false)
+    }
+  }
+
   const generateContent = async () => {
-    // Check if user is authenticated before generating content
     if (!isAuthenticated()) {
       toast.error(t('login_required'))
       router.push('/login')
       return
     }
 
-    if (!formData.direction || !formData.platform || !formData.source || !formData.topic || !formData.tone) {
-      toast.error(t('fill_all_fields'))
+    if (!formData.direction || !formData.platform || !formData.postType || !formData.source || !formData.selectedTopic || !formData.tone) {
+      toast.error('Please fill in all required fields')
       return
     }
 
     setIsGenerating(true)
     try {
-      const response = await apiClient.generateContent(formData)
-      setGeneratedContent(response)
-      toast.success(t('content_generated'))
+      const response = await apiClient.generateContent({
+        ...formData,
+        generate_images: true
+      })
+      setGeneratedContent(response.data)
+      toast.success('Content generated successfully!')
     } catch (error) {
-      toast.error(error.message || t('generation_failed'))
+      toast.error(error.message || 'Generation failed')
       console.error('Generation error:', error)
     } finally {
       setIsGenerating(false)
@@ -110,29 +286,31 @@ export default function Generator() {
   const copyToClipboard = async (text) => {
     try {
       await navigator.clipboard.writeText(text)
-      toast.success(t('copied_to_clipboard'))
+      toast.success('Copied to clipboard!')
     } catch (error) {
-      toast.error(t('copy_failed'))
+      toast.error('Failed to copy')
     }
   }
 
   const downloadContent = () => {
     if (!generatedContent) return
     
-    const content = `${t('content_creator_pro')} - ${t('generated_content')}
+    const content = `Content Creator Pro - Generated Content
 
-${t('direction')}: ${formData.direction}
-${t('platform')}: ${formData.platform}
-${t('topic')}: ${formData.topic}
-${t('tone')}: ${formData.tone}
+Direction: ${contentDirections.find(d => d.key === formData.direction)?.name}
+Platform: ${enhancedPlatforms.find(p => p.key === formData.platform)?.name}
+Post Type: ${enhancedPlatforms.find(p => p.key === formData.platform)?.postTypes.find(pt => pt.key === formData.postType)?.name}
+Topic: ${formData.selectedTopic}
+Tone: ${tones.find(t => t.key === formData.tone)?.name}
+Image Style: ${imageStyles.find(s => s.key === formData.imageStyle)?.name}
 
-${t('content')}:
-${generatedContent.content}
+Content:
+${generatedContent.content?.text || generatedContent.content}
 
-${t('hashtags')}:
-${generatedContent.hashtags?.join(', ') || 'N/A'}
+Hashtags:
+${generatedContent.content?.hashtags?.join(', ') || 'N/A'}
 
-${t('generated_on')}: ${new Date().toLocaleString()}
+Generated on: ${new Date().toLocaleString()}
 `
 
     const blob = new Blob([content], { type: 'text/plain' })
@@ -144,7 +322,7 @@ ${t('generated_on')}: ${new Date().toLocaleString()}
     a.click()
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
-    toast.success(t('content_downloaded'))
+    toast.success('Content downloaded!')
   }
 
   const regenerateContent = () => {
@@ -155,19 +333,19 @@ ${t('generated_on')}: ${new Date().toLocaleString()}
   return (
     <>
       <Head>
-        <title>{t('content_generator')} - Content Creator Pro</title>
-        <meta name="description" content={t('generator_description')} />
+        <title>AI Content Generator - Content Creator Pro</title>
+        <meta name="description" content="Generate high-quality content with AI using DeepSeek and Stable Diffusion" />
       </Head>
 
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              {t('content_generator')}
+              AI Content Generator
             </h1>
             <p className="text-xl text-gray-600">
-              {t('generator_subtitle')}
+              Create engaging content with DeepSeek AI and Stable Diffusion
             </p>
           </div>
 
@@ -197,9 +375,9 @@ ${t('generated_on')}: ${new Date().toLocaleString()}
           <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
             {currentStep === 1 && (
               <div>
-                <h2 className="text-2xl font-bold mb-6">{t('choose_direction')}</h2>
-                <p className="text-gray-600 mb-6">{t('direction_description')}</p>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <h2 className="text-2xl font-bold mb-6">Choose Content Direction</h2>
+                <p className="text-gray-600 mb-6">What niche, industry, or lifestyle interests you?</p>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {contentDirections.map((direction) => (
                     <button
                       key={direction.key}
@@ -220,10 +398,10 @@ ${t('generated_on')}: ${new Date().toLocaleString()}
 
             {currentStep === 2 && (
               <div>
-                <h2 className="text-2xl font-bold mb-6">{t('choose_platform')}</h2>
-                <p className="text-gray-600 mb-6">{t('platform_description')}</p>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {platforms.map((platform) => (
+                <h2 className="text-2xl font-bold mb-6">Choose Platform</h2>
+                <p className="text-gray-600 mb-6">Where will you share this content?</p>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+                  {enhancedPlatforms.map((platform) => (
                     <button
                       key={platform.key}
                       onClick={() => handleInputChange('platform', platform.key)}
@@ -238,92 +416,168 @@ ${t('generated_on')}: ${new Date().toLocaleString()}
                     </button>
                   ))}
                 </div>
+
+                {formData.platform && (
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4">Select Post Type</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                      {enhancedPlatforms.find(p => p.key === formData.platform)?.postTypes.map((postType) => (
+                        <button
+                          key={postType.key}
+                          onClick={() => handleInputChange('postType', postType.key)}
+                          disabled={postType.disabled}
+                          className={`p-3 border-2 rounded-lg transition-all duration-200 ${
+                            formData.postType === postType.key
+                              ? 'border-blue-600 bg-blue-50'
+                              : 'border-gray-200 hover:border-gray-300'
+                          } ${postType.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                          <div className="font-medium">{postType.name}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
             {currentStep === 3 && (
               <div>
-                <h2 className="text-2xl font-bold mb-6">{t('what_inspires_you')}</h2>
-                <p className="text-gray-600 mb-6">{t('inspiration_description')}</p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {sources.map((source) => (
-                    <button
+                <h2 className="text-2xl font-bold mb-6">What Inspires You?</h2>
+                <p className="text-gray-600 mb-6">Choose your content source (AI + Google will search based on your direction)</p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                  {enhancedSources.map((source) => (
+                    <div
                       key={source.key}
-                      onClick={() => handleInputChange('source', source.key)}
-                      className={`p-4 border-2 rounded-lg text-left transition-all duration-200 ${
+                      className={`p-6 border-2 rounded-lg cursor-pointer transition-all duration-200 ${
                         formData.source === source.key
                           ? 'border-blue-600 bg-blue-50'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
+                      onClick={() => handleInputChange('source', source.key)}
                     >
-                      <div className="font-medium">{source.name}</div>
+                      <div className="flex items-center mb-3">
+                        <div className="text-2xl mr-3">{source.icon}</div>
+                        <div className="font-medium text-lg">{source.name}</div>
+                      </div>
+                      <p className="text-gray-600 text-sm">{source.description}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {formData.source && (
+                  <div className="bg-gray-50 p-6 rounded-lg">
+                    <h3 className="text-lg font-semibold mb-4">Search Configuration</h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Search Query
+                        </label>
+                        <input
+                          type="text"
+                          value={googleSearchQuery}
+                          onChange={(e) => setGoogleSearchQuery(e.target.value)}
+                          placeholder="Enter your search query..."
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Country
+                        </label>
+                        <select
+                          value={selectedCountry}
+                          onChange={(e) => setSelectedCountry(e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                          {countries.map(country => (
+                            <option key={country.code} value={country.code}>
+                              {country.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={generateTopics}
+                      disabled={isLoadingTopics}
+                      className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-all duration-200"
+                    >
+                      {isLoadingTopics ? (
+                        <>
+                          <RefreshCw className="w-5 h-5 animate-spin" />
+                          Generating Topics...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-5 h-5" />
+                          Generate Topics
+                        </>
+                      )}
+                    </button>
+                  </div>
+                )}
+
+                {selectedTopics.length > 0 && (
+                  <div className="mt-6">
+                    <h3 className="text-lg font-semibold mb-4">Generated Topics</h3>
+                    <div className="grid grid-cols-1 gap-3">
+                      {selectedTopics.map((topic, index) => (
+                        <button
+                          key={index}
+                          onClick={() => handleInputChange('selectedTopic', topic.title)}
+                          className={`p-4 border-2 rounded-lg text-left transition-all duration-200 ${
+                            formData.selectedTopic === topic.title
+                              ? 'border-blue-600 bg-blue-50'
+                              : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                        >
+                          <div className="font-medium mb-1">{topic.title}</div>
+                          <div className="text-sm text-gray-600">{topic.description}</div>
+                          {topic.trending_score && (
+                            <div className="text-xs text-blue-600 mt-2">
+                              Trending Score: {topic.trending_score}
+                            </div>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {currentStep === 4 && (
+              <div>
+                <h2 className="text-2xl font-bold mb-6">Select Tone</h2>
+                <p className="text-gray-600 mb-6">How would you like your content to sound?</p>
+                
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {tones.map((tone) => (
+                    <button
+                      key={tone.key}
+                      onClick={() => handleInputChange('tone', tone.key)}
+                      className={`p-4 border-2 rounded-lg transition-all duration-200 ${
+                        formData.tone === tone.key
+                          ? 'border-blue-600 bg-blue-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="font-medium mb-1">{tone.name}</div>
                     </button>
                   ))}
                 </div>
               </div>
             )}
 
-            {currentStep === 4 && (
-              <div>
-                <h2 className="text-2xl font-bold mb-6">{t('select_topics_tone')}</h2>
-                <p className="text-gray-600 mb-6">{t('topics_tone_description')}</p>
-                
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {t('topic_label')}
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.topic}
-                      onChange={(e) => handleInputChange('topic', e.target.value)}
-                      placeholder={t('topic_placeholder')}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {t('tone_label')}
-                    </label>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                      {tones.map((tone) => (
-                        <button
-                          key={tone.key}
-                          onClick={() => handleInputChange('tone', tone.key)}
-                          className={`p-3 border-2 rounded-lg transition-all duration-200 ${
-                            formData.tone === tone.key
-                              ? 'border-blue-600 bg-blue-50'
-                              : 'border-gray-200 hover:border-gray-300'
-                          }`}
-                        >
-                          {tone.name}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {t('language_label')}
-                    </label>
-                    <select
-                      value={formData.language}
-                      onChange={(e) => handleInputChange('language', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      <option value="en">{t('english')}</option>
-                      <option value="zh">{t('chinese')}</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            )}
-
             {currentStep === 5 && (
               <div>
-                <h2 className="text-2xl font-bold mb-6">{t('select_image_style')}</h2>
-                <p className="text-gray-600 mb-6">{t('image_style_description')}</p>
+                <h2 className="text-2xl font-bold mb-6">Select Image Style</h2>
+                <p className="text-gray-600 mb-6">How would you like your images to look?</p>
                 
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {imageStyles.map((style) => (
@@ -347,19 +601,20 @@ ${t('generated_on')}: ${new Date().toLocaleString()}
 
             {currentStep === 6 && (
               <div>
-                <h2 className="text-2xl font-bold mb-6">{t('generate_content')}</h2>
-                <p className="text-gray-600 mb-6">{t('review_settings')}</p>
+                <h2 className="text-2xl font-bold mb-6">Generate Content</h2>
+                <p className="text-gray-600 mb-6">Review your settings and generate your content</p>
                 
                 <div className="bg-gray-50 p-6 rounded-lg mb-6">
-                  <h3 className="font-semibold mb-4">{t('your_settings')}</h3>
+                  <h3 className="font-semibold mb-4">Your Settings</h3>
                   <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div><strong>{t('direction_label')}</strong> {contentDirections.find(d => d.key === formData.direction)?.name}</div>
-                    <div><strong>{t('platform_label')}</strong> {platforms.find(p => p.key === formData.platform)?.name}</div>
-                    <div><strong>{t('source_label')}</strong> {sources.find(s => s.key === formData.source)?.name}</div>
-                    <div><strong>{t('tone_label_settings')}</strong> {tones.find(t => t.key === formData.tone)?.name}</div>
-                    <div><strong>{t('topic_label_settings')}</strong> {formData.topic}</div>
-                    <div><strong>{t('language_label_settings')}</strong> {formData.language === 'en' ? t('english') : t('chinese')}</div>
-                    <div><strong>{t('image_style_label')}</strong> {imageStyles.find(s => s.key === formData.imageStyle)?.name}</div>
+                    <div><strong>Direction:</strong> {contentDirections.find(d => d.key === formData.direction)?.name}</div>
+                    <div><strong>Platform:</strong> {enhancedPlatforms.find(p => p.key === formData.platform)?.name}</div>
+                    <div><strong>Post Type:</strong> {enhancedPlatforms.find(p => p.key === formData.platform)?.postTypes.find(pt => pt.key === formData.postType)?.name}</div>
+                    <div><strong>Source:</strong> {enhancedSources.find(s => s.key === formData.source)?.name}</div>
+                    <div><strong>Selected Topic:</strong> {formData.selectedTopic}</div>
+                    <div><strong>Tone:</strong> {tones.find(t => t.key === formData.tone)?.name}</div>
+                    <div><strong>Image Style:</strong> {imageStyles.find(s => s.key === formData.imageStyle)?.name}</div>
+                    <div><strong>Language:</strong> {formData.language === 'en' ? 'English' : 'Chinese'}</div>
                   </div>
                 </div>
 
@@ -371,12 +626,12 @@ ${t('generated_on')}: ${new Date().toLocaleString()}
                   {isGenerating ? (
                     <>
                       <RefreshCw className="w-5 h-5 animate-spin" />
-                      {t('generating')}
+                      Generating Content...
                     </>
                   ) : (
                     <>
                       <Sparkles className="w-5 h-5" />
-                      {t('generate_content_button')}
+                      Generate Content
                     </>
                   )}
                 </button>
@@ -390,7 +645,7 @@ ${t('generated_on')}: ${new Date().toLocaleString()}
                 disabled={currentStep === 1}
                 className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
               >
-                {t('previous')}
+                Previous
               </button>
               
               {currentStep < 6 && (
@@ -398,7 +653,7 @@ ${t('generated_on')}: ${new Date().toLocaleString()}
                   onClick={nextStep}
                   className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200"
                 >
-                  {t('next')}
+                  Next
                 </button>
               )}
             </div>
@@ -408,42 +663,42 @@ ${t('generated_on')}: ${new Date().toLocaleString()}
           {generatedContent && (
             <div className="bg-white rounded-lg shadow-lg p-8">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold">{t('generated_content_title')}</h2>
+                <h2 className="text-2xl font-bold">Generated Content</h2>
                 <div className="flex gap-2">
                   <button
-                    onClick={() => copyToClipboard(generatedContent.content)}
+                    onClick={() => copyToClipboard(generatedContent.content?.text || generatedContent.content)}
                     className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 flex items-center gap-2 transition-all duration-200"
                   >
                     <Copy className="w-4 h-4" />
-                    {t('copy')}
+                    Copy
                   </button>
                   <button
                     onClick={downloadContent}
                     className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2 transition-all duration-200"
                   >
                     <Download className="w-4 h-4" />
-                    {t('download')}
+                    Download
                   </button>
                   <button
                     onClick={regenerateContent}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 transition-all duration-200"
                   >
                     <RefreshCw className="w-4 h-4" />
-                    {t('regenerate')}
+                    Regenerate
                   </button>
                 </div>
               </div>
 
               <div className="bg-gray-50 p-6 rounded-lg mb-6">
-                <h3 className="font-semibold mb-4">{t('content_label')}</h3>
-                <p className="text-gray-800 whitespace-pre-wrap">{generatedContent.content}</p>
+                <h3 className="font-semibold mb-4">Content</h3>
+                <p className="text-gray-800 whitespace-pre-wrap">{generatedContent.content?.text || generatedContent.content}</p>
               </div>
 
-              {generatedContent.hashtags && generatedContent.hashtags.length > 0 && (
-                <div>
-                  <h3 className="font-semibold mb-4">{t('hashtags_label')}</h3>
+              {generatedContent.content?.hashtags && generatedContent.content.hashtags.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="font-semibold mb-4">Hashtags</h3>
                   <div className="flex flex-wrap gap-2">
-                    {generatedContent.hashtags.map((hashtag, index) => (
+                    {generatedContent.content.hashtags.map((hashtag, index) => (
                       <span
                         key={index}
                         className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
@@ -451,6 +706,58 @@ ${t('generated_on')}: ${new Date().toLocaleString()}
                         #{hashtag}
                       </span>
                     ))}
+                  </div>
+                </div>
+              )}
+
+              {generatedContent.images && (
+                <div className="mb-6">
+                  <h3 className="font-semibold mb-4">Generated Images</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {generatedContent.images.primary && (
+                      <div className="border rounded-lg p-4">
+                        <h4 className="font-medium mb-2">Primary Image</h4>
+                        <img 
+                          src={`data:image/jpeg;base64,${generatedContent.images.primary}`} 
+                          alt="Primary generated image"
+                          className="w-full h-48 object-cover rounded-lg"
+                        />
+                      </div>
+                    )}
+                    {generatedContent.images.variations && generatedContent.images.variations.map((image, index) => (
+                      <div key={index} className="border rounded-lg p-4">
+                        <h4 className="font-medium mb-2">Variation {index + 1}</h4>
+                        <img 
+                          src={`data:image/jpeg;base64,${image}`} 
+                          alt={`Generated image variation ${index + 1}`}
+                          className="w-full h-48 object-cover rounded-lg"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {generatedContent.analytics && (
+                <div className="bg-blue-50 p-6 rounded-lg">
+                  <h3 className="font-semibold mb-4">Analytics & Insights</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div>
+                      <div className="font-medium">Engagement Score</div>
+                      <div className="text-2xl font-bold text-blue-600">{generatedContent.analytics.engagement_score}%</div>
+                    </div>
+                    <div>
+                      <div className="font-medium">Reach Potential</div>
+                      <div className="text-lg font-semibold text-green-600">{generatedContent.analytics.reach_potential}</div>
+                    </div>
+                    <div>
+                      <div className="font-medium">Best Time</div>
+                      <div className="text-lg font-semibold text-purple-600">{generatedContent.analytics.optimal_posting_time}</div>
+                    </div>
+                    <div>
+                      <div className="font-medium">Best Days</div>
+                      <div className="text-lg font-semibold text-orange-600">{generatedContent.analytics.best_posting_days?.join(', ')}</div>
+                    </div>
                   </div>
                 </div>
               )}

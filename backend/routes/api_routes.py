@@ -13,6 +13,14 @@ except ImportError:
     AI_SERVICE_AVAILABLE = False
     print("Warning: AI service not available. Using fallback content generation.")
 
+# Import Google Search services
+try:
+    from services.google_search_service import GoogleSearchService
+    GOOGLE_SERVICE_AVAILABLE = True
+except ImportError:
+    GOOGLE_SERVICE_AVAILABLE = False
+    print("Warning: Google Search service not available.")
+
 api_routes = Blueprint('api', __name__)
 
 # Content directions mapping
@@ -1041,28 +1049,31 @@ def get_platform_specifications(platform):
 
 @api_routes.route('/generate', methods=['POST'])
 def generate_content():
-    """Generate content based on user input"""
+    """Generate content based on user input using AI workflow"""
     try:
         data = request.get_json()
         
-        # Extract parameters
+        # Extract parameters with new structure
         direction = data.get('direction', 'business_finance')
         platform = data.get('platform', 'linkedin')
+        post_type = data.get('postType', 'posts')
         source = data.get('source', 'personal_experience')
-        topic = data.get('topic', 'Business Strategy')
+        source_details = data.get('sourceDetails', {})
+        selected_topic = data.get('selectedTopic', 'Business Strategy')
         tone = data.get('tone', 'professional')
         language = data.get('language', 'en')
-        image_style = data.get('imageStyle', 'professional')  # New image style parameter
-        generate_images = data.get('generate_images', True)  # New parameter
+        image_style = data.get('imageStyle', 'professional')
+        generate_images = data.get('generate_images', True)
         
         # Step 1: Generate content using DeepSeek AI
         if AI_SERVICE_AVAILABLE:
             content_text = ai_service.generate_content(
-                direction, platform, source, topic, tone, language, 
+                direction, platform, post_type, source, selected_topic, tone, language, 
+                source_details=source_details,
                 generate_images=generate_images
             )
         else:
-            content_text = generate_content_text(direction, platform, source, topic, tone, language)
+            content_text = generate_content_text(direction, platform, source, selected_topic, tone, language)
         
         # Step 2: Analyze the generated content to create image prompts
         image_prompts = analyze_content_for_image_generation(content_text, direction, platform, tone, image_style)
@@ -1079,7 +1090,7 @@ def generate_content():
                     platform=platform,
                     prompt=image_prompts['primary'],
                     content_direction=direction,
-                    topic=topic,
+                    topic=selected_topic,
                     tone=tone,
                     language=language
                 )
@@ -1091,7 +1102,7 @@ def generate_content():
                         platform=platform,
                         prompt=variation_prompt,
                         content_direction=direction,
-                        topic=topic,
+                        topic=selected_topic,
                         tone=tone,
                         language=language
                     )
@@ -1136,12 +1147,14 @@ def generate_content():
             'metadata': {
                 'content_direction': direction,
                 'content_type': platform,
+                'post_type': post_type,
                 'source_type': source,
-                'topic': topic,
+                'source_details': source_details,
+                'selected_topic': selected_topic,
                 'tone': tone,
                 'region': 'global',
                 'language': language,
-                'image_style': image_style,  # Include image style in metadata
+                'image_style': image_style,
                 'generated_at': datetime.utcnow().isoformat() + 'Z',
                 'platform': platform.upper(),
                 'content_category': direction
@@ -1767,3 +1780,207 @@ def test_stable_diffusion():
             'success': False,
             'error': str(e)
         }), 500 
+
+# New AI Content Generation Endpoints
+
+@api_routes.route('/topics/generate', methods=['POST'])
+def generate_topics():
+    """Generate topics using AI and Google Search integration"""
+    try:
+        data = request.get_json()
+        
+        direction = data.get('direction')
+        source = data.get('source')
+        source_details = data.get('sourceDetails', {})
+        
+        if not direction or not source:
+            return jsonify({
+                'success': False,
+                'error': 'Direction and source are required'
+            }), 400
+        
+        # Initialize Google Search service
+        if GOOGLE_SERVICE_AVAILABLE:
+            google_service = GoogleSearchService()
+        else:
+            return jsonify({
+                'success': False,
+                'error': 'Google Search service not available'
+            }), 503
+        
+        # Generate topics based on source type
+        topics = []
+        
+        if source == 'google_search':
+            query = source_details.get('query', direction)
+            country = source_details.get('country', 'US')
+            topics = google_service.search_topics(direction, country, query)
+            
+        elif source == 'google_news':
+            country = source_details.get('country', 'US')
+            topics = google_service.get_news_topics(direction, country)
+            
+        elif source == 'google_trends':
+            country = source_details.get('country', 'US')
+            topics = google_service.get_trending_topics(direction, country)
+            
+        elif source == 'books':
+            query = source_details.get('query', direction)
+            country = source_details.get('country', 'US')
+            topics = google_service.get_book_topics(direction, country, query)
+            
+        elif source == 'youtube':
+            country = source_details.get('country', 'US')
+            topics = google_service.get_youtube_topics(direction, country)
+            
+        elif source == 'podcasts':
+            country = source_details.get('country', 'US')
+            topics = google_service.get_podcast_topics(direction, country)
+            
+        elif source == 'ai_discovery':
+            country = source_details.get('country', 'US')
+            topics = google_service.get_ai_discovery_topics(direction, country)
+        
+        # Limit to 5 topics
+        topics = topics[:5]
+        
+        return jsonify({
+            'success': True,
+            'topics': topics
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@api_routes.route('/google/search', methods=['POST'])
+def google_search():
+    """Google Search API endpoint"""
+    try:
+        data = request.get_json()
+        query = data.get('query')
+        country = data.get('country', 'US')
+        
+        if not query:
+            return jsonify({
+                'success': False,
+                'error': 'Query is required'
+            }), 400
+        
+        if GOOGLE_SERVICE_AVAILABLE:
+            google_service = GoogleSearchService()
+            results = google_service.search(query, country)
+            
+            return jsonify({
+                'success': True,
+                'data': results
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': 'Google Search service not available'
+            }), 503
+            
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@api_routes.route('/google/news', methods=['POST'])
+def google_news():
+    """Google News API endpoint"""
+    try:
+        data = request.get_json()
+        country = data.get('country', 'US')
+        category = data.get('category', 'all')
+        
+        if GOOGLE_SERVICE_AVAILABLE:
+            google_service = GoogleSearchService()
+            results = google_service.get_news(country, category)
+            
+            return jsonify({
+                'success': True,
+                'data': results
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': 'Google News service not available'
+            }), 503
+            
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@api_routes.route('/google/trends', methods=['POST'])
+def google_trends():
+    """Google Trends API endpoint"""
+    try:
+        data = request.get_json()
+        query = data.get('query')
+        country = data.get('country', 'US')
+        
+        if not query:
+            return jsonify({
+                'success': False,
+                'error': 'Query is required'
+            }), 400
+        
+        if GOOGLE_SERVICE_AVAILABLE:
+            google_service = GoogleSearchService()
+            results = google_service.get_trends(query, country)
+            
+            return jsonify({
+                'success': True,
+                'data': results
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': 'Google Trends service not available'
+            }), 503
+            
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@api_routes.route('/google/books', methods=['POST'])
+def google_books():
+    """Google Books API endpoint"""
+    try:
+        data = request.get_json()
+        query = data.get('query')
+        country = data.get('country', 'US')
+        
+        if not query:
+            return jsonify({
+                'success': False,
+                'error': 'Query is required'
+            }), 400
+        
+        if GOOGLE_SERVICE_AVAILABLE:
+            google_service = GoogleSearchService()
+            results = google_service.get_books(query, country)
+            
+            return jsonify({
+                'success': True,
+                'data': results
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': 'Google Books service not available'
+            }), 503
+            
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
