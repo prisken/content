@@ -3,6 +3,7 @@ const API_BASE_URL = process.env.BACKEND_URL || 'https://content-contentmaker.up
 export const apiClient = {
   async request(endpoint, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
+    console.log('🌐 Frontend: Making API request to:', url);
     
     // Get user from localStorage for admin requests
     let userEmail = null;
@@ -34,16 +35,20 @@ export const apiClient = {
     }
 
     try {
+      console.log('🌐 Frontend: Sending request with config:', config);
       const response = await fetch(url, config);
+      console.log('🌐 Frontend: Response status:', response.status);
       
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || `API Error: ${response.status}`);
       }
 
-      return response.json();
+      const data = await response.json();
+      console.log('🌐 Frontend: Response data:', data);
+      return data;
     } catch (error) {
-      console.error('API Request Error:', error);
+      console.error('🌐 Frontend: API Request Error:', error);
       throw error;
     }
   },
