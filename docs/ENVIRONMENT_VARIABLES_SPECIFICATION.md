@@ -75,9 +75,9 @@ CLOUDINARY_API_SECRET=QkWKsPdbREy6Ox86kpncl6q4KbI
 # Security Configuration
 JWT_SECRET_KEY=a5308400690e449e632a50f4004ffeacc662cb24b9cdf7708811e7da069cb247
 JWT_ACCESS_TOKEN_EXPIRES=3600
-CORS_ORIGINS=https://your-vercel-app.vercel.app,https://www.your-vercel-app.vercel.app
-ALLOWED_HOSTS=your-vercel-app.vercel.app,www.your-vercel-app.vercel.app
-CSRF_TRUSTED_ORIGINS=https://your-vercel-app.vercel.app
+CORS_ORIGINS=https://content-gray-nu.vercel.app,https://www.content-gray-nu.vercel.app
+ALLOWED_HOSTS=content-gray-nu.vercel.app,www.content-gray-nu.vercel.app
+CSRF_TRUSTED_ORIGINS=https://content-gray-nu.vercel.app
 ```
 
 ### **Rate Limiting Configuration**
@@ -130,14 +130,14 @@ UPLOAD_FOLDER=uploads
 ### **Core Configuration**
 ```bash
 # Backend Configuration
-BACKEND_URL=https://your-railway-app.railway.app
+BACKEND_URL=https://content-contentmaker.up.railway.app
 
 # Environment
 NODE_ENV=production
 
 # Frontend Configuration
 NEXT_PUBLIC_APP_NAME=Content Creator Pro
-NEXT_PUBLIC_APP_URL=https://your-vercel-app.vercel.app
+NEXT_PUBLIC_APP_URL=https://content-gray-nu.vercel.app
 ```
 
 ### **AI Feature Flags**
@@ -299,11 +299,11 @@ NEXT_PUBLIC_SENTRY_DSN=your_sentry_dsn
 3. **Update Environment Variables**:
    ```bash
    # Replace with your actual domains
-   CORS_ORIGINS=https://your-vercel-app.vercel.app
-   ALLOWED_HOSTS=your-vercel-app.vercel.app
-   CSRF_TRUSTED_ORIGINS=https://your-vercel-app.vercel.app
-   BACKEND_URL=https://your-railway-app.railway.app
-   NEXT_PUBLIC_APP_URL=https://your-vercel-app.vercel.app
+   CORS_ORIGINS=https://content-gray-nu.vercel.app
+   ALLOWED_HOSTS=content-gray-nu.vercel.app
+   CSRF_TRUSTED_ORIGINS=https://content-gray-nu.vercel.app
+   BACKEND_URL=https://content-contentmaker.up.railway.app
+   NEXT_PUBLIC_APP_URL=https://content-gray-nu.vercel.app
    ```
 
 ---
