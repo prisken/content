@@ -554,8 +554,10 @@ This document provides a visual representation of the complete content generatio
 │  │  DeepSeek AI Service                                                    │ │
 │  │  ┌─────────────────────────────────────────────────────────────────────┐ │ │
 │  │  │ • Input: direction, platform, source, topic, tone, language        │ │ │
-│  │  │ • Process: AI content generation                                    │ │ │
-│  │  │ • Output: Generated content text                                    │ │ │
+│  │  │ • Process: Advanced AI content generation with context              │ │ │
+│  │  │ • Features: Multi-language support, platform-specific formatting    │ │ │
+│  │  │ • Capabilities: 128K context window, real-time content creation     │ │ │
+│  │  │ • Output: High-quality, engaging content text                       │ │ │
 │  │  └─────────────────────────────────────────────────────────────────────┘ │ │
 │  └─────────────────────────────────────────────────────────────────────────┘ │
 │                                                         │                   │
@@ -590,8 +592,10 @@ This document provides a visual representation of the complete content generatio
 │  │  Stable Diffusion Service                                               │ │
 │  │  ┌─────────────────────────────────────────────────────────────────────┐ │ │
 │  │  │ • Input: Generated prompts, platform specs, image style            │ │ │
-│  │  │ • Process: Generate images with Stable Diffusion                    │ │ │
-│  │  │ • Output: Primary image + variation images                          │ │ │
+│  │  │ • Process: AI-powered image generation with custom prompts          │ │ │
+│  │  │ • Features: Platform-specific dimensions, style-aware generation    │ │ │
+│  │  │ • Capabilities: 512x512 to 1024x1024, multiple aspect ratios       │ │ │
+│  │  │ • Output: Primary image + 4 variation images                        │ │ │
 │  │  └─────────────────────────────────────────────────────────────────────┘ │ │
 │  └─────────────────────────────────────────────────────────────────────────┘ │
 │                                                         │                   │
@@ -746,9 +750,12 @@ This document provides a visual representation of the complete content generatio
 │  │ • UI shows style previews and descriptions                              │ │
 │  └─────────────────────────────────────────────────────────────────────────┘ │
 │                                                                             │
-│  STEP 6: Content Generation                                                 │
+│  STEP 6: AI-Powered Content Generation                                     │
 │  ┌─────────────────────────────────────────────────────────────────────────┐ │
 │  │ • User reviews all settings and initiates generation                    │ │
+│  │ • DeepSeek AI generates content with Google context                     │ │
+│  │ • AI analyzes content and creates Stable Diffusion prompts             │ │
+│  │ • Stable Diffusion generates images with user style preferences        │ │
 │  │ • System processes: Content → Analysis → Images → Analytics            │ │
 │  │ • UI displays comprehensive results with actions                        │ │
 │  └─────────────────────────────────────────────────────────────────────────┘ │
@@ -769,25 +776,62 @@ This document provides a visual representation of the complete content generatio
 - **Google Search Interface**: Real-time search with country/region selection
 
 ### **Backend Services**
-- **Content Generation**: DeepSeek AI integration
-- **Content Analysis**: Theme and element extraction
-- **Image Generation**: Stable Diffusion with custom prompts
+- **DeepSeek AI Service**: Advanced content generation with 128K context
+- **Content Analysis**: Theme and element extraction with AI insights
+- **Stable Diffusion Service**: AI-powered image generation with custom prompts
 - **Analytics Engine**: Performance metrics and insights
 - **Validation Service**: Quality and compliance checking
 - **Google Search Service**: Custom Search API integration
 - **Google Trends Service**: Real-time trending data
 - **Google News Service**: RSS feed processing
 - **Google Books Service**: Books API integration
+- **AI Prompt Engineering**: Optimized prompts for both DeepSeek and Stable Diffusion
+
+### **AI Workflow Integration**
+- **DeepSeek AI**: Handles all text content generation with context awareness
+- **Stable Diffusion**: Generates images based on content analysis and user style preferences
+- **Content Analysis**: AI-powered extraction of themes and visual elements
+- **Prompt Engineering**: Optimized prompts for both AI services
+- **Quality Assurance**: AI-powered content validation and optimization
 
 ### **Data Flow**
 - **State Management**: React hooks for form data
 - **API Communication**: Axios for backend requests
 - **Error Handling**: Comprehensive error management
 - **Response Processing**: JSON parsing and display
+- **AI Service Integration**: Seamless communication between DeepSeek and Stable Diffusion
 
 ---
 
 ## 📋 **Redesign Considerations**
+
+### **AI Technology Stack**
+
+#### **DeepSeek AI Integration**
+- **Model**: DeepSeek-V2.5 (128K context window)
+- **Capabilities**: 
+  - Multi-language content generation (English, Chinese)
+  - Platform-specific formatting and optimization
+  - Real-time content creation with context awareness
+  - Advanced prompt engineering for quality output
+- **Features**:
+  - Character limit compliance per platform
+  - Hashtag generation and optimization
+  - Tone and style consistency
+  - Cultural sensitivity and regional adaptation
+
+#### **Stable Diffusion Integration**
+- **Model**: Stable Diffusion XL (SDXL) or similar
+- **Capabilities**:
+  - High-resolution image generation (512x512 to 1024x1024)
+  - Platform-specific aspect ratios and dimensions
+  - Style-aware generation (Professional, Creative, Minimalist, etc.)
+  - Custom prompt engineering for content relevance
+- **Features**:
+  - Multiple image variations (Primary + 4 variations)
+  - Real-time generation with progress tracking
+  - Quality optimization and filtering
+  - Brand consistency and visual coherence
 
 ### **Google Search Integration Benefits**
 1. **Real-time Data**: Always up-to-date content and trends from Google
@@ -799,12 +843,14 @@ This document provides a visual representation of the complete content generatio
 7. **Enhanced Discovery**: AI-powered topic generation with Google insights
 
 ### **Current vs Future Capabilities**
-1. **Available Now**: Text-based content generation for all platforms
-2. **Available Now**: Image generation for all platforms
+1. **Available Now**: DeepSeek AI content generation (128K context, multi-language)
+2. **Available Now**: Stable Diffusion image generation (SDXL, custom prompts)
 3. **Available Now**: Google Search integration (Search, News, Trends)
-4. **Coming Soon**: Video content generation (Reels, Stories, IGTV, Shorts)
-5. **Coming Soon**: Audio content generation (Podcasts, Spaces)
-6. **Coming Soon**: Interactive content (Groups, Threads)
+4. **Available Now**: AI-powered content analysis and optimization
+5. **Coming Soon**: Video content generation (Reels, Stories, IGTV, Shorts)
+6. **Coming Soon**: Audio content generation (Podcasts, Spaces)
+7. **Coming Soon**: Interactive content (Groups, Threads)
+8. **Coming Soon**: Advanced AI models (GPT-4, Claude, etc.)
 
 ### **Potential Improvements**
 1. **Step Consolidation**: Combine related steps for faster flow
