@@ -97,6 +97,8 @@ export default function Generator() {
   const [generatedPodcasts, setGeneratedPodcasts] = useState([])
   const [selectedVideo, setSelectedVideo] = useState(null)
   const [selectedPodcast, setSelectedPodcast] = useState(null)
+  const [customVideoLink, setCustomVideoLink] = useState('')
+  const [customPodcastLink, setCustomPodcastLink] = useState('')
   
   // Debug effect to monitor podcast state changes
   useEffect(() => {
@@ -902,6 +904,64 @@ export default function Generator() {
     toast.success('Podcast selected for topic generation!')
   }
 
+  const addCustomVideoLink = () => {
+    if (!customVideoLink.trim()) {
+      toast.error('Please enter a video link')
+      return
+    }
+    
+    // Basic validation for YouTube URL
+    if (!customVideoLink.includes('youtube.com') && !customVideoLink.includes('youtu.be')) {
+      toast.error('Please enter a valid YouTube URL')
+      return
+    }
+    
+    const customVideo = {
+      title: 'Custom Video Link',
+      url: customVideoLink,
+      channel: 'Custom',
+      duration: 'Unknown',
+      views: 'Custom',
+      thumbnail: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=300&h=300&fit=crop',
+      description: 'Custom video link provided by user'
+    }
+    
+    setSelectedVideo(customVideo)
+    setSelectedPodcast(null)
+    setCustomVideoLink('')
+    toast.success('Custom video link added for topic generation!')
+  }
+
+  const addCustomPodcastLink = () => {
+    if (!customPodcastLink.trim()) {
+      toast.error('Please enter a podcast link')
+      return
+    }
+    
+    // Basic validation for podcast URL
+    if (!customPodcastLink.includes('podcasts.apple.com') && 
+        !customPodcastLink.includes('spotify.com') && 
+        !customPodcastLink.includes('google.com/podcasts')) {
+      toast.error('Please enter a valid podcast URL (Apple Podcasts, Spotify, or Google Podcasts)')
+      return
+    }
+    
+    const customPodcast = {
+      title: 'Custom Podcast Link',
+      url: customPodcastLink,
+      host: 'Custom',
+      duration: 'Unknown',
+      episodes: 'Custom',
+      cover: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=300&h=300&fit=crop',
+      description: 'Custom podcast link provided by user'
+    }
+    
+    setSelectedPodcast(customPodcast)
+    setSelectedVideo(null)
+    setCustomPodcastLink('')
+    toast.success('Custom podcast link added for topic generation!')
+  }
+
   const generateVideoLink = async () => {
     if (!formData.direction) {
       toast.error('Please select direction first')
@@ -1384,6 +1444,27 @@ Generated on: ${new Date().toLocaleString()}
                                       </div>
                                     </div>
                                   )}
+                                  
+                                  {/* Custom Video Link Input */}
+                                  <div className="border-t pt-4">
+                                    <h4 className="text-sm font-medium text-gray-700 mb-2">Or Add Your Own Video Link:</h4>
+                                    <div className="flex gap-2">
+                                      <input
+                                        type="url"
+                                        value={customVideoLink}
+                                        onChange={(e) => setCustomVideoLink(e.target.value)}
+                                        placeholder="https://www.youtube.com/watch?v=..."
+                                        className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                                      />
+                                      <button
+                                        onClick={addCustomVideoLink}
+                                        className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors"
+                                      >
+                                        Add
+                                      </button>
+                                    </div>
+                                    <p className="text-xs text-gray-500 mt-1">Enter a YouTube URL to use for topic generation</p>
+                                  </div>
                                 </div>
                               )}
 
@@ -1464,6 +1545,27 @@ Generated on: ${new Date().toLocaleString()}
                                       </div>
                                     </div>
                                   )}
+                                  
+                                  {/* Custom Podcast Link Input */}
+                                  <div className="border-t pt-4">
+                                    <h4 className="text-sm font-medium text-gray-700 mb-2">Or Add Your Own Podcast Link:</h4>
+                                    <div className="flex gap-2">
+                                      <input
+                                        type="url"
+                                        value={customPodcastLink}
+                                        onChange={(e) => setCustomPodcastLink(e.target.value)}
+                                        placeholder="https://podcasts.apple.com/... or https://open.spotify.com/..."
+                                        className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                                      />
+                                      <button
+                                        onClick={addCustomPodcastLink}
+                                        className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors"
+                                      >
+                                        Add
+                                      </button>
+                                    </div>
+                                    <p className="text-xs text-gray-500 mt-1">Enter a podcast URL (Apple Podcasts, Spotify, or Google Podcasts) to use for topic generation</p>
+                                  </div>
                                 </div>
                               )}
                             </div>
@@ -1471,6 +1573,39 @@ Generated on: ${new Date().toLocaleString()}
                         </div>
                       )
                     })()}
+
+                    {/* Selected Content Display */}
+                    {(selectedVideo || selectedPodcast) && (
+                      <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                        <h4 className="text-sm font-medium text-green-800 mb-2">
+                          Selected for Topic Generation:
+                        </h4>
+                        <div className="flex items-center gap-3">
+                          <img 
+                            src={selectedVideo?.thumbnail || selectedPodcast?.cover} 
+                            alt="Selected content"
+                            className="w-12 h-12 object-cover rounded-lg"
+                          />
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-gray-900">
+                              {selectedVideo?.title || selectedPodcast?.title}
+                            </p>
+                            <p className="text-xs text-gray-600">
+                              {selectedVideo?.channel || selectedPodcast?.host}
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => {
+                              setSelectedVideo(null)
+                              setSelectedPodcast(null)
+                            }}
+                            className="text-xs text-red-600 hover:text-red-800"
+                          >
+                            Clear
+                          </button>
+                        </div>
+                      </div>
+                    )}
 
                     <div className="space-y-3">
                       <button
