@@ -18,14 +18,23 @@ class GoogleSearchService:
             os.environ.get('GOOGLE_SEARCH_ENGINE_ID') or
             os.environ.get('SEARCH_ENGINE_ID')
         )
+        # YouTube Data API key (can be the same as Custom Search API key)
+        self.youtube_api_key = (
+            os.environ.get('YOUTUBE_API_KEY') or
+            os.environ.get('GOOGLE_YOUTUBE_API_KEY') or
+            os.environ.get('GOOGLE_CUSTOM_SEARCH_API_KEY') or  # Fallback to same key
+            os.environ.get('GOOGLE_API_KEY')
+        )
         self.trends_api_key = os.environ.get('GOOGLE_TRENDS_API_KEY')
         self.books_api_key = os.environ.get('GOOGLE_BOOKS_API_KEY')
         
         # Debug logging for API configuration
         print(f"🔍 DEBUG: Google Search API Key length: {len(self.api_key) if self.api_key else 0}")
         print(f"🔍 DEBUG: Google Search Engine ID length: {len(self.search_engine_id) if self.search_engine_id else 0}")
+        print(f"🔍 DEBUG: YouTube API Key length: {len(self.youtube_api_key) if self.youtube_api_key else 0}")
         print(f"🔍 DEBUG: API Key configured: {bool(self.api_key)}")
         print(f"🔍 DEBUG: Search Engine ID configured: {bool(self.search_engine_id)}")
+        print(f"🔍 DEBUG: YouTube API Key configured: {bool(self.youtube_api_key)}")
         
         # Base URLs
         self.custom_search_url = "https://www.googleapis.com/customsearch/v1"
@@ -901,14 +910,14 @@ class GoogleSearchService:
             print(f"🔍 DEBUG: Starting YouTube video details fetch for video ID: {video_id}")
             
             # Try to get real data first
-            if self.api_key:
-                print(f"🔍 DEBUG: API key available, trying YouTube Data API")
+            if self.youtube_api_key:
+                print(f"🔍 DEBUG: YouTube API key available, trying YouTube Data API")
                 # Use YouTube Data API v3
                 import requests
                 
                 url = 'https://www.googleapis.com/youtube/v3/videos'
                 params = {
-                    'key': self.api_key,
+                    'key': self.youtube_api_key,
                     'part': 'snippet,statistics,contentDetails',
                     'id': video_id
                 }
