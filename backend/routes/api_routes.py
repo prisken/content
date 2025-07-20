@@ -2346,8 +2346,42 @@ def debug_google_search():
         # Check all possible Google API environment variables
         all_env_vars = {k: v for k, v in os.environ.items() if 'GOOGLE' in k.upper()}
         
-        api_key = os.environ.get('GOOGLE_CUSTOM_SEARCH_API_KEY')
-        search_engine_id = os.environ.get('GOOGLE_CUSTOM_SEARCH_ENGINE_ID')
+        # Try multiple possible environment variable names
+        api_key = (
+            os.environ.get('GOOGLE_CUSTOM_SEARCH_API_KEY') or 
+            os.environ.get('GOOGLE_SEARCH_API_KEY') or
+            os.environ.get('GOOGLE_API_KEY')
+        )
+        search_engine_id = (
+            os.environ.get('GOOGLE_CUSTOM_SEARCH_ENGINE_ID') or
+            os.environ.get('GOOGLE_SEARCH_ENGINE_ID') or
+            os.environ.get('SEARCH_ENGINE_ID')
+        )
+        
+        # Test API call if credentials are available
+        api_test_result = None
+        if api_key and search_engine_id:
+            try:
+                import requests
+                test_url = "https://www.googleapis.com/customsearch/v1"
+                test_params = {
+                    'key': api_key,
+                    'cx': search_engine_id,
+                    'q': 'test',
+                    'num': 1
+                }
+                test_response = requests.get(test_url, params=test_params, timeout=10)
+                api_test_result = {
+                    'status_code': test_response.status_code,
+                    'success': test_response.status_code == 200,
+                    'error': test_response.text[:200] if test_response.status_code != 200 else None
+                }
+            except Exception as e:
+                api_test_result = {
+                    'status_code': None,
+                    'success': False,
+                    'error': str(e)
+                }
         
         return jsonify({
             'success': True,
@@ -2357,7 +2391,8 @@ def debug_google_search():
             'search_engine_id_length': len(search_engine_id) if search_engine_id else 0,
             'all_configured': bool(api_key and search_engine_id),
             'all_google_env_vars': list(all_env_vars.keys()),
-            'total_google_vars': len(all_env_vars)
+            'total_google_vars': len(all_env_vars),
+            'api_test': api_test_result
         })
     except Exception as e:
         return jsonify({
