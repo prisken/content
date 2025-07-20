@@ -653,14 +653,27 @@ Generate 5 creative topics now:
                 # Try to parse JSON response
                 try:
                     import json
-                    topics = json.loads(content)
+                    # Clean up the content to remove extra quotes and commas
+                    cleaned_content = content.strip()
+                    if cleaned_content.startswith('```json'):
+                        cleaned_content = cleaned_content[7:]
+                    if cleaned_content.endswith('```'):
+                        cleaned_content = cleaned_content[:-3]
+                    cleaned_content = cleaned_content.strip()
+                    
+                    topics = json.loads(cleaned_content)
                     
                     # Validate and format topics
                     formatted_topics = []
                     for topic in topics[:5]:  # Limit to 5 topics
                         if isinstance(topic, dict) and 'title' in topic:
+                            # Clean up title (remove extra quotes and commas)
+                            title = topic.get('title', 'Unknown Topic')
+                            if isinstance(title, str):
+                                title = title.strip().strip('"').strip(',').strip()
+                            
                             formatted_topics.append({
-                                'title': topic.get('title', 'Unknown Topic'),
+                                'title': title,
                                 'description': topic.get('description', 'No description available'),
                                 'trending_score': topic.get('trending_score', 80),
                                 'content_angle': topic.get('content_angle', 'General discussion')
