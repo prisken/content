@@ -11,22 +11,22 @@ class StableDiffusionService:
         self.api_key = "sk-4LYzKcgv6IQ5qVtXBNTZD6j8oeo3NVToOWAar2ykfD8Ux5IW"
         self.api_base = "https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image"
         
-        # Stable Diffusion supported aspect ratios and dimensions
+        # Stable Diffusion supported aspect ratios and dimensions (API-accepted only)
         self.supported_ratios = {
             '1:1': {'width': 1024, 'height': 1024},      # Square
-            '16:9': {'width': 1024, 'height': 576},      # Landscape
-            '9:16': {'width': 576, 'height': 1024}       # Portrait
+            '16:9': {'width': 1344, 'height': 768},      # Landscape (API-accepted)
+            '9:16': {'width': 768, 'height': 1344}       # Portrait (API-accepted)
         }
         
         # Platform-specific image configurations (adjusted to supported ratios)
         self.platform_configs = {
             'facebook': {
-                'width': 1024,
-                'height': 576,
+                'width': 1344,
+                'height': 768,
                 'aspect_ratio': '16:9',
                 'style': 'social media post, professional, engaging',
                 'format': 'JPG',
-                'note': 'Uses 16:9 ratio (closest to Facebook\'s 1.91:1)'
+                'note': 'Uses 16:9 ratio (API-accepted 1344x768)'
             },
             'instagram': {
                 'width': 1024,
@@ -37,36 +37,36 @@ class StableDiffusionService:
                 'note': 'Perfect square ratio for Instagram posts'
             },
             'linkedin': {
-                'width': 1024,
-                'height': 576,
+                'width': 1344,
+                'height': 768,
                 'aspect_ratio': '16:9',
                 'style': 'professional, business, corporate',
                 'format': 'JPG',
-                'note': 'Uses 16:9 ratio (closest to LinkedIn\'s 1.91:1)'
+                'note': 'Uses 16:9 ratio (API-accepted 1344x768)'
             },
             'twitter': {
-                'width': 1024,
-                'height': 576,
+                'width': 1344,
+                'height': 768,
                 'aspect_ratio': '16:9',
                 'style': 'trending, engaging, shareable',
                 'format': 'JPG',
-                'note': 'Perfect 16:9 ratio for Twitter'
+                'note': 'Uses 16:9 ratio (API-accepted 1344x768)'
             },
             'youtube_shorts': {
-                'width': 576,
-                'height': 1024,
+                'width': 768,
+                'height': 1344,
                 'aspect_ratio': '9:16',
                 'style': 'video thumbnail, clickable, engaging',
                 'format': 'JPG',
-                'note': 'Perfect 9:16 ratio for YouTube Shorts'
+                'note': 'Uses 9:16 ratio (API-accepted 768x1344)'
             },
             'blog': {
-                'width': 1024,
-                'height': 576,
+                'width': 1344,
+                'height': 768,
                 'aspect_ratio': '16:9',
                 'style': 'featured image, professional, informative',
                 'format': 'JPG',
-                'note': 'Uses 16:9 ratio (closest to blog\'s 1.91:1)'
+                'note': 'Uses 16:9 ratio (API-accepted 1344x768)'
             }
         }
         
