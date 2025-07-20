@@ -689,15 +689,28 @@ class GoogleSearchService:
             if categories:
                 search_terms.extend(categories[:2])  # Use top 2 categories to avoid long queries
             
+            # Add location-specific terms based on country
+            location_terms = self._get_location_terms(country)
+            if location_terms:
+                import random
+                location_term = random.choice(location_terms)
+                search_terms.append(location_term)
+            
             # Create a cleaner search query
             base_query = ' '.join(search_terms)
             search_query = f'{base_query} site:youtube.com'
+            
+            # Add randomization for variety
+            import random
+            start_index = random.randint(1, 10)  # Start from random position for variety
             
             params = {
                 'key': self.api_key,
                 'cx': self.search_engine_id,
                 'q': search_query,
                 'gl': country.lower(),
+                'lr': f'lang_{self._get_language_code(country)}',  # Language preference
+                'start': start_index,  # Random start position for variety
                 'num': 3  # Get 3 results
             }
             
@@ -758,18 +771,31 @@ class GoogleSearchService:
             if categories:
                 search_terms.extend(categories[:3])  # Use top 3 categories
             
+            # Add location-specific terms based on country
+            location_terms = self._get_location_terms(country)
+            if location_terms:
+                import random
+                location_term = random.choice(location_terms)
+                search_terms.append(location_term)
+            
             # Create a cleaner search query for podcasts
             base_query = ' '.join(search_terms)
             search_query = f'{base_query} site:podcasts.apple.com'
             
             print(f"🔍 DEBUG: Search query: '{search_query}'")
-            print(f"🔍 DEBUG: Using Google Custom Search API")
+            print(f"🔍 DEBUG: Using Google Custom Search API with country: {country}")
+            
+            # Add randomization for variety
+            import random
+            start_index = random.randint(1, 10)  # Start from random position for variety
             
             params = {
                 'key': self.api_key,
                 'cx': self.search_engine_id,
                 'q': search_query,
                 'gl': country.lower(),
+                'lr': f'lang_{self._get_language_code(country)}',  # Language preference
+                'start': start_index,  # Random start position for variety
                 'num': 3  # Get 3 results
             }
             
@@ -857,6 +883,37 @@ class GoogleSearchService:
             'views': '1.2M',
             'channel': 'Popular Channel'
         }
+    
+    def _get_location_terms(self, country: str) -> List[str]:
+        """Get location-specific search terms based on country"""
+        location_terms = {
+            'US': ['United States', 'American', 'US', 'USA'],
+            'CA': ['Canada', 'Canadian', 'Toronto', 'Vancouver'],
+            'GB': ['UK', 'British', 'England', 'London'],
+            'AU': ['Australia', 'Australian', 'Sydney', 'Melbourne'],
+            'DE': ['Germany', 'German', 'Berlin', 'Munich'],
+            'FR': ['France', 'French', 'Paris', 'Lyon'],
+            'JP': ['Japan', 'Japanese', 'Tokyo', 'Osaka'],
+            'KR': ['Korea', 'Korean', 'Seoul', 'Busan'],
+            'CN': ['China', 'Chinese', 'Beijing', 'Shanghai'],
+            'IN': ['India', 'Indian', 'Mumbai', 'Delhi'],
+            'BR': ['Brazil', 'Brazilian', 'São Paulo', 'Rio'],
+            'MX': ['Mexico', 'Mexican', 'Mexico City', 'Guadalajara'],
+            'ES': ['Spain', 'Spanish', 'Madrid', 'Barcelona'],
+            'IT': ['Italy', 'Italian', 'Rome', 'Milan'],
+            'NL': ['Netherlands', 'Dutch', 'Amsterdam', 'Rotterdam'],
+        }
+        return location_terms.get(country.upper(), [])
+    
+    def _get_language_code(self, country: str) -> str:
+        """Get language code for country"""
+        language_codes = {
+            'US': 'en', 'CA': 'en', 'GB': 'en', 'AU': 'en',
+            'DE': 'de', 'FR': 'fr', 'JP': 'ja', 'KR': 'ko',
+            'CN': 'zh', 'IN': 'en', 'BR': 'pt', 'MX': 'es',
+            'ES': 'es', 'IT': 'it', 'NL': 'nl'
+        }
+        return language_codes.get(country.upper(), 'en')
     
     def _generate_no_preview_image(self, title: str) -> str:
         """Generate a "No Preview Available" image with podcast title"""
