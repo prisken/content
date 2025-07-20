@@ -31,11 +31,11 @@ export default function Generator() {
     imageStyle: 'professional'
   })
 
-  // Enhanced platforms with post types
+  // Enhanced platforms with post types - Updated to match design document exactly
   const enhancedPlatforms = [
     {
       key: 'linkedin',
-      name: 'LinkedIn',
+      name: 'LinkedIn Posts',
       icon: '💼',
       postTypes: [
         { key: 'posts', name: 'Posts' },
@@ -45,7 +45,7 @@ export default function Generator() {
     },
     {
       key: 'facebook',
-      name: 'Facebook',
+      name: 'Facebook Posts',
       icon: '📘',
       postTypes: [
         { key: 'posts', name: 'Posts' },
@@ -55,7 +55,7 @@ export default function Generator() {
     },
     {
       key: 'instagram',
-      name: 'Instagram',
+      name: 'Instagram Posts',
       icon: '📷',
       postTypes: [
         { key: 'posts', name: 'Posts' },
@@ -66,7 +66,7 @@ export default function Generator() {
     },
     {
       key: 'twitter',
-      name: 'Twitter',
+      name: 'Twitter Posts',
       icon: '🐦',
       postTypes: [
         { key: 'tweets', name: 'Tweets' },
@@ -76,7 +76,7 @@ export default function Generator() {
     },
     {
       key: 'youtube',
-      name: 'YouTube',
+      name: 'YouTube Shorts',
       icon: '📺',
       postTypes: [
         { key: 'shorts', name: 'Shorts (Coming Soon)', disabled: true },
@@ -86,7 +86,7 @@ export default function Generator() {
     },
     {
       key: 'blog',
-      name: 'Blog',
+      name: 'Blog Articles',
       icon: '📝',
       postTypes: [
         { key: 'articles', name: 'Articles' },
@@ -96,55 +96,62 @@ export default function Generator() {
     }
   ]
 
-  // Enhanced sources with Google integration
+  // Enhanced sources with Google integration - Updated to match design document exactly (8 sources)
   const enhancedSources = [
     {
-      key: 'google_search',
-      name: 'Google Search',
-      icon: <Search className="w-6 h-6" />,
-      description: 'Real-time Google search with AI analysis',
-      hasSearch: true
-    },
-    {
-      key: 'google_news',
-      name: 'Google News',
+      key: 'news',
+      name: 'News',
       icon: <Globe className="w-6 h-6" />,
-      description: 'RSS feed + AI content analysis',
-      hasSearch: true
-    },
-    {
-      key: 'google_trends',
-      name: 'Google Trends',
-      icon: <TrendingUp className="w-6 h-6" />,
-      description: 'Real-time trending data + interest over time',
+      description: 'Financial, tech, business, industry news (localised by region)',
       hasSearch: true
     },
     {
       key: 'books',
       name: 'Books',
       icon: <BookOpen className="w-6 h-6" />,
-      description: 'AI-powered book discovery',
+      description: 'Business, self-help, industry, fiction',
       hasSearch: true
     },
     {
-      key: 'youtube',
-      name: 'YouTube',
-      icon: <Youtube className="w-6 h-6" />,
-      description: 'Enhanced with Google search data',
+      key: 'popular_threads',
+      name: 'Popular Threads',
+      icon: <TrendingUp className="w-6 h-6" />,
+      description: 'Reddit, Twitter, LinkedIn viral content',
       hasSearch: true
     },
     {
       key: 'podcasts',
       name: 'Podcasts',
       icon: <Mic className="w-6 h-6" />,
-      description: 'Enhanced with Google search data',
+      description: 'Business and tech podcasts',
       hasSearch: true
     },
     {
-      key: 'ai_discovery',
-      name: 'AI-Powered Discovery',
-      icon: <Bot className="w-6 h-6" />,
-      description: 'Combines all Google services + AI analysis',
+      key: 'youtube',
+      name: 'YouTube Videos',
+      icon: <Youtube className="w-6 h-6" />,
+      description: 'Educational content, TED Talks',
+      hasSearch: true
+    },
+    {
+      key: 'research_papers',
+      name: 'Research Papers',
+      icon: <Search className="w-6 h-6" />,
+      description: 'Academic insights',
+      hasSearch: true
+    },
+    {
+      key: 'case_studies',
+      name: 'Case Studies',
+      icon: <BookOpen className="w-6 h-6" />,
+      description: 'Business success stories',
+      hasSearch: true
+    },
+    {
+      key: 'trending_topics',
+      name: 'Trending Topics',
+      icon: <TrendingUp className="w-6 h-6" />,
+      description: 'Current events and viral content (localised)',
       hasSearch: true
     }
   ]
@@ -352,7 +359,7 @@ Generated on: ${new Date().toLocaleString()}
           {/* Progress Steps */}
           <div className="flex justify-center mb-8">
             <div className="flex items-center space-x-4">
-              {[1, 2, 3, 4, 5, 6].map((step) => (
+              {[1, 2, 3, 4].map((step) => (
                 <div key={step} className="flex items-center">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${
                     step <= currentStep 
@@ -361,7 +368,7 @@ Generated on: ${new Date().toLocaleString()}
                   }`}>
                     {step}
                   </div>
-                  {step < 6 && (
+                  {step < 4 && (
                     <ChevronRight className={`w-6 h-6 mx-2 ${
                       step < currentStep ? 'text-blue-600' : 'text-gray-300'
                     }`} />
@@ -375,7 +382,7 @@ Generated on: ${new Date().toLocaleString()}
           <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
             {currentStep === 1 && (
               <div>
-                <h2 className="text-2xl font-bold mb-6">Choose Content Direction</h2>
+                <h2 className="text-2xl font-bold mb-6">Choose Your Focus</h2>
                 <p className="text-gray-600 mb-6">What niche, industry, or lifestyle interests you?</p>
                 
                 <div className="max-w-2xl">
@@ -434,7 +441,7 @@ Generated on: ${new Date().toLocaleString()}
 
             {currentStep === 2 && (
               <div>
-                <h2 className="text-2xl font-bold mb-6">Choose Platform</h2>
+                <h2 className="text-2xl font-bold mb-6">What Type of Content?</h2>
                 <p className="text-gray-600 mb-6">Where will you share this content?</p>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
                   {enhancedPlatforms.map((platform) => (
@@ -589,55 +596,7 @@ Generated on: ${new Date().toLocaleString()}
 
             {currentStep === 4 && (
               <div>
-                <h2 className="text-2xl font-bold mb-6">Select Tone</h2>
-                <p className="text-gray-600 mb-6">How would you like your content to sound?</p>
-                
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {tones.map((tone) => (
-                    <button
-                      key={tone.key}
-                      onClick={() => handleInputChange('tone', tone.key)}
-                      className={`p-4 border-2 rounded-lg transition-all duration-200 ${
-                        formData.tone === tone.key
-                          ? 'border-blue-600 bg-blue-50'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="font-medium mb-1">{tone.name}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {currentStep === 5 && (
-              <div>
-                <h2 className="text-2xl font-bold mb-6">Select Image Style</h2>
-                <p className="text-gray-600 mb-6">How would you like your images to look?</p>
-                
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {imageStyles.map((style) => (
-                    <button
-                      key={style.key}
-                      onClick={() => handleInputChange('imageStyle', style.key)}
-                      className={`p-4 border-2 rounded-lg text-left transition-all duration-200 ${
-                        formData.imageStyle === style.key
-                          ? 'border-blue-600 bg-blue-50'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="text-2xl mb-2">{style.icon}</div>
-                      <div className="font-medium mb-1">{style.name}</div>
-                      <div className="text-sm text-gray-600">{style.description}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {currentStep === 6 && (
-              <div>
-                <h2 className="text-2xl font-bold mb-6">Generate Content</h2>
+                <h2 className="text-2xl font-bold mb-6">How Should It Sound?</h2>
                 <p className="text-gray-600 mb-6">Review your settings and generate your content</p>
                 
                 <div className="bg-gray-50 p-6 rounded-lg mb-6">
@@ -648,9 +607,26 @@ Generated on: ${new Date().toLocaleString()}
                     <div><strong>Post Type:</strong> {enhancedPlatforms.find(p => p.key === formData.platform)?.postTypes.find(pt => pt.key === formData.postType)?.name}</div>
                     <div><strong>Source:</strong> {enhancedSources.find(s => s.key === formData.source)?.name}</div>
                     <div><strong>Selected Topic:</strong> {formData.selectedTopic}</div>
-                    <div><strong>Tone:</strong> {tones.find(t => t.key === formData.tone)?.name}</div>
-                    <div><strong>Image Style:</strong> {imageStyles.find(s => s.key === formData.imageStyle)?.name}</div>
                     <div><strong>Language:</strong> {formData.language === 'en' ? 'English' : 'Chinese'}</div>
+                  </div>
+                </div>
+
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-4">Select Tone</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {tones.map((tone) => (
+                      <button
+                        key={tone.key}
+                        onClick={() => handleInputChange('tone', tone.key)}
+                        className={`p-4 border-2 rounded-lg transition-all duration-200 ${
+                          formData.tone === tone.key
+                            ? 'border-blue-600 bg-blue-50'
+                            : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                      >
+                        <div className="font-medium mb-1">{tone.name}</div>
+                      </button>
+                    ))}
                   </div>
                 </div>
 
@@ -684,7 +660,7 @@ Generated on: ${new Date().toLocaleString()}
                 Previous
               </button>
               
-              {currentStep < 6 && (
+              {currentStep < 4 && (
                 <button
                   onClick={nextStep}
                   className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200"

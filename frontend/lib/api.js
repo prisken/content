@@ -208,26 +208,26 @@ export const apiClient = {
   },
 };
 
-// Content directions data
+// Content directions data - Updated to match design document exactly
 export const contentDirections = [
   { key: 'business_finance', name: 'Business & Finance', icon: '💼' },
   { key: 'technology', name: 'Technology', icon: '💻' },
   { key: 'health_wellness', name: 'Health & Wellness', icon: '🏥' },
   { key: 'education', name: 'Education', icon: '📚' },
   { key: 'entertainment', name: 'Entertainment', icon: '🎬' },
-  { key: 'travel_tourism', name: 'Travel & Tourism', icon: '✈️' },
+  { key: 'travel', name: 'Travel & Tourism', icon: '✈️' },
   { key: 'food_cooking', name: 'Food & Cooking', icon: '🍳' },
   { key: 'fashion_beauty', name: 'Fashion & Beauty', icon: '👗' },
-  { key: 'sports_fitness', name: 'Sports & Fitness', icon: '⚽' },
+  { key: 'sports', name: 'Sports & Fitness', icon: '⚽' },
   { key: 'science_research', name: 'Science & Research', icon: '🔬' },
-  { key: 'politics_current_events', name: 'Politics & Current Events', icon: '📰' },
+  { key: 'politics_society', name: 'Politics & Current Events', icon: '📰' },
   { key: 'environment_sustainability', name: 'Environment & Sustainability', icon: '🌱' },
-  { key: 'personal_development', name: 'Personal Development', icon: '🧠' },
-  { key: 'parenting_family', name: 'Parenting & Family', icon: '👨‍👩‍👧‍👦' },
+  { key: 'lifestyle', name: 'Personal Development', icon: '🧠' },
+  { key: 'parenting', name: 'Parenting & Family', icon: '👨‍👩‍👧‍👦' },
   { key: 'art_creativity', name: 'Art & Creativity', icon: '🎨' },
   { key: 'real_estate', name: 'Real Estate', icon: '🏠' },
   { key: 'automotive', name: 'Automotive', icon: '🚗' },
-  { key: 'pet_care', name: 'Pet Care', icon: '🐕' },
+  { key: 'pets_animals', name: 'Pet Care', icon: '🐕' },
 ];
 
 // Platforms data (legacy - now using enhancedPlatforms in generator.js)
@@ -254,13 +254,14 @@ export const sources = [
   { key: 'seasonal_events', name: 'Seasonal Events' },
 ];
 
-// Tones data
+// Tones data - Updated to match design document exactly (6 tones)
 export const tones = [
   { key: 'professional', name: 'Professional' },
   { key: 'casual', name: 'Casual' },
   { key: 'inspirational', name: 'Inspirational' },
   { key: 'educational', name: 'Educational' },
   { key: 'entertaining', name: 'Entertaining' },
+  { key: 'serious', name: 'Serious' },
 ];
 
 // Image styles data
