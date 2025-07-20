@@ -2087,6 +2087,130 @@ def google_books():
             'error': str(e)
         }), 500
 
+@api_routes.route('/videos/generate-link', methods=['POST'])
+def generate_video_link():
+    """Generate popular video links based on direction and categories"""
+    try:
+        data = request.get_json()
+        direction = data.get('direction', '')
+        categories = data.get('categories', {})
+        country = data.get('country', 'US')
+        
+        # Extract category keywords for search
+        category_keywords = []
+        for category_type, items in categories.items():
+            if items:
+                category_keywords.extend(items)
+        
+        # Create search query based on direction and categories
+        search_terms = [direction.replace('_', ' ')]
+        if category_keywords:
+            search_terms.extend(category_keywords[:3])  # Use top 3 categories
+        
+        search_query = ' '.join(search_terms)
+        
+        # Mock popular video links based on search
+        popular_videos = {
+            'business_finance': [
+                'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+                'https://www.youtube.com/watch?v=9bZkp7q19f0',
+                'https://www.youtube.com/watch?v=kJQP7kiw5Fk'
+            ],
+            'technology': [
+                'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+                'https://www.youtube.com/watch?v=9bZkp7q19f0',
+                'https://www.youtube.com/watch?v=kJQP7kiw5Fk'
+            ],
+            'health_wellness': [
+                'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+                'https://www.youtube.com/watch?v=9bZkp7q19f0',
+                'https://www.youtube.com/watch?v=kJQP7kiw5Fk'
+            ]
+        }
+        
+        # Get videos for the direction, or use default
+        video_links = popular_videos.get(direction, popular_videos['business_finance'])
+        selected_video = video_links[0]  # Return the first popular video
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'videoLink': selected_video,
+                'searchQuery': search_query,
+                'direction': direction,
+                'categories': category_keywords,
+                'country': country,
+                'message': f'Found popular video for {direction.replace("_", " ")}'
+            }
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@api_routes.route('/podcasts/generate-link', methods=['POST'])
+def generate_podcast_link():
+    """Generate popular podcast links based on direction and categories"""
+    try:
+        data = request.get_json()
+        direction = data.get('direction', '')
+        categories = data.get('categories', {})
+        country = data.get('country', 'US')
+        
+        # Extract category keywords for search
+        category_keywords = []
+        for category_type, items in categories.items():
+            if items:
+                category_keywords.extend(items)
+        
+        # Create search query based on direction and categories
+        search_terms = [direction.replace('_', ' ')]
+        if category_keywords:
+            search_terms.extend(category_keywords[:3])  # Use top 3 categories
+        
+        search_query = ' '.join(search_terms)
+        
+        # Mock popular podcast links based on search
+        popular_podcasts = {
+            'business_finance': [
+                'https://podcasts.apple.com/us/podcast/the-tim-ferriss-show/id863897795',
+                'https://podcasts.apple.com/us/podcast/how-i-built-this/id1150510297',
+                'https://podcasts.apple.com/us/podcast/masters-of-scale/id1227971746'
+            ],
+            'technology': [
+                'https://podcasts.apple.com/us/podcast/lex-fridman-podcast/id1434243584',
+                'https://podcasts.apple.com/us/podcast/the-vergecast/id430333725',
+                'https://podcasts.apple.com/us/podcast/recode-decode/id1011668648'
+            ],
+            'health_wellness': [
+                'https://podcasts.apple.com/us/podcast/the-joe-rogan-experience/id360084272',
+                'https://podcasts.apple.com/us/podcast/on-purpose-with-jay-shetty/id1437448722',
+                'https://podcasts.apple.com/us/podcast/the-wellness-mama-podcast/id1070840096'
+            ]
+        }
+        
+        # Get podcasts for the direction, or use default
+        podcast_links = popular_podcasts.get(direction, popular_podcasts['business_finance'])
+        selected_podcast = podcast_links[0]  # Return the first popular podcast
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'podcastLink': selected_podcast,
+                'searchQuery': search_query,
+                'direction': direction,
+                'categories': category_keywords,
+                'country': country,
+                'message': f'Found popular podcast for {direction.replace("_", " ")}'
+            }
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 @api_routes.route('/image/<image_hash>', methods=['GET'])
 def get_image(image_hash):
     """Get image data by hash reference"""

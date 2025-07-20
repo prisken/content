@@ -83,6 +83,22 @@ export const apiClient = {
     });
   },
 
+  // Video Link Generation
+  async generateVideoLink(data) {
+    return this.request('/api/videos/generate-link', {
+      method: 'POST',
+      body: data,
+    });
+  },
+
+  // Podcast Link Generation
+  async generatePodcastLink(data) {
+    return this.request('/api/podcasts/generate-link', {
+      method: 'POST',
+      body: data,
+    });
+  },
+
   // Google Search Integration
   async googleSearch(query, country = 'US') {
     return this.request('/api/google/search', {

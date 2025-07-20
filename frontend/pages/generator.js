@@ -855,8 +855,12 @@ export default function Generator() {
         country: selectedCountry
       })
       
-      setGeneratedVideoLink(response.videoLink || '')
-      toast.success('Video link generated successfully!')
+      if (response.success && response.data) {
+        setGeneratedVideoLink(response.data.videoLink || '')
+        toast.success('Video link generated successfully!')
+      } else {
+        toast.error(response.error || 'Failed to generate video link')
+      }
     } catch (error) {
       toast.error('Failed to generate video link')
       console.error('Video link generation error:', error)
@@ -879,8 +883,12 @@ export default function Generator() {
         country: selectedCountry
       })
       
-      setGeneratedPodcastLink(response.podcastLink || '')
-      toast.success('Podcast link generated successfully!')
+      if (response.success && response.data) {
+        setGeneratedPodcastLink(response.data.podcastLink || '')
+        toast.success('Podcast link generated successfully!')
+      } else {
+        toast.error(response.error || 'Failed to generate podcast link')
+      }
     } catch (error) {
       toast.error('Failed to generate podcast link')
       console.error('Podcast link generation error:', error)
