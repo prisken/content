@@ -679,9 +679,14 @@ class GoogleSearchService:
     
     def search_youtube_videos(self, direction: str, categories: List[str], country: str = 'US') -> List[Dict[str, Any]]:
         """Search for real YouTube videos using Google Custom Search or web scraping"""
+        print(f"🔍 DEBUG: Starting YouTube video search for direction={direction}, categories={categories}, country={country}")
+        print(f"🔍 DEBUG: Google Search API Key configured: {bool(self.api_key)}")
+        print(f"🔍 DEBUG: Google Search Engine ID configured: {bool(self.search_engine_id)}")
+        
         if not self.api_key or not self.search_engine_id:
-            # Try web scraping as fallback
-            return self._scrape_youtube_videos(direction, categories)
+            print("⚠️ DEBUG: Google Search API credentials not configured, using enhanced mock data")
+            # Use enhanced mock data instead of web scraping
+            return self._mock_youtube_videos(direction, categories)
         
         try:
             # Create search query based on direction and categories
