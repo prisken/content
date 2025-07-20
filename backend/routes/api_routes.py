@@ -2133,11 +2133,14 @@ def generate_video_link():
 @api_routes.route('/podcasts/generate-link', methods=['POST'])
 def generate_podcast_link():
     """Generate popular podcast links based on direction and categories"""
+    print(f"🎤 DEBUG: Podcast API called with data: {request.get_json()}")
     try:
         data = request.get_json()
         direction = data.get('direction', '')
         categories = data.get('categories', {})
         country = data.get('country', 'US')
+        
+        print(f"🎤 DEBUG: Extracted - direction={direction}, categories={categories}, country={country}")
         
         # Extract category keywords for search
         category_keywords = []
@@ -2153,8 +2156,10 @@ def generate_podcast_link():
         search_query = ' '.join(search_terms)
         
         # Use Google Search service to find real podcasts (with web scraping fallback)
+        print(f"🎤 DEBUG: Calling GoogleSearchService.search_podcasts()")
         google_service = GoogleSearchService()
         podcasts = google_service.search_podcasts(direction, category_keywords, country)
+        print(f"🎤 DEBUG: GoogleSearchService returned {len(podcasts)} podcasts")
         
         # Create search query for display
         search_terms = [direction.replace('_', ' ')]
@@ -2162,7 +2167,7 @@ def generate_podcast_link():
             search_terms.extend(category_keywords[:3])
         search_query = ' '.join(search_terms)
         
-        return jsonify({
+        response_data = {
             'success': True,
             'data': {
                 'podcasts': podcasts,
@@ -2172,7 +2177,10 @@ def generate_podcast_link():
                 'country': country,
                 'message': f'Found {len(podcasts)} podcasts for {direction.replace("_", " ")} using real Google search'
             }
-        })
+        }
+        print(f"🎤 DEBUG: Returning response with {len(podcasts)} podcasts")
+        print(f"🎤 DEBUG: First podcast title: {podcasts[0]['title'] if podcasts else 'None'}")
+        return jsonify(response_data)
     except Exception as e:
         return jsonify({
             'success': False,

@@ -743,7 +743,12 @@ class GoogleSearchService:
     
     def search_podcasts(self, direction: str, categories: List[str], country: str = 'US') -> List[Dict[str, Any]]:
         """Search for real podcasts using Google Custom Search or web scraping"""
+        print(f"🔍 DEBUG: Starting podcast search for direction={direction}, categories={categories}, country={country}")
+        print(f"🔍 DEBUG: API Key configured: {bool(self.api_key)}")
+        print(f"🔍 DEBUG: Search Engine ID configured: {bool(self.search_engine_id)}")
+        
         if not self.api_key or not self.search_engine_id:
+            print("⚠️ DEBUG: No API credentials, trying web scraping fallback")
             # Try web scraping as fallback
             return self._scrape_podcasts(direction, categories)
         
@@ -757,6 +762,9 @@ class GoogleSearchService:
             base_query = ' '.join(search_terms)
             search_query = f'{base_query} site:podcasts.apple.com'
             
+            print(f"🔍 DEBUG: Search query: '{search_query}'")
+            print(f"🔍 DEBUG: Using Google Custom Search API")
+            
             params = {
                 'key': self.api_key,
                 'cx': self.search_engine_id,
@@ -766,14 +774,25 @@ class GoogleSearchService:
             }
             
             response = requests.get(self.custom_search_url, params=params)
-            response.raise_for_status()
+            print(f"🔍 DEBUG: API Response Status: {response.status_code}")
+            
+            if response.status_code != 200:
+                print(f"❌ DEBUG: API Error Response: {response.text[:500]}")
+                raise Exception(f"API returned status {response.status_code}")
             
             data = response.json()
+            print(f"🔍 DEBUG: API Response has {len(data.get('items', []))} items")
             podcasts = []
             
             if 'items' in data:
-                for item in data['items']:
+                print(f"🔍 DEBUG: Processing {len(data['items'])} search results")
+                for i, item in enumerate(data['items']):
                     podcast_url = item.get('link', '')
+                    title = item.get('title', '')
+                    snippet = item.get('snippet', '')
+                    
+                    print(f"🔍 DEBUG: Item {i+1}: Title='{title[:50]}...'")
+                    print(f"🔍 DEBUG: Item {i+1}: URL='{podcast_url}'")
                     
                     # Extract podcast details from URL or search result
                     podcast_details = self._extract_podcast_details(item)
@@ -788,18 +807,27 @@ class GoogleSearchService:
                         'description': item.get('snippet', '')
                     }
                     podcasts.append(podcast)
+                    print(f"✅ DEBUG: Added podcast: {podcast['title'][:50]}... (Host: {podcast['host']})")
+            else:
+                print("⚠️ DEBUG: No 'items' found in API response")
+                print(f"🔍 DEBUG: API Response keys: {list(data.keys())}")
             
             # Fallback to mock data if no results
             if not podcasts:
+                print("⚠️ DEBUG: No podcasts found, falling back to mock data")
                 podcasts = self._mock_podcasts(direction, categories)
+            else:
+                print(f"✅ DEBUG: Successfully found {len(podcasts)} real podcasts")
             
+            print(f"🔍 DEBUG: Final podcast count: {len(podcasts)}")
             return podcasts
             
         except Exception as e:
-            print(f"Podcast search error: {e}")
-            print(f"Search query: {search_query}")
-            print(f"API URL: {self.custom_search_url}")
-            print(f"Parameters: {params}")
+            print(f"❌ DEBUG: Podcast search error: {e}")
+            print(f"🔍 DEBUG: Search query: {search_query}")
+            print(f"🔍 DEBUG: API URL: {self.custom_search_url}")
+            print(f"🔍 DEBUG: Parameters: {params}")
+            print("⚠️ DEBUG: Falling back to mock data due to error")
             return self._mock_podcasts(direction, categories)
     
     def _extract_youtube_id(self, url: str) -> str:
