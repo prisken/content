@@ -687,17 +687,18 @@ class GoogleSearchService:
             # Create search query based on direction and categories
             search_terms = [direction.replace('_', ' ')]
             if categories:
-                search_terms.extend(categories[:3])  # Use top 3 categories
+                search_terms.extend(categories[:2])  # Use top 2 categories to avoid long queries
             
-            search_query = ' '.join(search_terms) + ' site:youtube.com'
+            # Create a cleaner search query
+            base_query = ' '.join(search_terms)
+            search_query = f'{base_query} site:youtube.com'
             
             params = {
                 'key': self.api_key,
                 'cx': self.search_engine_id,
                 'q': search_query,
                 'gl': country.lower(),
-                'num': 3,  # Get 3 results
-                'searchType': 'video'
+                'num': 3  # Get 3 results
             }
             
             response = requests.get(self.custom_search_url, params=params)
@@ -735,6 +736,9 @@ class GoogleSearchService:
             
         except Exception as e:
             print(f"YouTube search error: {e}")
+            print(f"Search query: {search_query}")
+            print(f"API URL: {self.custom_search_url}")
+            print(f"Parameters: {params}")
             return self._mock_youtube_videos(direction, categories)
     
     def search_podcasts(self, direction: str, categories: List[str], country: str = 'US') -> List[Dict[str, Any]]:
@@ -749,15 +753,16 @@ class GoogleSearchService:
             if categories:
                 search_terms.extend(categories[:3])  # Use top 3 categories
             
-            search_query = ' '.join(search_terms) + ' podcast'
+            # Create a cleaner search query for podcasts
+            base_query = ' '.join(search_terms)
+            search_query = f'{base_query} site:podcasts.apple.com'
             
             params = {
                 'key': self.api_key,
                 'cx': self.search_engine_id,
                 'q': search_query,
                 'gl': country.lower(),
-                'num': 3,  # Get 3 results
-                'sitesearch': 'podcasts.apple.com'  # Focus on Apple Podcasts
+                'num': 3  # Get 3 results
             }
             
             response = requests.get(self.custom_search_url, params=params)
@@ -792,6 +797,9 @@ class GoogleSearchService:
             
         except Exception as e:
             print(f"Podcast search error: {e}")
+            print(f"Search query: {search_query}")
+            print(f"API URL: {self.custom_search_url}")
+            print(f"Parameters: {params}")
             return self._mock_podcasts(direction, categories)
     
     def _extract_youtube_id(self, url: str) -> str:
