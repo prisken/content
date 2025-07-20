@@ -3,6 +3,7 @@ from models import db, User, Content
 import uuid
 import random
 from sqlalchemy import text
+from datetime import datetime
 
 # Import AI service
 try:
@@ -910,6 +911,134 @@ TRANSLATIONS = {
     }
 }
 
+def extract_hashtags(text):
+    """Extract hashtags from text using a simple regex."""
+    import re
+    hashtags = re.findall(r'#(\w+)', text)
+    return list(set(hashtags))
+
+def extract_call_to_action(text):
+    """Extract call-to-action phrases from text."""
+    call_to_actions = [
+        "Check it out!",
+        "Don't miss this!",
+        "Follow for more!",
+        "Subscribe for updates!",
+        "Join the conversation!",
+        "Let's go!",
+        "Stay tuned!",
+        "Follow me!",
+        "Check out my latest!",
+        "Join our community!"
+    ]
+    return random.choice(call_to_actions)
+
+def calculate_readability_score(text):
+    """Calculate a simple readability score (e.g., Flesch-Kincaid Grade Level)."""
+    # This is a simplified example. A real implementation would use a library.
+    words = text.split()
+    sentences = text.count('.') + text.count('!') + text.count('?')
+    syllables = sum(len(word.lower().strip('.,!?')) for word in words)
+    
+    if sentences == 0:
+        return 0
+        
+    # Flesch-Kincaid Grade Level formula
+    # 0.39 * (words / sentences) + 11.8 * (syllables / words) - 15.59
+    fk_grade = 0.39 * (len(words) / sentences) + 11.8 * (syllables / len(words)) - 15.59
+    return round(fk_grade, 2)
+
+def generate_analytics_data(platform, direction, tone, content_text):
+    """Generate analytics data for the content."""
+    # This is a simplified example. A real implementation would involve AI models.
+    return {
+        'content_metrics': {
+            'character_count': len(content_text),
+            'word_count': len(content_text.split()),
+            'hashtag_count': len(extract_hashtags(content_text)),
+            'readability_score': calculate_readability_score(content_text),
+            'engagement_potential': 'medium' # Placeholder
+        },
+        'platform_optimization': {
+            'optimal_posting_time': 'Varies', # Placeholder
+            'recommended_frequency': 'Varies', # Placeholder
+            'audience_demographics': 'Varies', # Placeholder
+            'content_lifecycle': 'Varies' # Placeholder
+        },
+        'performance_predictions': {
+            'estimated_reach': 'medium', # Placeholder
+            'estimated_engagement': 'medium', # Placeholder
+            'estimated_clicks': 'low', # Placeholder
+            'viral_potential': 'low' # Placeholder
+        }
+    }
+
+def validate_content(text, platform):
+    """Validate content for platform-specific compliance."""
+    # This is a simplified example. A real implementation would involve AI models.
+    # For now, it just returns a placeholder.
+    return {
+        'platform': platform,
+        'compliance_check': 'Passed', # Placeholder
+        'issues': [], # Placeholder
+        'recommendations': [] # Placeholder
+    }
+
+def calculate_content_quality_score(text, platform):
+    """Calculate a quality score for the content."""
+    # This is a simplified example. A real implementation would involve AI models.
+    return {
+        'platform': platform,
+        'quality_score': 0.8, # Placeholder
+        'issues': [], # Placeholder
+        'recommendations': [] # Placeholder
+    }
+
+def generate_optimization_suggestions(text, platform):
+    """Generate optimization suggestions for the content."""
+    # This is a simplified example. A real implementation would involve AI models.
+    return {
+        'platform': platform,
+        'suggestions': [], # Placeholder
+        'specific_actions': [] # Placeholder
+    }
+
+def generate_performance_insights(platform):
+    """Generate performance insights for a platform."""
+    # This is a simplified example. A real implementation would involve AI models.
+    return {
+        'platform': platform,
+        'insights': [], # Placeholder
+        'recommendations': [] # Placeholder
+    }
+
+def get_optimal_posting_time(platform):
+    """Get optimal posting time for a platform."""
+    # This is a simplified example. A real implementation would involve AI models.
+    return 'Varies' # Placeholder
+
+def get_best_posting_days(platform):
+    """Get best posting days for a platform."""
+    # This is a simplified example. A real implementation would involve AI models.
+    return ['Monday', 'Wednesday', 'Friday'] # Placeholder
+
+def get_recommended_frequency(platform):
+    """Get recommended frequency for a platform."""
+    # This is a simplified example. A real implementation would involve AI models.
+    return 'Varies' # Placeholder
+
+def get_platform_specifications(platform):
+    """Get platform-specific image specifications."""
+    # This is a simplified example. A real implementation would involve AI models.
+    return {
+        'facebook': {'width': 1200, 'height': 628, 'aspect_ratio': '2:1'},
+        'instagram': {'width': 1080, 'height': 1080, 'aspect_ratio': '1:1'},
+        'linkedin': {'width': 1200, 'height': 628, 'aspect_ratio': '2:1'},
+        'twitter': {'width': 1024, 'height': 512, 'aspect_ratio': '2:1'},
+        'youtube_shorts': {'width': 1080, 'height': 1920, 'aspect_ratio': '9:16'},
+        'blog': {'width': 1200, 'height': 628, 'aspect_ratio': '2:1'}
+    }
+
 @api_routes.route('/generate', methods=['POST'])
 def generate_content():
     """Generate content based on user input"""
@@ -927,47 +1056,115 @@ def generate_content():
         
         # Generate content using AI service or fallback
         if AI_SERVICE_AVAILABLE:
-            content = ai_service.generate_content(
+            content_text = ai_service.generate_content(
                 direction, platform, source, topic, tone, language, 
                 generate_images=generate_images
             )
         else:
-            content = generate_content_text(direction, platform, source, topic, tone, language)
-            # Add basic structure for non-AI content
-            content = {
-                'content': {
-                    'text': content,
-                    'length': len(content),
-                    'max_length': 1300,
-                    'hashtags': [],
-                    'call_to_action': []
-                },
-                'variations': [],
-                'images': {'primary': None, 'variations': [], 'total_count': 0},
-                'media_suggestions': {'images': [], 'videos': [], 'graphics': []},
-                'platform_specs': {},
-                'metadata': {
-                    'content_direction': direction,
-                    'content_type': platform,
-                    'source_type': source,
-                    'topic': topic,
-                    'tone': tone,
-                    'region': 'global',
-                    'language': language,
-                    'generated_at': '2024-01-15T10:30:00Z'
-                },
-                'cultural_context': {'sensitivity': 'general', 'recommendations': []},
-                'direction_context': {},
-                'analytics': {
-                    'content_metrics': {'character_count': len(content), 'word_count': len(content.split()), 'hashtag_count': 0, 'readability_score': 0, 'engagement_potential': 'medium'},
-                    'platform_optimization': {'optimal_posting_time': 'Varies', 'recommended_frequency': 'Varies', 'audience_demographics': 'Varies', 'content_lifecycle': 'Varies'},
-                    'performance_predictions': {'estimated_reach': 'medium', 'estimated_engagement': 'medium', 'estimated_clicks': 'low', 'viral_potential': 'low'}
+            content_text = generate_content_text(direction, platform, source, topic, tone, language)
+        
+        # Generate images using Stable Diffusion if requested
+        generated_images = {'primary': None, 'variations': [], 'total_count': 0}
+        if generate_images:
+            try:
+                from services.stable_diffusion import StableDiffusionService
+                stable_diffusion = StableDiffusionService()
+                
+                # Generate primary image
+                primary_image = stable_diffusion.generate_image(
+                    platform=platform,
+                    content_direction=direction,
+                    topic=topic,
+                    tone=tone,
+                    language=language
+                )
+                
+                # Generate variations
+                variations = stable_diffusion.generate_multiple_images(
+                    platform=platform,
+                    content_direction=direction,
+                    topic=topic,
+                    tone=tone,
+                    count=2
+                )
+                
+                generated_images = {
+                    'primary': primary_image,
+                    'variations': variations,
+                    'total_count': len(variations) + 1
+                }
+                
+            except Exception as e:
+                print(f"Error generating images: {str(e)}")
+                generated_images = {
+                    'primary': None,
+                    'variations': [],
+                    'total_count': 0,
+                    'error': str(e)
+                }
+        
+        # Create enhanced response with analytics
+        response = {
+            'content': {
+                'text': content_text,
+                'length': len(content_text),
+                'max_length': 1300,  # Will be updated based on platform
+                'hashtags': extract_hashtags(content_text),
+                'call_to_action': extract_call_to_action(content_text),
+                'word_count': len(content_text.split()),
+                'readability_score': calculate_readability_score(content_text)
+            },
+            'variations': [],  # Could be generated if needed
+            'images': generated_images,
+            'media_suggestions': {
+                'images': [f"Professional {direction} related image"],
+                'videos': [],
+                'graphics': []
+            },
+            'platform_specifications': get_platform_specifications(platform),
+            'metadata': {
+                'content_direction': direction,
+                'content_type': platform,
+                'source_type': source,
+                'topic': topic,
+                'tone': tone,
+                'region': 'global',
+                'language': language,
+                'generated_at': datetime.utcnow().isoformat() + 'Z',
+                'platform': platform.upper(),
+                'content_category': direction
+            },
+            'cultural_context': {
+                'region': 'global',
+                'content_direction': direction,
+                'cultural_considerations': 'Standard global content',
+                'local_relevance': 'High',
+                'sensitivity_notes': 'None'
+            },
+            'direction_context': {},
+            'analytics': generate_analytics_data(platform, direction, tone, content_text),
+            'validation': {
+                'compliance_check': validate_content(content_text, platform),
+                'quality_score': calculate_content_quality_score(content_text, platform),
+                'optimization_suggestions': generate_optimization_suggestions(content_text, platform),
+                'performance_insights': generate_performance_insights(platform)
+            },
+            'export_formats': {
+                'social_media_ready': True,
+                'copy_paste_text': content_text,
+                'hashtag_list': extract_hashtags(content_text),
+                'image_specifications': get_platform_specifications(platform).get('image_format', {}),
+                'scheduling_recommendations': {
+                    'optimal_time': get_optimal_posting_time(platform),
+                    'best_days': get_best_posting_days(platform),
+                    'frequency': get_recommended_frequency(platform)
                 }
             }
+        }
         
         return jsonify({
             'success': True,
-            'data': content
+            'data': response
         })
         
     except Exception as e:
@@ -1250,8 +1447,8 @@ def generate_image():
         tone = data.get('tone', 'professional')
         language = data.get('language', 'en')
         
-        # Import Stable Diffusion service
-        from app.services.stable_diffusion import StableDiffusionService
+        # Import Stable Diffusion service from backend
+        from services.stable_diffusion import StableDiffusionService
         stable_diffusion = StableDiffusionService()
         
         # Generate image
@@ -1278,7 +1475,7 @@ def generate_image():
 def get_image_specs(platform):
     """Get image specifications for a specific platform"""
     try:
-        from app.services.stable_diffusion import StableDiffusionService
+        from services.stable_diffusion import StableDiffusionService
         stable_diffusion = StableDiffusionService()
         
         specs = stable_diffusion.get_platform_image_specs(platform)
@@ -1303,7 +1500,7 @@ def get_image_specs(platform):
 def test_stable_diffusion():
     """Test Stable Diffusion configuration and supported ratios"""
     try:
-        from app.services.stable_diffusion import StableDiffusionService
+        from services.stable_diffusion import StableDiffusionService
         stable_diffusion = StableDiffusionService()
         
         # Get supported ratios
