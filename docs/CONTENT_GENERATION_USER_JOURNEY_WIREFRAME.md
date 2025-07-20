@@ -180,13 +180,32 @@ This document provides a visual representation of the complete content generatio
 │  ┌─────────────────────────────────────────────────────────────────────────┐ │
 │  │                      What Inspires You?                                 │ │
 │  │                                                                         │ │
-│  │  Choose your content source (AI will search based on your direction)    │ │
+│  │  Choose your content source (AI + Google will search based on your direction)│ │
 │  │                                                                         │ │
 │  │  ┌─────────────────────────────────────────────────────────────────────┐ │ │
-│  │  │ 📰 News                                                             │ │ │
+│  │  │ 🔍 Google Search                                                    │ │ │
 │  │  │ ┌─────────────────────────────────────────────────────────────────┐ │ │ │
-│  │  │ │ Country: [United States ▼] State: [California ▼]               │ │ │ │
-│  │  │ │ [🔍 Search News]                                               │ │ │ │
+│  │  │ │ Search Query: [________________]                                │ │ │ │
+│  │  │ │ Country: [United States ▼] [🔍 Search Google]                   │ │ │ │
+│  │  │ │ Results: Real-time Google search with AI analysis               │ │ │ │
+│  │  │ └─────────────────────────────────────────────────────────────────┘ │ │ │
+│  │  └─────────────────────────────────────────────────────────────────────┘ │ │
+│  │                                                                         │ │
+│  │  ┌─────────────────────────────────────────────────────────────────────┐ │ │
+│  │  │ 📰 Google News                                                      │ │ │
+│  │  │ ┌─────────────────────────────────────────────────────────────────┐ │ │ │
+│  │  │ │ Country: [United States ▼] Category: [All ▼]                   │ │ │ │
+│  │  │ │ [🔍 Search News] [📈 Get Trending News]                        │ │ │ │
+│  │  │ │ Results: RSS feed + AI content analysis                         │ │ │ │
+│  │  │ └─────────────────────────────────────────────────────────────────┘ │ │ │
+│  │  └─────────────────────────────────────────────────────────────────────┘ │ │
+│  │                                                                         │ │
+│  │  ┌─────────────────────────────────────────────────────────────────────┐ │ │
+│  │  │ 📈 Google Trends                                                    │ │ │
+│  │  │ ┌─────────────────────────────────────────────────────────────────┐ │ │ │
+│  │  │ │ Country: [United States ▼] Category: [All ▼]                   │ │ │ │
+│  │  │ │ [🔍 Get Trending Topics] [📊 Related Queries]                  │ │ │ │
+│  │  │ │ Results: Real-time trending data + interest over time           │ │ │ │
 │  │  │ └─────────────────────────────────────────────────────────────────┘ │ │ │
 │  │  └─────────────────────────────────────────────────────────────────────┘ │ │
 │  │                                                                         │ │
@@ -195,6 +214,7 @@ This document provides a visual representation of the complete content generatio
 │  │  │ ┌─────────────────────────────────────────────────────────────────┐ │ │ │
 │  │  │ │ Book Name: [________________] Author: [________________]        │ │ │ │
 │  │  │ │ [📁 Upload PDF] [➕ Add More Books]                             │ │ │ │
+│  │  │ │ [🔍 Google Books Search] (AI-powered book discovery)            │ │ │ │
 │  │  │ └─────────────────────────────────────────────────────────────────┘ │ │ │
 │  │  └─────────────────────────────────────────────────────────────────────┘ │ │
 │  │                                                                         │ │
@@ -204,6 +224,7 @@ This document provides a visual representation of the complete content generatio
 │  │  │ │ Link: [https://youtube.com/...]                                 │ │ │ │
 │  │  │ │ OR                                                                │ │ │
 │  │  │ │ Country: [United States ▼] [🔍 Generate Popular Videos]         │ │ │ │
+│  │  │ │ [🔍 Google Search Videos] (Enhanced with Google data)           │ │ │ │
 │  │  │ └─────────────────────────────────────────────────────────────────┘ │ │ │
 │  │  └─────────────────────────────────────────────────────────────────────┘ │ │
 │  │                                                                         │ │
@@ -213,25 +234,20 @@ This document provides a visual representation of the complete content generatio
 │  │  │ │ Link: [https://podcast.com/...]                                 │ │ │ │
 │  │  │ │ OR                                                                │ │ │
 │  │  │ │ Country: [United States ▼] [🔍 Generate Popular Podcasts]       │ │ │ │
+│  │  │ │ [🔍 Google Search Podcasts] (Enhanced with Google data)         │ │ │ │
 │  │  │ └─────────────────────────────────────────────────────────────────┘ │ │ │
 │  │  └─────────────────────────────────────────────────────────────────────┘ │ │
 │  │                                                                         │ │
 │  │  ┌─────────────────────────────────────────────────────────────────────┐ │ │
-│  │  │ 🔥 Popular Trends                                                   │ │ │
-│  │  │ ┌─────────────────────────────────────────────────────────────────┐ │ │ │
-│  │  │ │ Country: [United States ▼] [🔍 Generate Trending Topics]       │ │ │ │
-│  │  │ └─────────────────────────────────────────────────────────────────┘ │ │ │
-│  │  └─────────────────────────────────────────────────────────────────────┘ │ │
-│  │                                                                         │ │
-│  │  ┌─────────────────────────────────────────────────────────────────────┐ │ │
-│  │  │ 🤖 Automatic                                                         │ │ │
+│  │  │ 🤖 AI-Powered Discovery                                             │ │ │
 │  │  │ ┌─────────────────────────────────────────────────────────────────┐ │ │ │
 │  │  │ │ Country: [United States ▼] [🔍 AI Choose Popular Topics]       │ │ │ │
+│  │  │ │ Combines: Google Trends + Search + News + AI analysis           │ │ │ │
 │  │  │ └─────────────────────────────────────────────────────────────────┘ │ │ │
 │  │  └─────────────────────────────────────────────────────────────────────┘ │ │
 │  │                                                                         │ │
 │  │  ┌─────────────────────────────────────────────────────────────────────┐ │ │
-│  │  │ [👁️ See Topics] (Returns 5 AI-generated topics with refresh option)│ │ │
+│  │  │ [👁️ See Topics] (Returns 5 AI+Google-generated topics with refresh)│ │ │
 │  │  └─────────────────────────────────────────────────────────────────────┘ │ │
 │  │                                                                         │ │
 │  └─────────────────────────────────────────────────────────────────────────┘ │
@@ -246,33 +262,41 @@ This document provides a visual representation of the complete content generatio
 │                           STEP 3: SYSTEM PROCESS                           │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
-│  User Source Selection → AI Search → Topic Generation → Topic Selection     │
+│  User Source Selection → Google+AI Search → Topic Generation → Topic Selection│
 │       ↓                    ↓              ↓                ↓               │
-│  • source: "news"         • Web Crawl    • AI Analysis     • User Choice   │
-│  • sourceDetails: {       • API Calls    • Content         • Validation    │
-│      country: "US",       • Data         • Extraction      • Storage       │
-│      state: "CA"          • Processing   • Topic           • UI Update     │
-│  }                       • Filtering     • Generation      • Navigation    │
-│                          • Ranking       • 5 Options       • Next Step     │
+│  • source: "google_       • Google       • AI Analysis     • User Choice   │
+│     search"              • Search API    • Content         • Validation    │
+│  • sourceDetails: {       • Google       • Extraction      • Storage       │
+│      country: "US",       • Trends       • Topic           • UI Update     │
+│      query: "AI"          • Google       • Generation      • Navigation    │
+│  }                       • News          • 5 Options       • Next Step     │
+│                          • Custom        • Enhanced        • Enhanced      │
+│                          • Search        • with Google     • Results       │
+│                          • Engine        • Data            • Display       │
 │                                                                             │
-│  AI Search Process:                                                        │
-│  • News: RSS feeds, news APIs, country/state filtering                     │
-│  • Books: Google Books API, PDF processing, text extraction                │
-│  • YouTube: YouTube Data API, trending videos, country filtering           │
-│  • Podcasts: Podcast APIs, episode transcripts, country filtering          │
-│  • Trends: Social media APIs, Google Trends, country-specific data         │
-│  • Automatic: AI-powered topic discovery based on direction                │
+│  Google + AI Search Process:                                               │
+│  • Google Search: Custom Search API, real-time web results                 │
+│  • Google News: RSS feeds, category filtering, trending news               │
+│  • Google Trends: Real-time trending topics, related queries               │
+│  • Google Books: Books API, PDF processing, AI text extraction             │
+│  • YouTube: Enhanced with Google search data, trending videos              │
+│  • Podcasts: Enhanced with Google search data, popular podcasts            │
+│  • AI-Powered Discovery: Combines all Google services + AI analysis        │
 │                                                                             │
 │  Updated Data Structure:                                                   │
 │  {                                                                          │
 │    direction: "technology",                                                │
 │    platform: "linkedin",                                                   │
 │    postType: "posts",                                                      │
-│    source: "news",                                                         │
+│    source: "google_search",                                                │
 │    sourceDetails: {                                                        │
 │      country: "US",                                                        │
-│      state: "CA",                                                          │
-│      searchResults: [...]                                                  │
+│      query: "AI in healthcare",                                            │
+│      googleSearchResults: [...],                                           │
+│      googleTrendsData: {...},                                              │
+│      googleNewsResults: [...],                                             │
+│      relatedQueries: [...],                                                │
+│      trendingTopics: [...]                                                 │
 │    },                                                                       │
 │    selectedTopic: "AI in Healthcare",                                      │
 │    tone: "",                                                               │
@@ -700,11 +724,11 @@ This document provides a visual representation of the complete content generatio
 │  │ • UI updates with platform-specific post type options                   │ │
 │  └─────────────────────────────────────────────────────────────────────────┘ │
 │                                                                             │
-│  STEP 3: AI-Powered Source Selection                                        │
+│  STEP 3: Google+AI-Powered Source Selection                                │
 │  ┌─────────────────────────────────────────────────────────────────────────┐ │
-│  │ • User selects source type (News, Books, YouTube, Podcasts, etc.)      │ │
-│  │ • AI/web crawler searches based on chosen direction                     │ │
-│  │ • System generates 5 topic options for user selection                   │ │
+│  │ • User selects source type (Google Search, Google News, Google Trends) │ │
+│  │ • Google APIs + AI search based on chosen direction                     │ │
+│  │ • System generates 5 topic options with Google insights                 │ │
 │  │ • User can refresh topics if not satisfied                              │ │
 │  └─────────────────────────────────────────────────────────────────────────┘ │
 │                                                                             │
@@ -742,6 +766,7 @@ This document provides a visual representation of the complete content generatio
 - **Style Selection**: Interactive card-based selection
 - **Loading States**: Spinner and progress indicators
 - **Result Display**: Content, images, and analytics presentation
+- **Google Search Interface**: Real-time search with country/region selection
 
 ### **Backend Services**
 - **Content Generation**: DeepSeek AI integration
@@ -749,6 +774,10 @@ This document provides a visual representation of the complete content generatio
 - **Image Generation**: Stable Diffusion with custom prompts
 - **Analytics Engine**: Performance metrics and insights
 - **Validation Service**: Quality and compliance checking
+- **Google Search Service**: Custom Search API integration
+- **Google Trends Service**: Real-time trending data
+- **Google News Service**: RSS feed processing
+- **Google Books Service**: Books API integration
 
 ### **Data Flow**
 - **State Management**: React hooks for form data
@@ -760,12 +789,22 @@ This document provides a visual representation of the complete content generatio
 
 ## 📋 **Redesign Considerations**
 
+### **Google Search Integration Benefits**
+1. **Real-time Data**: Always up-to-date content and trends from Google
+2. **Trending Topics**: Generate content on what's currently popular via Google Trends
+3. **News Integration**: Include recent news from Google News RSS feeds
+4. **Geographic Relevance**: Country-specific content and trends
+5. **Related Topics**: Discover new content angles through Google search
+6. **SEO Optimization**: Use trending keywords and topics from Google
+7. **Enhanced Discovery**: AI-powered topic generation with Google insights
+
 ### **Current vs Future Capabilities**
 1. **Available Now**: Text-based content generation for all platforms
 2. **Available Now**: Image generation for all platforms
-3. **Coming Soon**: Video content generation (Reels, Stories, IGTV, Shorts)
-4. **Coming Soon**: Audio content generation (Podcasts, Spaces)
-5. **Coming Soon**: Interactive content (Groups, Threads)
+3. **Available Now**: Google Search integration (Search, News, Trends)
+4. **Coming Soon**: Video content generation (Reels, Stories, IGTV, Shorts)
+5. **Coming Soon**: Audio content generation (Podcasts, Spaces)
+6. **Coming Soon**: Interactive content (Groups, Threads)
 
 ### **Potential Improvements**
 1. **Step Consolidation**: Combine related steps for faster flow
