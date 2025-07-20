@@ -44,14 +44,29 @@ from models import db, User, Content, Image
 # Initialize extensions with the db instance from models
 db.init_app(app)
 migrate = Migrate(app, db)
-CORS(app, origins=[
+# CORS configuration - allow all origins for development, restrict for production
+allowed_origins = [
     'https://content-gray-nu.vercel.app',
     'https://content-priskens-projects-61a29b86.vercel.app',
     'https://content-contentmaker.vercel.app',
     'https://content-creator-pro.vercel.app',
+    'https://content-gray-nu.vercel.app',
     'http://localhost:3000',
-    'http://localhost:5000'
-], supports_credentials=True, methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'])
+    'http://localhost:5000',
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:5000'
+]
+
+# Add wildcard for development
+if os.environ.get('FLASK_ENV') == 'development':
+    allowed_origins.append('*')
+
+CORS(app, 
+     origins=allowed_origins,
+     supports_credentials=True, 
+     methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+     allow_headers=['Content-Type', 'Authorization', 'X-Requested-With'],
+     expose_headers=['Content-Type', 'Authorization'])
 
 # Cloudinary configuration (optional - using Stable Diffusion as primary)
 if CLOUDINARY_AVAILABLE:
@@ -90,6 +105,16 @@ def health_check():
         'timestamp': datetime.utcnow().isoformat(),
         'environment': os.environ.get('FLASK_ENV', 'development')
     })
+
+# CORS preflight handler
+@app.route('/api/<path:path>', methods=['OPTIONS'])
+def handle_preflight(path):
+    response = jsonify({'status': 'ok'})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Requested-With')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
+    return response
 
 # Initialize database
 with app.app_context():
