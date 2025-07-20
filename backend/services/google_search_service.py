@@ -758,6 +758,11 @@ class GoogleSearchService:
                     if video_id:
                         # Get additional video details (thumbnail, duration, etc.)
                         print(f"🔍 DEBUG: Getting video details for video ID: {video_id}")
+                        
+                        # Add small delay to avoid rate limiting
+                        import time
+                        time.sleep(0.5)
+                        
                         video_details = self.get_youtube_video_details(video_id)
                         print(f"🔍 DEBUG: Video details result: {video_details}")
                         
