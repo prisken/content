@@ -1949,7 +1949,7 @@ def generate_topics():
         # If we have topics, enhance them with AI analysis
         if topics and GOOGLE_SERVICE_AVAILABLE:
             try:
-                from backend.services.ai_service import ai_service
+                from services.ai_service import ai_service
                 
                 # Create a content summary for AI analysis
                 content_summary = {
@@ -2010,7 +2010,7 @@ def generate_topics_from_content():
             }), 400
         
         # Use AI service to generate topics
-        from backend.services.ai_service import ai_service
+        from services.ai_service import ai_service
         
         topics = ai_service.generate_topics_from_content(content_data, direction, content_type)
         
