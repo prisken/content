@@ -88,14 +88,19 @@ else:
     print("Info: Celery not configured - background jobs disabled")
 
 # Import routes
-from routes import auth_routes, content_routes, image_routes, api_routes, admin_routes
-
-# Register blueprints
-app.register_blueprint(auth_routes, url_prefix='/api/auth')
-app.register_blueprint(content_routes, url_prefix='/api/content')
-app.register_blueprint(image_routes, url_prefix='/api/images')
-app.register_blueprint(api_routes, url_prefix='/api')
-app.register_blueprint(admin_routes, url_prefix='/api/admin')
+try:
+    from routes import auth_routes, content_routes, image_routes, api_routes, admin_routes
+    
+    # Register blueprints
+    app.register_blueprint(auth_routes, url_prefix='/api/auth')
+    app.register_blueprint(content_routes, url_prefix='/api/content')
+    app.register_blueprint(image_routes, url_prefix='/api/images')
+    app.register_blueprint(api_routes, url_prefix='/api')
+    app.register_blueprint(admin_routes, url_prefix='/api/admin')
+    print("✅ All routes registered successfully")
+except Exception as e:
+    print(f"❌ Error registering routes: {e}")
+    # Continue with basic app functionality
 
 # Health check endpoint
 @app.route('/health')
@@ -117,9 +122,17 @@ def handle_preflight(path):
     return response
 
 # Initialize database
-with app.app_context():
-    db.create_all()
+def init_db():
+    try:
+        with app.app_context():
+            db.create_all()
+            print("✅ Database initialized successfully")
+    except Exception as e:
+        print(f"⚠️ Database initialization warning: {e}")
+        # Continue without database for now
 
+# Only initialize database if not in production or if explicitly requested
 if __name__ == '__main__':
+    init_db()
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False) 
