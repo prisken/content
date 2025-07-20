@@ -124,11 +124,11 @@ This document provides a visual representation of the complete content generatio
 │  │  │                                                                     │ │ │
 │  │  │ After selecting platform, choose your post type:                    │ │ │
 │  │  │                                                                     │ │ │
-│  │  │ Facebook: Posts, Stories, Reels, Groups                             │ │ │
-│  │  │ Instagram: Posts, Stories, Reels, IGTV                              │ │ │
+│  │  │ Facebook: Posts, Stories, Reels (Coming Soon), Groups (Coming Soon) │ │ │
+│  │  │ Instagram: Posts, Stories, Reels (Coming Soon), IGTV (Coming Soon)  │ │ │
 │  │  │ LinkedIn: Posts, Articles, Newsletters                              │ │ │
-│  │  │ Twitter: Tweets, Threads, Spaces                                    │ │ │
-│  │  │ YouTube: Shorts, Videos, Scripts                                    │ │ │
+│  │  │ Twitter: Tweets, Threads, Spaces (Coming Soon)                      │ │ │
+│  │  │ YouTube: Shorts (Coming Soon), Videos (Coming Soon), Scripts        │ │ │
 │  │  │ Blog: Articles, Newsletters, Guides                                 │ │ │
 │  │  └─────────────────────────────────────────────────────────────────────┘ │ │
 │  │                                                                         │ │
@@ -696,6 +696,7 @@ This document provides a visual representation of the complete content generatio
 │  ┌─────────────────────────────────────────────────────────────────────────┐ │
 │  │ • User chooses platform (LinkedIn, Facebook, Instagram, etc.)          │ │
 │  │ • System prompts for post type (Posts, Stories, Reels, etc.)           │ │
+│  │ • Video features marked as "Coming Soon"                               │ │
 │  │ • UI updates with platform-specific post type options                   │ │
 │  └─────────────────────────────────────────────────────────────────────────┘ │
 │                                                                             │
@@ -758,6 +759,13 @@ This document provides a visual representation of the complete content generatio
 ---
 
 ## 📋 **Redesign Considerations**
+
+### **Current vs Future Capabilities**
+1. **Available Now**: Text-based content generation for all platforms
+2. **Available Now**: Image generation for all platforms
+3. **Coming Soon**: Video content generation (Reels, Stories, IGTV, Shorts)
+4. **Coming Soon**: Audio content generation (Podcasts, Spaces)
+5. **Coming Soon**: Interactive content (Groups, Threads)
 
 ### **Potential Improvements**
 1. **Step Consolidation**: Combine related steps for faster flow
