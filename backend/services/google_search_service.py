@@ -201,13 +201,6 @@ class GoogleSearchService:
                 {'title': 'Real Estate Technology', 'description': 'Digital tools for buying and selling property', 'trending_score': 80},
                 {'title': 'Urban Development Projects', 'description': 'City planning and infrastructure improvements', 'trending_score': 77}
             ],
-            'marketing_advertising': [
-                {'title': 'Digital Marketing Evolution', 'description': 'New strategies and platforms emerge', 'trending_score': 88},
-                {'title': 'Influencer Marketing Growth', 'description': 'Social media personalities drive brand awareness', 'trending_score': 85},
-                {'title': 'Data Privacy in Advertising', 'description': 'Balancing personalization with privacy', 'trending_score': 82},
-                {'title': 'Content Marketing Strategies', 'description': 'Value-driven content creation approaches', 'trending_score': 79},
-                {'title': 'Marketing Technology Stack', 'description': 'Tools and platforms for modern marketers', 'trending_score': 76}
-            ],
             'science_research': [
                 {'title': 'Breakthrough Scientific Discovery', 'description': 'Major advancement in research field', 'trending_score': 92},
                 {'title': 'Climate Change Research Update', 'description': 'Latest findings on environmental impact', 'trending_score': 89},
@@ -228,6 +221,13 @@ class GoogleSearchService:
                 {'title': 'Plastic Pollution Solutions', 'description': 'Innovations in waste reduction', 'trending_score': 85},
                 {'title': 'Biodiversity Conservation', 'description': 'Protection of ecosystems and species', 'trending_score': 82},
                 {'title': 'Sustainable Agriculture', 'description': 'Eco-friendly farming practices', 'trending_score': 79}
+            ],
+            'art_creativity': [
+                {'title': 'Digital Art Revolution', 'description': 'AI and technology transforming artistic creation', 'trending_score': 90},
+                {'title': 'Creative Industry Growth', 'description': 'Expansion of creative and design sectors', 'trending_score': 87},
+                {'title': 'Artistic Expression Trends', 'description': 'New forms of creative self-expression emerging', 'trending_score': 84},
+                {'title': 'Design Innovation', 'description': 'Breakthroughs in graphic and product design', 'trending_score': 81},
+                {'title': 'Creative Entrepreneurship', 'description': 'Artists and creators building successful businesses', 'trending_score': 78}
             ]
         }
         
@@ -329,18 +329,11 @@ class GoogleSearchService:
                 {'title': 'Sustainable Transportation', 'description': 'Green alternatives to traditional vehicles', 'trending_score': 82}
             ],
             'real_estate': [
-                {'title': 'Housing Market', 'description': 'Real estate trends and analysis', 'trending_score': 92},
-                {'title': 'Remote Work Impact', 'description': 'How work-from-home affects housing', 'trending_score': 89},
-                {'title': 'Sustainable Building', 'description': 'Green construction and energy efficiency', 'trending_score': 86},
-                {'title': 'Real Estate Technology', 'description': 'Digital tools for property transactions', 'trending_score': 83},
-                {'title': 'Urban Development', 'description': 'City planning and infrastructure', 'trending_score': 80}
-            ],
-            'marketing_advertising': [
-                {'title': 'Digital Marketing', 'description': 'Online advertising and promotion strategies', 'trending_score': 93},
-                {'title': 'Influencer Marketing', 'description': 'Social media personality partnerships', 'trending_score': 90},
-                {'title': 'Data Privacy', 'description': 'Consumer data protection in advertising', 'trending_score': 87},
-                {'title': 'Content Marketing', 'description': 'Value-driven content creation', 'trending_score': 84},
-                {'title': 'Marketing Technology', 'description': 'Tools and platforms for marketers', 'trending_score': 81}
+                {'title': 'Real Estate Market', 'description': 'Property market trends and analysis', 'trending_score': 88},
+                {'title': 'Investment Properties', 'description': 'Real estate investment strategies', 'trending_score': 85},
+                {'title': 'Home Improvement', 'description': 'DIY and renovation projects', 'trending_score': 82},
+                {'title': 'Sustainable Building', 'description': 'Green construction practices', 'trending_score': 79},
+                {'title': 'Real Estate Technology', 'description': 'Digital tools for property', 'trending_score': 76}
             ],
             'science_research': [
                 {'title': 'Scientific Breakthroughs', 'description': 'Latest discoveries and innovations', 'trending_score': 95},
@@ -350,18 +343,25 @@ class GoogleSearchService:
                 {'title': 'Renewable Energy', 'description': 'Sustainable energy solutions', 'trending_score': 83}
             ],
             'politics_society': [
-                {'title': 'Election Analysis', 'description': 'Political landscape and voter behavior', 'trending_score': 93},
-                {'title': 'Social Justice', 'description': 'Equality and civil rights movements', 'trending_score': 90},
-                {'title': 'Policy Impact', 'description': 'How laws affect communities', 'trending_score': 87},
-                {'title': 'Civic Engagement', 'description': 'Public participation in democracy', 'trending_score': 84},
-                {'title': 'International Relations', 'description': 'Global diplomacy and cooperation', 'trending_score': 81}
+                {'title': 'Political Analysis and Commentary', 'description': 'Understanding political events and trends', 'trending_score': 91},
+                {'title': 'Social Justice Discussions', 'description': 'Important societal issues and equality', 'trending_score': 88},
+                {'title': 'Civic Engagement Guide', 'description': 'How to participate in democracy effectively', 'trending_score': 85},
+                {'title': 'Policy Impact Analysis', 'description': 'How laws and policies affect communities', 'trending_score': 82},
+                {'title': 'International Relations Updates', 'description': 'Global political developments and diplomacy', 'trending_score': 79}
             ],
             'environment_sustainability': [
-                {'title': 'Climate Action', 'description': 'Global efforts to address climate change', 'trending_score': 94},
-                {'title': 'Renewable Energy', 'description': 'Sustainable power sources', 'trending_score': 91},
-                {'title': 'Plastic Pollution', 'description': 'Waste reduction and recycling', 'trending_score': 88},
-                {'title': 'Biodiversity Conservation', 'description': 'Protection of ecosystems', 'trending_score': 85},
-                {'title': 'Sustainable Agriculture', 'description': 'Eco-friendly farming practices', 'trending_score': 82}
+                {'title': 'Environmental Science Explained', 'description': 'Understanding environmental issues', 'trending_score': 91},
+                {'title': 'Sustainable Living Practices', 'description': 'Eco-friendly lifestyle tips', 'trending_score': 88},
+                {'title': 'Climate Change Updates', 'description': 'Latest climate science and news', 'trending_score': 85},
+                {'title': 'Conservation Efforts', 'description': 'Protecting the environment', 'trending_score': 82},
+                {'title': 'Green Technology Innovations', 'description': 'Sustainable technology solutions', 'trending_score': 79}
+            ],
+            'art_creativity': [
+                {'title': 'Creative Process Podcast', 'description': 'Behind-the-scenes of artistic creation and design', 'trending_score': 87},
+                {'title': 'Art Industry Insights', 'description': 'Understanding the business side of creativity', 'trending_score': 84},
+                {'title': 'Design Thinking Discussions', 'description': 'Creative problem-solving and innovation', 'trending_score': 81},
+                {'title': 'Artist Interviews and Stories', 'description': 'Personal journeys from creative professionals', 'trending_score': 78},
+                {'title': 'Creative Inspiration Sessions', 'description': 'Motivational content for artists and designers', 'trending_score': 75}
             ]
         }
         
@@ -509,13 +509,7 @@ class GoogleSearchService:
                 {'title': 'Property Investment Strategies', 'description': 'Real estate investment advice', 'trending_score': 79},
                 {'title': 'Interior Design Inspiration', 'description': 'Home decoration and design', 'trending_score': 76}
             ],
-            'marketing_advertising': [
-                {'title': 'Digital Marketing Strategies', 'description': 'Online marketing techniques', 'trending_score': 89},
-                {'title': 'Social Media Marketing Tips', 'description': 'Effective social media strategies', 'trending_score': 86},
-                {'title': 'Content Marketing Guide', 'description': 'Creating valuable content', 'trending_score': 83},
-                {'title': 'Brand Building Strategies', 'description': 'Building strong brands', 'trending_score': 80},
-                {'title': 'Marketing Analytics and Data', 'description': 'Understanding marketing metrics', 'trending_score': 77}
-            ],
+
             'science_research': [
                 {'title': 'Scientific Discoveries Explained', 'description': 'Understanding complex scientific concepts', 'trending_score': 92},
                 {'title': 'Research Methodology Guide', 'description': 'How scientific research works', 'trending_score': 89},
@@ -536,6 +530,13 @@ class GoogleSearchService:
                 {'title': 'Climate Change Updates', 'description': 'Latest climate science and news', 'trending_score': 85},
                 {'title': 'Conservation Efforts', 'description': 'Protecting the environment', 'trending_score': 82},
                 {'title': 'Green Technology Innovations', 'description': 'Sustainable technology solutions', 'trending_score': 79}
+            ],
+            'art_creativity': [
+                {'title': 'Digital Art Tutorials', 'description': 'Learn digital painting and design', 'trending_score': 89},
+                {'title': 'Creative Process Videos', 'description': 'Behind-the-scenes of artistic creation', 'trending_score': 86},
+                {'title': 'Design Tips and Tricks', 'description': 'Graphic design and visual arts advice', 'trending_score': 83},
+                {'title': 'Art History and Culture', 'description': 'Understanding art movements and styles', 'trending_score': 80},
+                {'title': 'Creative Inspiration Content', 'description': 'Motivational content for artists', 'trending_score': 77}
             ]
         }
         
@@ -642,13 +643,7 @@ class GoogleSearchService:
                 {'title': 'Sustainable Building Practices', 'description': 'Green construction and energy efficiency', 'trending_score': 79},
                 {'title': 'Real Estate Technology Trends', 'description': 'Digital tools and innovations in real estate', 'trending_score': 76}
             ],
-            'marketing_advertising': [
-                {'title': 'Digital Marketing Strategies', 'description': 'Online marketing techniques and trends', 'trending_score': 89},
-                {'title': 'Brand Building Insights', 'description': 'Creating and maintaining strong brands', 'trending_score': 86},
-                {'title': 'Content Marketing Excellence', 'description': 'Creating valuable and engaging content', 'trending_score': 83},
-                {'title': 'Social Media Marketing Trends', 'description': 'Effective social media strategies', 'trending_score': 80},
-                {'title': 'Marketing Analytics and Data', 'description': 'Understanding marketing metrics and ROI', 'trending_score': 77}
-            ],
+
             'science_research': [
                 {'title': 'Scientific Discoveries Explained', 'description': 'Understanding complex scientific concepts', 'trending_score': 92},
                 {'title': 'Research Methodology Insights', 'description': 'How scientific research works', 'trending_score': 89},
@@ -664,11 +659,18 @@ class GoogleSearchService:
                 {'title': 'International Relations Updates', 'description': 'Global political developments and diplomacy', 'trending_score': 79}
             ],
             'environment_sustainability': [
-                {'title': 'Climate Action', 'description': 'Global efforts to address climate change', 'trending_score': 94},
-                {'title': 'Renewable Energy', 'description': 'Sustainable power sources', 'trending_score': 91},
-                {'title': 'Plastic Pollution', 'description': 'Waste reduction and recycling', 'trending_score': 88},
-                {'title': 'Biodiversity Conservation', 'description': 'Protection of ecosystems', 'trending_score': 85},
-                {'title': 'Sustainable Agriculture', 'description': 'Eco-friendly farming practices', 'trending_score': 82}
+                {'title': 'Environmental Science Explained', 'description': 'Understanding environmental issues', 'trending_score': 91},
+                {'title': 'Sustainable Living Practices', 'description': 'Eco-friendly lifestyle tips', 'trending_score': 88},
+                {'title': 'Climate Change Updates', 'description': 'Latest climate science and news', 'trending_score': 85},
+                {'title': 'Conservation Efforts', 'description': 'Protecting the environment', 'trending_score': 82},
+                {'title': 'Green Technology Innovations', 'description': 'Sustainable technology solutions', 'trending_score': 79}
+            ],
+            'art_creativity': [
+                {'title': 'Creative Process Podcast', 'description': 'Behind-the-scenes of artistic creation and design', 'trending_score': 87},
+                {'title': 'Art Industry Insights', 'description': 'Understanding the business side of creativity', 'trending_score': 84},
+                {'title': 'Design Thinking Discussions', 'description': 'Creative problem-solving and innovation', 'trending_score': 81},
+                {'title': 'Artist Interviews and Stories', 'description': 'Personal journeys from creative professionals', 'trending_score': 78},
+                {'title': 'Creative Inspiration Sessions', 'description': 'Motivational content for artists and designers', 'trending_score': 75}
             ]
         }
         
@@ -889,13 +891,7 @@ class GoogleSearchService:
                 {'title': 'Book: "Real Estate Market"', 'description': 'Understanding property markets', 'trending_score': 76},
                 {'title': 'Book: "Home Improvement"', 'description': 'DIY and renovation projects', 'trending_score': 73}
             ],
-            'marketing_advertising': [
-                {'title': 'Book: "Digital Marketing"', 'description': 'Online marketing strategies and techniques', 'trending_score': 84},
-                {'title': 'Book: "Brand Building"', 'description': 'Creating and maintaining strong brands', 'trending_score': 81},
-                {'title': 'Book: "Content Marketing"', 'description': 'Creating valuable content for marketing', 'trending_score': 78},
-                {'title': 'Book: "Social Media Marketing"', 'description': 'Effective social media strategies', 'trending_score': 75},
-                {'title': 'Book: "Marketing Analytics"', 'description': 'Understanding marketing metrics', 'trending_score': 72}
-            ],
+
             'science_research': [
                 {'title': 'Book: "Scientific Method"', 'description': 'Understanding how science works', 'trending_score': 87},
                 {'title': 'Book: "Research Methods"', 'description': 'Conducting effective research', 'trending_score': 84},
@@ -916,6 +912,13 @@ class GoogleSearchService:
                 {'title': 'Book: "Renewable Energy"', 'description': 'Sustainable energy solutions', 'trending_score': 83},
                 {'title': 'Book: "Conservation Biology"', 'description': 'Protecting biodiversity and ecosystems', 'trending_score': 80},
                 {'title': 'Book: "Environmental Policy"', 'description': 'Environmental protection and regulation', 'trending_score': 77}
+            ],
+            'art_creativity': [
+                {'title': 'Book: "Art and Design Insights"', 'description': 'Understanding creative industries and trends', 'trending_score': 85},
+                {'title': 'Book: "Creative Entrepreneurship"', 'description': 'Building successful creative businesses', 'trending_score': 82},
+                {'title': 'Book: "Artistic Expression"', 'description': 'Exploring different forms of creative expression', 'trending_score': 79},
+                {'title': 'Book: "Design Innovation"', 'description': 'Breakthroughs in graphic and product design', 'trending_score': 76},
+                {'title': 'Book: "Creative Inspiration"', 'description': 'Inspiring stories and insights for artists', 'trending_score': 73}
             ]
         }
         
