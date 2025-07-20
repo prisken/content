@@ -2339,6 +2339,27 @@ def generate_podcast_link():
             'error': str(e)
         }), 500
 
+@api_routes.route('/debug/google-search', methods=['GET'])
+def debug_google_search():
+    """Debug endpoint to check Google Search API configuration"""
+    try:
+        api_key = os.environ.get('GOOGLE_CUSTOM_SEARCH_API_KEY')
+        search_engine_id = os.environ.get('GOOGLE_CUSTOM_SEARCH_ENGINE_ID')
+        
+        return jsonify({
+            'success': True,
+            'api_key_configured': bool(api_key),
+            'api_key_length': len(api_key) if api_key else 0,
+            'search_engine_id_configured': bool(search_engine_id),
+            'search_engine_id_length': len(search_engine_id) if search_engine_id else 0,
+            'all_configured': bool(api_key and search_engine_id)
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 @api_routes.route('/image/<image_hash>', methods=['GET'])
 def get_image(image_hash):
     """Get image data by hash reference"""

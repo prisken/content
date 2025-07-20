@@ -12,6 +12,12 @@ class GoogleSearchService:
         self.trends_api_key = os.environ.get('GOOGLE_TRENDS_API_KEY')
         self.books_api_key = os.environ.get('GOOGLE_BOOKS_API_KEY')
         
+        # Debug logging for API configuration
+        print(f"🔍 DEBUG: Google Search API Key length: {len(self.api_key) if self.api_key else 0}")
+        print(f"🔍 DEBUG: Google Search Engine ID length: {len(self.search_engine_id) if self.search_engine_id else 0}")
+        print(f"🔍 DEBUG: API Key configured: {bool(self.api_key)}")
+        print(f"🔍 DEBUG: Search Engine ID configured: {bool(self.search_engine_id)}")
+        
         # Base URLs
         self.custom_search_url = "https://www.googleapis.com/customsearch/v1"
         self.books_api_url = "https://www.googleapis.com/books/v1/volumes"
