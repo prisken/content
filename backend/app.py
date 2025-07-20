@@ -47,8 +47,11 @@ migrate = Migrate(app, db)
 CORS(app, origins=[
     'https://content-gray-nu.vercel.app',
     'https://content-priskens-projects-61a29b86.vercel.app',
-    'http://localhost:3000'
-], supports_credentials=True)
+    'https://content-contentmaker.vercel.app',
+    'https://content-creator-pro.vercel.app',
+    'http://localhost:3000',
+    'http://localhost:5000'
+], supports_credentials=True, methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'])
 
 # Cloudinary configuration
 if CLOUDINARY_AVAILABLE:

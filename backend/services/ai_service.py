@@ -14,7 +14,7 @@ class DeepSeekAIService:
             "Content-Type": "application/json"
         }
     
-    def generate_content(self, direction: str, platform: str, source: str, topic: str, tone: str, language: str = 'en') -> str:
+    def generate_content(self, direction: str, platform: str, source: str, topic: str, tone: str, language: str = 'en', generate_images: bool = True) -> str:
         """Generate content using DeepSeek AI"""
         
         if not self.api_key:
