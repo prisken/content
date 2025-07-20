@@ -858,6 +858,16 @@ class GoogleSearchService:
             'channel': 'Popular Channel'
         }
     
+    def _generate_no_preview_image(self, title: str) -> str:
+        """Generate a "No Preview Available" image with podcast title"""
+        # Use a better placeholder service that handles text well
+        # Gray background (#6B7280) with white text
+        import urllib.parse
+        
+        # Create a clean "No Preview Available" image
+        text = urllib.parse.quote("No Preview Available")
+        return f"https://via.placeholder.com/300x300/6B7280/FFFFFF?text={text}"
+    
     def _extract_podcast_details(self, search_item: Dict[str, Any]) -> Dict[str, Any]:
         """Extract podcast details from search result"""
         import re
@@ -941,6 +951,12 @@ class GoogleSearchService:
             cover = 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=300&h=300&fit=crop'
         elif any(word in title_lower for word in ['education', 'learning', 'school', 'study']):
             cover = 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=300&h=300&fit=crop'
+        
+        # Check if we should use "No Preview Available" image
+        # Use it for podcasts that don't have clear content matching
+        if not any(word in title_lower for word in ['business', 'finance', 'money', 'entrepreneur', 'tech', 'ai', 'programming', 'coding', 'health', 'fitness', 'wellness', 'nutrition', 'food', 'cooking', 'recipe', 'kitchen', 'education', 'learning', 'school', 'study']):
+            # Use a "No Preview Available" image
+            cover = self._generate_no_preview_image(title)
         
         return {
             'cover': cover,
