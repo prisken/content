@@ -254,14 +254,14 @@ export const sources = [
   { key: 'seasonal_events', name: 'Seasonal Events' },
 ];
 
-// Tones data - Updated to match design document exactly (6 tones)
+// Tones data - Updated to match design document exactly (6 tones) with emojis
 export const tones = [
-  { key: 'professional', name: 'Professional' },
-  { key: 'casual', name: 'Casual' },
-  { key: 'inspirational', name: 'Inspirational' },
-  { key: 'educational', name: 'Educational' },
-  { key: 'entertaining', name: 'Entertaining' },
-  { key: 'serious', name: 'Serious' },
+  { key: 'professional', name: 'Professional', icon: '💼' },
+  { key: 'casual', name: 'Casual', icon: '😊' },
+  { key: 'inspirational', name: 'Inspirational', icon: '✨' },
+  { key: 'educational', name: 'Educational', icon: '📚' },
+  { key: 'entertaining', name: 'Entertaining', icon: '🎉' },
+  { key: 'serious', name: 'Serious', icon: '🎯' },
 ];
 
 // Image styles data
