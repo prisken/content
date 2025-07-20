@@ -1068,9 +1068,7 @@ def generate_content():
         # Step 1: Generate content using DeepSeek AI
         if AI_SERVICE_AVAILABLE:
             content_text = ai_service.generate_content(
-                direction, platform, post_type, source, selected_topic, tone, language, 
-                source_details=source_details,
-                generate_images=generate_images
+                direction, platform, source, selected_topic, tone, language, generate_images
             )
         else:
             content_text = generate_content_text(direction, platform, source, selected_topic, tone, language)
