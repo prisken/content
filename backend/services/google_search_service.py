@@ -757,7 +757,9 @@ class GoogleSearchService:
                     
                     if video_id:
                         # Get additional video details (thumbnail, duration, etc.)
+                        print(f"🔍 DEBUG: Getting video details for video ID: {video_id}")
                         video_details = self.get_youtube_video_details(video_id)
+                        print(f"🔍 DEBUG: Video details result: {video_details}")
                         
                         video = {
                             'title': item.get('title', ''),
