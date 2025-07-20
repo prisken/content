@@ -1068,62 +1068,42 @@ def generate_content():
         # Simple content generation (no complex functions)
         content_text = f"🚀 {selected_topic}\n\nBased on {source.replace('_', ' ')} insights, here's what you need to know about {direction.replace('_', ' ')}.\n\nKey takeaways:\n• Understanding {selected_topic} is crucial for success\n• Focus on practical applications in {direction.replace('_', ' ')}\n• Continuous learning drives innovation\n\nWhat's your experience with {selected_topic}? Share your thoughts below! 👇\n\n#{direction.replace('_', '')} #{selected_topic.replace(' ', '')} #ProfessionalDevelopment"
         
-        # Generate images using Stable Diffusion (with timeout protection)
+        # Generate images using Stable Diffusion (simplified approach)
         generated_images = {'primary': None, 'variations': [], 'total_count': 0}
         if generate_images:
             try:
+                # Simple image generation without complex timeout handling
                 from services.stable_diffusion import StableDiffusionService
                 stable_diffusion = StableDiffusionService()
                 
-                # Create simple image prompt based on content and style
+                # Create image prompt based on content and style
                 image_prompt = f"Professional {image_style} style image for {platform} post about {selected_topic} in {direction.replace('_', ' ')} category, high quality, trending on artstation"
                 
-                # Generate primary image with timeout
-                import signal
-                import threading
+                # Generate image directly
+                primary_image = stable_diffusion.generate_image_with_prompt(
+                    platform=platform,
+                    prompt=image_prompt,
+                    content_direction=direction,
+                    topic=selected_topic,
+                    tone=tone,
+                    language=language
+                )
                 
-                def generate_with_timeout():
-                    try:
-                        result = stable_diffusion.generate_image_with_prompt(
-                            platform=platform,
-                            prompt=image_prompt,
-                            content_direction=direction,
-                            topic=selected_topic,
-                            tone=tone,
-                            language=language
-                        )
-                        return result
-                    except Exception as e:
-                        return {'error': str(e)}
-                
-                # Run image generation with 15-second timeout
-                import concurrent.futures
-                with concurrent.futures.ThreadPoolExecutor() as executor:
-                    future = executor.submit(generate_with_timeout)
-                    try:
-                        primary_image = future.result(timeout=15)
-                        if 'error' not in primary_image and primary_image.get('image_data'):
-                            generated_images = {
-                                'primary': primary_image.get('image_data'),
-                                'variations': [],
-                                'total_count': 1,
-                                'prompt_used': image_prompt
-                            }
-                        else:
-                            generated_images = {
-                                'primary': None,
-                                'variations': [],
-                                'total_count': 0,
-                                'note': 'Image generation failed, using fallback',
-                                'error': primary_image.get('error', 'Unknown error')
-                            }
-                    except concurrent.futures.TimeoutError:
-                        generated_images = {
-                            'primary': None,
-                            'variations': [],
-                            'total_count': 0,
-                            'note': 'Image generation timed out, using fallback'
-                        }
+                if 'error' not in primary_image and primary_image.get('image_data'):
+                    generated_images = {
+                        'primary': primary_image.get('image_data'),
+                        'variations': [],
+                        'total_count': 1,
+                        'prompt_used': image_prompt
+                    }
+                else:
+                    generated_images = {
+                        'primary': None,
+                        'variations': [],
+                        'total_count': 0,
+                        'note': 'Image generation failed, using fallback',
+                        'error': primary_image.get('error', 'Unknown error')
+                    }
                 
             except Exception as e:
                 print(f"Error in image generation: {str(e)}")
